@@ -1,0 +1,2750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="dashboard">
+  <meta name="design-style" content="charter">
+  <title>ØkAdmOfficeHub — Det Norske Brenneri AS | AI Cockpit &amp; Fiscal Ledger</title>
+
+  <!-- Google Fonts: Libre Caslon Text & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons (Pinned exact approved CDN) -->
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+
+  <!-- Chart.js (Pinned exact approved CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* =========================================================================
+       CHARTER DESIGN SYSTEM TOKENS & FOUNDATION
+       ========================================================================= */
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces */
+      --background: #f7f4ec;               /* warm cream paper */
+      --surface-container-low: #fffdf8;    /* bright leaf: figure cards, panels */
+      --surface-container: #ece5d4;        /* deeper cream: secondary buttons, table heads */
+      --surface-container-high: #e3dac4;   /* table header band, hover fill */
+
+      /* Ink */
+      --on-surface: #1c1f26;               /* near-black ink */
+      --on-surface-variant: #4f5360;       /* graphite: captions, secondary text */
+
+      /* Rules */
+      --outline: #b08d57;                  /* brass: rules and borders; text only on navy */
+      --outline-variant: #d9cfb8;          /* pale brass: hairline dividers */
+
+      /* Accents */
+      --primary: #14213d;                   /* deep navy: title band, primary action, links */
+      --on-primary: #f7f4ec;               /* cream on navy */
+      --primary-container: #e3e6ee;        /* pale navy wash: selected row, active state */
+      --on-primary-container: #14213d;
+      --secondary: #2d5a4a;                /* bottle green: favorable notes, second voice */
+      --tertiary: #8a6a35;                 /* dark brass: small accent text on cream/leaf */
+      --error: #9b2c2c;
+      --on-error: #f7f4ec;
+
+      /* Semantic additions */
+      --positive: #2d5a4a;
+      --warning: #8a6a35;
+      --focus: #14213d;
+
+      /* Data series (Charter sequence) */
+      --data-1: #14213d;                   /* navy */
+      --data-2: #8a6a35;                   /* dark brass */
+      --data-3: #2d5a4a;                   /* bottle green */
+      --data-4: #5b7aa0;                   /* slate blue */
+      --data-context: #c2bba9;             /* context series and gridlines */
+
+      /* Fonts */
+      --font-headline: 'Libre Caslon Text', Georgia, serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-label: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+      /* Type scale - Dashboard ratio */
+      --display-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem);
+      --headline-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+      --subhead-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+      --body-size: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+      --label-size: 0.75rem;
+
+      /* Spacing scale (4pt base) */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 6rem;
+
+      /* Shape - Strict Charter 2px corners */
+      --rounded: 0.125rem;
+      --rounded-lg: 0.125rem;
+      --rounded-full: 0.125rem;
+
+      /* Style effects */
+      --brass-rule: 2px solid var(--outline);
+      --hairline: 1px solid var(--outline-variant);
+      --leaf-underline: 0 1px 0 var(--outline-variant);
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base Reset & Guardrails */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.55;
+      overflow-x: clip;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Charter Title Band */
+    .title-band {
+      background: var(--primary);
+      color: var(--on-primary);
+      padding: var(--space-xl) var(--space-xl) var(--space-lg);
+      border-bottom: 3px solid var(--outline);
+    }
+
+    .title-band-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .brand-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-md);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: color-mix(in srgb, var(--outline) 75%, var(--on-primary));
+    }
+
+    .badge-brass {
+      border: 1px solid var(--outline);
+      padding: 2px 8px;
+      border-radius: var(--rounded);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .title-band h1 {
+      font-family: var(--font-headline);
+      font-size: var(--display-size);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: var(--on-primary);
+    }
+
+    .title-band h1 span.emphasis {
+      color: color-mix(in srgb, var(--outline) 80%, var(--on-primary));
+      font-style: italic;
+    }
+
+    .title-band .lede {
+      color: color-mix(in srgb, var(--on-primary) 78%, var(--primary));
+      max-width: 90ch;
+      font-size: var(--subhead-size);
+      line-height: 1.45;
+      margin-top: var(--space-xs);
+    }
+
+    .header-indicators {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-lg);
+      margin-top: var(--space-md);
+      padding-top: var(--space-md);
+      border-top: 1px solid color-mix(in srgb, var(--outline) 40%, transparent);
+      font-size: var(--label-size);
+      color: color-mix(in srgb, var(--on-primary) 85%, transparent);
+    }
+
+    .indicator-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .indicator-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--secondary);
+    }
+
+    /* Main Container */
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--space-xl) var(--space-xl) var(--space-3xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2xl);
+    }
+
+    /* Section Headers */
+    .section-head {
+      border-top: var(--brass-rule);
+      padding-top: var(--space-md);
+      border-bottom: var(--hairline);
+      padding-bottom: var(--space-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+
+    .section-head-title {
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 400;
+      color: var(--on-surface);
+      line-height: 1.2;
+    }
+
+    .section-head-subtitle {
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--on-surface-variant);
+      font-weight: 600;
+    }
+
+    /* Top Metric Summary Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .figure-card {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      box-shadow: var(--leaf-underline);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform var(--dur-short) var(--ease-out);
+    }
+
+    .figure-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .figure-label {
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--on-surface-variant);
+      margin-bottom: var(--space-xs);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .figure-value {
+      font-family: var(--font-headline);
+      font-size: 1.85rem;
+      font-weight: 400;
+      font-variant-numeric: tabular-nums lining-nums;
+      color: var(--on-surface);
+      line-height: 1.15;
+    }
+
+    .figure-subvalue {
+      font-size: 0.825rem;
+      color: var(--on-surface-variant);
+      margin-top: 2px;
+      font-family: var(--font-body);
+    }
+
+    .figure-delta {
+      color: var(--secondary);
+      font-weight: 600;
+      font-size: var(--label-size);
+      margin-top: var(--space-xs);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .figure-delta.neutral {
+      color: var(--tertiary);
+    }
+
+    .figure-delta.negative {
+      color: var(--error);
+    }
+
+    /* 2-Column Responsive Layout Grids */
+    .two-col-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: var(--space-xl);
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .two-col-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    /* Ingestion Hub Styles */
+    .ingest-box {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      box-shadow: var(--leaf-underline);
+      padding: var(--space-lg);
+      border-radius: var(--rounded-lg);
+    }
+
+    .drop-zone {
+      border: 2px dashed var(--outline);
+      background: color-mix(in srgb, var(--surface-container) 45%, transparent);
+      padding: var(--space-xl) var(--space-lg);
+      text-align: center;
+      border-radius: var(--rounded);
+      cursor: pointer;
+      transition: background var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+    }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      background: var(--primary-container);
+      border-color: var(--primary);
+    }
+
+    .drop-icon {
+      color: var(--primary);
+      width: 44px;
+      height: 44px;
+    }
+
+    .drop-prompt {
+      font-family: var(--font-headline);
+      font-size: var(--subhead-size);
+      color: var(--on-surface);
+    }
+
+    .drop-sub {
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      max-width: 50ch;
+    }
+
+    /* Ingestion Pipeline Stages */
+    .pipeline-wrapper {
+      margin-top: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .pipeline-progress-bar {
+      height: 6px;
+      background: var(--outline-variant);
+      border-radius: var(--rounded);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .pipeline-progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 100%;
+      transition: width var(--dur-long) var(--ease-out);
+    }
+
+    .pipeline-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-xs);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pipeline-step {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 6px 8px;
+      background: var(--surface-container);
+      border-left: 2px solid var(--secondary);
+    }
+
+    .pipeline-step.active {
+      border-left-color: var(--outline);
+      background: var(--primary-container);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .pipeline-step-title {
+      font-weight: 600;
+      color: var(--on-surface);
+    }
+
+    /* Preset Quick Buttons */
+    .preset-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      margin-top: var(--space-md);
+      align-items: center;
+    }
+
+    .preset-label {
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface-variant);
+      margin-right: var(--space-xs);
+    }
+
+    /* Buttons */
+    .btn {
+      font-family: var(--font-body);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      padding: 6px 14px;
+      border-radius: var(--rounded);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+      text-decoration: none;
+      min-height: 34px;
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--on-primary);
+      border: 1px solid var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: color-mix(in srgb, var(--primary) 85%, black);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--primary-container);
+    }
+
+    .btn-brass {
+      background: transparent;
+      color: var(--tertiary);
+      border: 1px solid var(--outline);
+    }
+
+    .btn-brass:hover {
+      background: var(--surface-container-high);
+      color: var(--on-surface);
+    }
+
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      min-height: 28px;
+    }
+
+    /* Ingested Documents Registry */
+    .doc-registry-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      margin-top: var(--space-sm);
+    }
+
+    .doc-registry-table th {
+      background: var(--surface-container-high);
+      color: var(--on-surface-variant);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--outline);
+    }
+
+    .doc-registry-table td {
+      padding: 10px 12px;
+      border-bottom: var(--hairline);
+      color: var(--on-surface);
+    }
+
+    .doc-registry-table tr:hover {
+      background: color-mix(in srgb, var(--surface-container) 40%, transparent);
+    }
+
+    .tag-engine {
+      border: 1px solid var(--outline);
+      background: transparent;
+      color: var(--tertiary);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: var(--rounded);
+      letter-spacing: 0.05em;
+    }
+
+    .tag-engine.duckdb {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .tag-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--secondary);
+    }
+
+    /* AI Chatbot Module */
+    .ai-chat-box {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      box-shadow: var(--leaf-underline);
+      border-radius: var(--rounded-lg);
+      display: flex;
+      flex-direction: column;
+      height: 620px;
+    }
+
+    .ai-chat-header {
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: var(--hairline);
+      background: var(--surface-container);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .mode-toggle-group {
+      display: flex;
+      border: 1px solid var(--outline);
+      border-radius: var(--rounded);
+      overflow: hidden;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 8px 12px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--on-surface-variant);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+    }
+
+    .mode-btn.active {
+      background: var(--primary);
+      color: var(--on-primary);
+    }
+
+    .mode-btn:focus-visible {
+      outline: 2px solid var(--focus);
+      z-index: 2;
+    }
+
+    .chat-mode-desc {
+      font-size: 0.75rem;
+      color: var(--on-surface-variant);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      background: var(--background);
+    }
+
+    .chat-bubble {
+      max-width: 88%;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--rounded);
+      font-size: 0.875rem;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .chat-bubble.user {
+      align-self: flex-end;
+      background: var(--primary);
+      color: var(--on-primary);
+      border-bottom-right-radius: 0;
+    }
+
+    .chat-bubble.ai {
+      align-self: flex-start;
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      border: 1px solid var(--outline-variant);
+      border-left: 3px solid var(--outline);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .chat-sender-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--tertiary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chat-bubble.user .chat-sender-label {
+      color: color-mix(in srgb, var(--outline) 80%, var(--on-primary));
+    }
+
+    .chat-citation-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      background: var(--primary-container);
+      color: var(--primary);
+      padding: 1px 6px;
+      border-radius: var(--rounded);
+      margin-top: 4px;
+      margin-right: 4px;
+      border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+    }
+
+    .chat-prompt-chips {
+      padding: 8px var(--space-lg);
+      background: var(--surface-container-low);
+      border-top: var(--hairline);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip-btn {
+      font-size: 0.72rem;
+      background: var(--surface-container);
+      border: 1px solid var(--outline-variant);
+      padding: 4px 8px;
+      border-radius: var(--rounded);
+      cursor: pointer;
+      color: var(--on-surface);
+      transition: background var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+      white-space: nowrap;
+    }
+
+    .chip-btn:hover {
+      background: var(--primary-container);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .chat-input-row {
+      padding: var(--space-sm) var(--space-lg);
+      background: var(--surface-container-low);
+      border-top: var(--hairline);
+      display: flex;
+      gap: var(--space-sm);
+      align-items: center;
+    }
+
+    .chat-input {
+      flex: 1;
+      height: 38px;
+      background: var(--surface-container-low);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded);
+      padding: 0 12px;
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      color: var(--on-surface);
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 20%, transparent);
+    }
+
+    /* Dashboard Charts Grid */
+    .dashboard-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-md);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--surface-container);
+      border: var(--hairline);
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface-variant);
+    }
+
+    .filter-select {
+      background: var(--surface-container-low);
+      border: 1px solid var(--outline-variant);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: 0.8125rem;
+      padding: 4px 28px 4px 8px;
+      border-radius: var(--rounded);
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%234f5360%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-lg);
+    }
+
+    @media (max-width: 900px) {
+      .charts-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .chart-panel {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      box-shadow: var(--leaf-underline);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--rounded-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .chart-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: var(--hairline);
+      padding-bottom: 6px;
+    }
+
+    .chart-title {
+      font-family: var(--font-headline);
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--on-surface);
+    }
+
+    .chart-metric-tag {
+      font-size: var(--label-size);
+      font-weight: 600;
+      color: var(--tertiary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .chart-canvas-container {
+      position: relative;
+      width: 100%;
+      min-height: 250px;
+      max-height: 280px;
+    }
+
+    /* What-If Fiscal Simulator */
+    .simulator-box {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      box-shadow: var(--leaf-underline);
+      padding: var(--space-lg);
+      border-radius: var(--rounded-lg);
+      margin-top: var(--space-lg);
+    }
+
+    .simulator-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-lg);
+      margin-top: var(--space-md);
+    }
+
+    @media (max-width: 800px) {
+      .simulator-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .sim-control-card {
+      background: var(--surface-container);
+      padding: var(--space-md);
+      border-radius: var(--rounded);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .sim-label {
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface-variant);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .sim-range {
+      width: 100%;
+      accent-color: var(--primary);
+      cursor: pointer;
+      margin: var(--space-xs) 0;
+    }
+
+    .sim-result-box {
+      background: var(--primary-container);
+      border-left: 3px solid var(--primary);
+      padding: var(--space-md);
+      border-radius: var(--rounded);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .sim-result-label {
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--on-primary-container);
+    }
+
+    .sim-result-val {
+      font-family: var(--font-headline);
+      font-size: 1.6rem;
+      font-variant-numeric: tabular-nums lining-nums;
+      color: var(--primary);
+    }
+
+    /* Live Data Explorer Table */
+    .data-table-container {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      box-shadow: var(--leaf-underline);
+      border-radius: var(--rounded-lg);
+      overflow-x: auto;
+    }
+
+    .table-toolbar {
+      padding: var(--space-md) var(--space-lg);
+      background: var(--surface-container);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+      border-bottom: var(--hairline);
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: var(--surface-container-low);
+      border: 1px solid var(--outline-variant);
+      border-radius: var(--rounded);
+      padding: 0 8px;
+    }
+
+    .search-box input {
+      border: none;
+      background: transparent;
+      padding: 6px 8px;
+      font-family: var(--font-body);
+      font-size: 0.8125rem;
+      color: var(--on-surface);
+      outline: none;
+      min-width: 220px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      white-space: nowrap;
+    }
+
+    .data-table th {
+      background: var(--surface-container-high);
+      color: var(--on-surface-variant);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-align: left;
+      padding: 10px 14px;
+      border-bottom: 2px solid var(--outline);
+    }
+
+    .data-table th.num, .data-table td.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .data-table td {
+      padding: 10px 14px;
+      border-bottom: var(--hairline);
+      color: var(--on-surface);
+    }
+
+    .data-table tr:hover {
+      background: color-mix(in srgb, var(--surface-container) 50%, transparent);
+      cursor: pointer;
+    }
+
+    .badge-status {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: var(--rounded);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-status.bonded {
+      background: color-mix(in srgb, var(--primary) 12%, transparent);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .badge-status.released {
+      background: color-mix(in srgb, var(--secondary) 15%, transparent);
+      color: var(--secondary);
+      border: 1px solid var(--secondary);
+    }
+
+    /* Modal / Drawer for Inspection */
+    .detail-drawer {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 33, 61, 0.45);
+      backdrop-filter: blur(2px);
+      z-index: 100;
+      justify-content: flex-end;
+    }
+
+    .detail-drawer.open {
+      display: flex;
+    }
+
+    .drawer-card {
+      width: 100%;
+      max-width: 520px;
+      height: 100%;
+      background: var(--surface-container-low);
+      border-left: var(--brass-rule);
+      box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: var(--space-xl);
+    }
+
+    .drawer-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: var(--brass-rule);
+      padding-bottom: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+
+    .drawer-title {
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 400;
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--on-surface-variant);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    /* Footer */
+    .dashboard-footer {
+      border-top: var(--brass-rule);
+      padding: var(--space-xl) var(--space-xl) var(--space-2xl);
+      background: var(--primary);
+      color: var(--on-primary);
+      margin-top: var(--space-2xl);
+    }
+
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: var(--space-xl);
+      font-size: 0.8125rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 800px) {
+      .footer-inner {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .footer-col h4 {
+      font-family: var(--font-headline);
+      font-size: 1rem;
+      font-weight: 400;
+      color: color-mix(in srgb, var(--outline) 80%, var(--on-primary));
+      margin-bottom: var(--space-xs);
+    }
+
+    .footer-col p {
+      color: color-mix(in srgb, var(--on-primary) 75%, transparent);
+    }
+
+    /* Accessibility reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================================
+       CHARTER TITLE BAND (Report Cover & Executive Authority)
+       ========================================================================= -->
+  <header class="title-band">
+    <div class="title-band-inner">
+      <div class="brand-meta">
+        <span>Det Norske Brenneri AS</span>
+        <span>•</span>
+        <span>Industriveien 6, 4879 Grimstad, Norge</span>
+        <span>•</span>
+        <span>Org.nr 996 928 977 MVA</span>
+        <span class="badge-brass">
+          <i data-lucide="shield-check" style="width:14px; height:14px;"></i>
+          Bonded Warehouse Auth #TL-4879-NO
+        </span>
+      </div>
+
+      <h1>ØkAdmOfficeHub <span class="emphasis">&amp; Financial AI Cockpit</span></h1>
+      
+      <p class="lede">
+        Autonomous operational command center for distillery administration, bonded cask accounting (ulåst vs. fortollet fatlager), 
+        Skatteetaten excise duty tracking, dual-mode regulatory intelligence, and in-memory DuckDB analytics for Det Norske Brenneri AS.
+      </p>
+
+      <div class="header-indicators">
+        <div class="indicator-item">
+          <span class="indicator-dot"></span>
+          <span>Fiscal Term: <strong>2026 Term 5 (Sep/Oct)</strong></span>
+        </div>
+        <div class="indicator-item">
+          <span class="indicator-dot"></span>
+          <span>Visma.net ERP Sync: <strong>Live &amp; Validated</strong></span>
+        </div>
+        <div class="indicator-item">
+          <span class="indicator-dot"></span>
+          <span>Altinn Gateway: <strong>Connected (RF-1127 Særavgift / MVA)</strong></span>
+        </div>
+        <div class="indicator-item">
+          <span class="indicator-dot"></span>
+          <span>Vector Database: <strong>3,420 Semantic Chunks (Norwegian Tax Code)</strong></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       MAIN DASHBOARD WORKSPACE
+       ========================================================================= -->
+  <main class="dashboard-container">
+
+    <!-- TOP EXECUTIVE METRIC CARDS (Prompt Requirement 3) -->
+    <section>
+      <div class="kpi-grid">
+        <!-- Metric 1: Total Production in Liters -->
+        <div class="figure-card">
+          <div>
+            <div class="figure-label">
+              <span>Distillation &amp; Blending Output</span>
+              <i data-lucide="flask-conical" style="width:16px; height:16px; color:var(--tertiary);"></i>
+            </div>
+            <div class="figure-value" id="kpi-production-val">148,450 L</div>
+            <div class="figure-subvalue">YTD Production (Aquavit, Gin, Single Malt &amp; Cider)</div>
+          </div>
+          <div class="figure-delta">
+            <i data-lucide="trending-up" style="width:14px; height:14px;"></i>
+            <span>+12.4% vs FY2025 Budget Target</span>
+          </div>
+        </div>
+
+        <!-- Metric 2: Ulåst vs. Fortollet Fatlager -->
+        <div class="figure-card">
+          <div>
+            <div class="figure-label">
+              <span>Cask Ledger: Bonded vs. Released</span>
+              <i data-lucide="archive" style="width:16px; height:16px; color:var(--tertiary);"></i>
+            </div>
+            <div class="figure-value" id="kpi-cask-ratio">185.2k / 48.1k L</div>
+            <div class="figure-subvalue">185,240 L Bonded (Ulåst) | 48,120 L Released (Fortollet)</div>
+          </div>
+          <div class="figure-delta neutral">
+            <i data-lucide="shield" style="width:14px; height:14px;"></i>
+            <span>Duty Deferred: NOK 18,245,000</span>
+          </div>
+        </div>
+
+        <!-- Metric 3: Working Capital DSO / DIO / DPO -->
+        <div class="figure-card">
+          <div>
+            <div class="figure-label">
+              <span>Working Capital Velocity</span>
+              <i data-lucide="repeat" style="width:16px; height:16px; color:var(--tertiary);"></i>
+            </div>
+            <div class="figure-value" id="kpi-working-capital">DSO 38.2 d</div>
+            <div class="figure-subvalue">DIO: 194.5 d (Cask Maturation) | DPO: 44.1 d</div>
+          </div>
+          <div class="figure-delta">
+            <i data-lucide="arrow-down-right" style="width:14px; height:14px;"></i>
+            <span>DSO lowered 7.0 days vs Q2 (Vinmonopolet / Horeca)</span>
+          </div>
+        </div>
+
+        <!-- Metric 4: Alkoholavgift til Skatteetaten -->
+        <div class="figure-card">
+          <div>
+            <div class="figure-label">
+              <span>Excise Duty (Skatteetaten / Altinn)</span>
+              <i data-lucide="receipt" style="width:16px; height:16px; color:var(--tertiary);"></i>
+            </div>
+            <div class="figure-value" id="kpi-excise-val">NOK 4,215,800</div>
+            <div class="figure-subvalue">Term 5 Accrued Særavgift | Due Nov 18, 2026</div>
+          </div>
+          <div class="figure-delta neutral">
+            <i data-lucide="clock" style="width:14px; height:14px;"></i>
+            <span>Reconciled to Visma Sales Ledger</span>
+          </div>
+        </div>
+
+        <!-- Metric 5: Skattetrekksdekning -->
+        <div class="figure-card">
+          <div>
+            <div class="figure-label">
+              <span>Tax Withholding Coverage</span>
+              <i data-lucide="landmark" style="width:16px; height:16px; color:var(--tertiary);"></i>
+            </div>
+            <div class="figure-value" id="kpi-tax-coverage">104.6%</div>
+            <div class="figure-subvalue">Bank: NOK 528.4k vs. Accrued Liability: NOK 505.1k</div>
+          </div>
+          <div class="figure-delta">
+            <i data-lucide="check-circle-2" style="width:14px; height:14px;"></i>
+            <span>Compliant (Skattebetalingsloven § 5-12)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION 1 & 3 COMBO: FILE INGESTION HUB & DUAL-MODE AI COCKPIT
+         ========================================================================= -->
+    <div class="two-col-grid">
+      
+      <!-- LEFT: FILE INGESTION & PARSING PIPELINE (Prompt Req 1 & 4) -->
+      <div class="ingest-box">
+        <div class="section-head" style="margin-top:0;">
+          <div>
+            <h2 class="section-head-title">Document &amp; Data Ingestion Hub</h2>
+            <div class="section-head-subtitle">Hybrid RAG Vector Store &amp; DuckDB Analytics Engine</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="triggerManualReindex()">
+            <i data-lucide="refresh-cw" style="width:14px; height:14px;"></i>
+            Re-index Memory
+          </button>
+        </div>
+
+        <p style="font-size:0.875rem; color:var(--on-surface-variant); margin-bottom:var(--space-md);">
+          Drag and drop PDF circulars, Altinn XML declarations, and tax law documents into the RAG Vector Knowledgebase, 
+          or upload CSV/Excel files from Visma ERP directly into the browser-embedded DuckDB engine for real-time SQL execution.
+        </p>
+
+        <!-- Drop Zone -->
+        <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+          <input type="file" id="file-input" style="display:none;" multiple accept=".pdf,.txt,.csv,.xlsx,.json" onchange="handleFileUpload(event)">
+          <i data-lucide="upload-cloud" class="drop-icon"></i>
+          <div class="drop-prompt">Drop regulatory PDFs or Visma Excel/CSV sheets here</div>
+          <div class="drop-sub">
+            Supported formats: PDF, TXT, CSV, XLSX, JSON. Automatic routing: Text &rarr; Vector Embeddings, Tables &rarr; DuckDB.
+          </div>
+          <button class="btn btn-primary btn-sm" style="margin-top:var(--space-xs);" onclick="event.stopPropagation(); document.getElementById('file-input').click();">
+            <i data-lucide="folder-open" style="width:14px; height:14px;"></i>
+            Browse Local Computer
+          </button>
+        </div>
+
+        <!-- Preset Loaders for Instant Demonstration -->
+        <div class="preset-row">
+          <span class="preset-label">Load Canonical Sources:</span>
+          <button class="btn btn-brass btn-sm" onclick="loadSampleDoc('saeravgift')">
+            <i data-lucide="file-text" style="width:12px; height:12px;"></i>
+            Særavgiftsforskriften 2026 (PDF)
+          </button>
+          <button class="btn btn-brass btn-sm" onclick="loadSampleDoc('visma_ar')">
+            <i data-lucide="table" style="width:12px; height:12px;"></i>
+            Visma AR Aging Ledger (CSV)
+          </button>
+          <button class="btn btn-brass btn-sm" onclick="loadSampleDoc('cask_register')">
+            <i data-lucide="database" style="width:12px; height:12px;"></i>
+            Grimstad Fatlager Tollager (XLSX)
+          </button>
+          <button class="btn btn-brass btn-sm" onclick="loadSampleDoc('skattetrekk')">
+            <i data-lucide="check-square" style="width:12px; height:12px;"></i>
+            Skattetrekksavstemming Term 5
+          </button>
+        </div>
+
+        <!-- Processing Pipeline Indicator -->
+        <div class="pipeline-wrapper">
+          <div style="display:flex; justify-content:space-between; font-size:var(--label-size); font-weight:600; text-transform:uppercase; color:var(--on-surface-variant);">
+            <span id="pipeline-status-text">Ingestion Pipeline: Idle &amp; Ready</span>
+            <span id="pipeline-percent-text">100% Synced</span>
+          </div>
+          <div class="pipeline-progress-bar">
+            <div class="pipeline-progress-fill" id="pipeline-fill" style="width:100%;"></div>
+          </div>
+          <div class="pipeline-steps">
+            <div class="pipeline-step active" id="step-1">
+              <span class="pipeline-step-title">1. Tokenize &amp; Schema</span>
+              <span>Chunking text &amp; headers</span>
+            </div>
+            <div class="pipeline-step active" id="step-2">
+              <span class="pipeline-step-title">2. Vector Embeddings</span>
+              <span>384-dim semantic index</span>
+            </div>
+            <div class="pipeline-step active" id="step-3">
+              <span class="pipeline-step-title">3. DuckDB Ingest</span>
+              <span>Columnar parquet tables</span>
+            </div>
+            <div class="pipeline-step active" id="step-4">
+              <span class="pipeline-step-title">4. Cockpit Sync</span>
+              <span>Altinn &amp; Visma aligned</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ingested Files Registry Table -->
+        <div style="margin-top:var(--space-md);">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div class="section-head-subtitle">Mounted Documents &amp; Analytical Datasets</div>
+            <span style="font-size:0.75rem; color:var(--on-surface-variant);" id="doc-count-badge">4 active datasources</span>
+          </div>
+          <table class="doc-registry-table">
+            <thead>
+              <tr>
+                <th>Document / Source</th>
+                <th>Target Engine</th>
+                <th>Size / Records</th>
+                <th>Status</th>
+                <th style="text-align:right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="ingested-docs-body">
+              <tr>
+                <td>
+                  <strong>Særavgiftsforskriften_Alkohol_2026.pdf</strong><br>
+                  <span style="font-size:0.72rem; color:var(--on-surface-variant);">Norwegian Customs &amp; Excise Regulations (Skatteetaten)</span>
+                </td>
+                <td><span class="tag-engine">RAG Vector</span></td>
+                <td>48 pgs / 340 chunks</td>
+                <td><span class="tag-status"><i data-lucide="check" style="width:12px; height:12px;"></i> Active</span></td>
+                <td style="text-align:right;"><button class="btn btn-secondary btn-sm" onclick="inspectDoc('saeravgift')">Inspect</button></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Visma_Kundereskontro_Q3_Q4_2026.csv</strong><br>
+                  <span style="font-size:0.72rem; color:var(--on-surface-variant);">Vinmonopolet, Asko &amp; Horeca Sales Ledger</span>
+                </td>
+                <td><span class="tag-engine duckdb">DuckDB SQL</span></td>
+                <td>1,842 rows / 14 cols</td>
+                <td><span class="tag-status"><i data-lucide="check" style="width:12px; height:12px;"></i> Ingested</span></td>
+                <td style="text-align:right;"><button class="btn btn-secondary btn-sm" onclick="inspectDoc('visma_ar')">Inspect</button></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Grimstad_Tollager_Fatregister_2026.xlsx</strong><br>
+                  <span style="font-size:0.72rem; color:var(--on-surface-variant);">842 Oak Casks (Ulåst vs. Fortollet bond tracking)</span>
+                </td>
+                <td><span class="tag-engine duckdb">DuckDB SQL</span></td>
+                <td>842 rows / 11 cols</td>
+                <td><span class="tag-status"><i data-lucide="check" style="width:12px; height:12px;"></i> Ingested</span></td>
+                <td style="text-align:right;"><button class="btn btn-secondary btn-sm" onclick="inspectDoc('cask_register')">Inspect</button></td>
+              </tr>
+              <tr>
+                <td>
+                  <strong>Skattetrekksavstemming_Term5_2026.pdf</strong><br>
+                  <span style="font-size:0.72rem; color:var(--on-surface-variant);">Bank Confirmation Account 2801.xx vs Skattetrekk</span>
+                </td>
+                <td><span class="tag-engine">RAG Vector</span></td>
+                <td>2 pgs / 14 chunks</td>
+                <td><span class="tag-status"><i data-lucide="check" style="width:12px; height:12px;"></i> Verified</span></td>
+                <td style="text-align:right;"><button class="btn btn-secondary btn-sm" onclick="inspectDoc('skattetrekk')">Inspect</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RIGHT: INTEGRATED DUAL-MODE AI CHATBOT (Prompt Req 2) -->
+      <div class="ai-chat-box">
+        <div class="ai-chat-header">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <i data-lucide="bot" style="width:20px; height:20px; color:var(--primary);"></i>
+              <strong style="font-family:var(--font-headline); font-size:1.1rem; color:var(--on-surface);">ØkAdm AI Copilot</strong>
+            </div>
+            <span class="badge-status released" id="current-mode-indicator">Mode: Legal &amp; Tax Active</span>
+          </div>
+
+          <!-- Dual-Mode Switcher -->
+          <div class="mode-toggle-group">
+            <button class="mode-btn active" id="btn-mode-legal" onclick="switchChatMode('legal')">
+              <i data-lucide="scale" style="width:14px; height:14px;"></i>
+              Lovverk &amp; Skatteetaten / Altinn
+            </button>
+            <button class="mode-btn" id="btn-mode-data" onclick="switchChatMode('data')">
+              <i data-lucide="bar-chart-3" style="width:14px; height:14px;"></i>
+              Data &amp; KPI Analytics (DuckDB)
+            </button>
+          </div>
+
+          <div class="chat-mode-desc" id="chat-mode-desc">
+            <i data-lucide="info" style="width:12px; height:12px;"></i>
+            <span>Answers grounded in Norwegian Tax Law, Bokføringsloven, Særavgiftsforskriften &amp; Altinn specs.</span>
+          </div>
+        </div>
+
+        <!-- Chat Transcript Area -->
+        <div class="chat-messages" id="chat-messages">
+          <!-- Initial AI Welcome -->
+          <div class="chat-bubble ai">
+            <div class="chat-sender-label">
+              <i data-lucide="shield" style="width:12px; height:12px;"></i>
+              ØkAdm AI &bull; Regulatory Intelligence System
+            </div>
+            <div>
+              Welcome to the Det Norske Brenneri AI Cockpit. I am synchronized with your Visma ERP general ledger, 
+              the Grimstad customs bonded cask register (tollager), and the latest Norwegian Tax Administration (Skatteetaten) circulars.
+              <br><br>
+              Select an inquiry mode above or click one of the preset operational questions below to test my legal reasoning or DuckDB query execution.
+            </div>
+            <div>
+              <span class="chat-citation-tag">Bokføringsloven § 5</span>
+              <span class="chat-citation-tag">Særavgiftsforskriften Kap. 3</span>
+              <span class="chat-citation-tag">Visma.net SQL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Question Chips -->
+        <div class="chat-prompt-chips" id="prompt-chips">
+          <!-- Populated dynamically based on active mode -->
+        </div>
+
+        <!-- Input Box -->
+        <div class="chat-input-row">
+          <input type="text" class="chat-input" id="chat-user-input" placeholder="Ask about excise duty calculation, MVA deductions, or run a DuckDB query..." onkeydown="handleChatKeyDown(event)">
+          <button class="btn btn-primary" onclick="submitChatMessage()">
+            <i data-lucide="send" style="width:14px; height:14px;"></i>
+            Ask
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =========================================================================
+         SECTION 2: INTERACTIVE DISTILLERY KPI DASHBOARD & CHARTS (Prompt Req 3)
+         ========================================================================= -->
+    <section>
+      <div class="section-head">
+        <div>
+          <h2 class="section-head-title">Distillery Operational &amp; Fiscal Analytics</h2>
+          <div class="section-head-subtitle">Grimstad Facility Production, Bonded Stock, Working Capital &amp; Tax Obligations</div>
+        </div>
+        <div style="display:flex; gap:var(--space-sm);">
+          <button class="btn btn-secondary btn-sm" onclick="exportDashboardSummary()">
+            <i data-lucide="download" style="width:14px; height:14px;"></i>
+            Export Summary (PDF/Excel)
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Controls Toolbar -->
+      <div class="dashboard-controls">
+        <div style="display:flex; flex-wrap:wrap; gap:var(--space-md); align-items:center;">
+          <div class="filter-group">
+            <label for="filter-period">Fiscal Period:</label>
+            <select class="filter-select" id="filter-period" onchange="updateChartsData()">
+              <option value="YTD">Full Year 2026 (YTD)</option>
+              <option value="Q1">Q1 2026 (Jan - Mar)</option>
+              <option value="Q2">Q2 2026 (Apr - Jun)</option>
+              <option value="Q3">Q3 2026 (Jul - Sep)</option>
+              <option value="Q4" selected>Q4 2026 (Oct - Dec Projected)</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filter-brand">Product Line:</label>
+            <select class="filter-select" id="filter-brand" onchange="updateChartsData()">
+              <option value="ALL">All Products (Portfolio View)</option>
+              <option value="AQUAVIT">Arvesølvet Aquavit (Traditional)</option>
+              <option value="GIN">Harahorn &amp; Lyng Botanical Gin</option>
+              <option value="WHISKY">Eiktyrne Norwegian Single Malt</option>
+              <option value="CIDER">K.G. Puntervold Apple Must &amp; Cider</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filter-bond-status">Tax Bond Status:</label>
+            <select class="filter-select" id="filter-bond-status" onchange="updateChartsData()">
+              <option value="ALL">Combined Inventory</option>
+              <option value="ULAST">Ulåst (Bonded Customs Warehouse)</option>
+              <option value="FORTOLLET">Fortollet (Duty-Paid Domestic Stock)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="font-size:0.75rem; color:var(--on-surface-variant);">
+          Cross-filtered across <strong>842 active barrels</strong> &amp; <strong>1,842 invoices</strong>
+        </div>
+      </div>
+
+      <!-- 4 Dashboard Charts Grid -->
+      <div class="charts-grid">
+        
+        <!-- Chart 1: Production Volume by Category -->
+        <div class="chart-panel">
+          <div class="chart-panel-header">
+            <div>
+              <h3 class="chart-title">Production &amp; Bottling Output (Liters)</h3>
+              <div style="font-size:0.75rem; color:var(--on-surface-variant);">Monthly liters distilled vs. bottled with harvest seasonal peak</div>
+            </div>
+            <span class="chart-metric-tag" id="chart-prod-headline">148,450 L Total</span>
+          </div>
+          <div class="chart-canvas-container">
+            <canvas id="chart-production"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Bonded (Ulåst) vs. Released (Fortollet) Cask Aging -->
+        <div class="chart-panel">
+          <div class="chart-panel-header">
+            <div>
+              <h3 class="chart-title">Cask Maturation: Ulåst vs. Fortollet (L)</h3>
+              <div style="font-size:0.75rem; color:var(--on-surface-variant);">Aging oak inventory by customs status &amp; maturation age bracket</div>
+            </div>
+            <span class="chart-metric-tag" id="chart-cask-headline">233,360 L in Wood</span>
+          </div>
+          <div class="chart-canvas-container">
+            <canvas id="chart-casks"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 3: Working Capital DSO, DIO & DPO Trends -->
+        <div class="chart-panel">
+          <div class="chart-panel-header">
+            <div>
+              <h3 class="chart-title">Working Capital Cycles (Days)</h3>
+              <div style="font-size:0.75rem; color:var(--on-surface-variant);">DSO (Accounts Receivable), DIO (Inventory), and DPO (Payables)</div>
+            </div>
+            <span class="chart-metric-tag" id="chart-wc-headline">DSO: 38.2 d (Improving)</span>
+          </div>
+          <div class="chart-canvas-container">
+            <canvas id="chart-working-capital"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 4: Alkoholavgift & Skattetrekksdekning Accrual Breakdown -->
+        <div class="chart-panel">
+          <div class="chart-panel-header">
+            <div>
+              <h3 class="chart-title">Excise Duty &amp; Tax Coverage Breakdown</h3>
+              <div style="font-size:0.75rem; color:var(--on-surface-variant);">Skatteetaten Term 5 Særavgift by product ABV tier &amp; payroll deposit</div>
+            </div>
+            <span class="chart-metric-tag" id="chart-tax-headline">NOK 4.22M Særavgift</span>
+          </div>
+          <div class="chart-canvas-container">
+            <canvas id="chart-tax"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- What-If Interactive Fiscal Simulator -->
+      <div class="simulator-box">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; border-bottom:var(--hairline); padding-bottom:var(--space-xs);">
+          <div>
+            <h3 style="font-family:var(--font-headline); font-size:1.15rem; font-weight:400; color:var(--on-surface);">
+              Interactive "What-If" Fiscal &amp; Working Capital Simulator
+            </h3>
+            <div style="font-size:0.75rem; color:var(--on-surface-variant);">
+              Model the immediate cash flow impact of releasing bonded casks into duty-paid status and accelerating Vinmonopolet / Horeca invoice collection.
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="resetSimulator()">Reset Model</button>
+        </div>
+
+        <div class="simulator-grid">
+          <!-- Slider 1: Release Bonded Casks -->
+          <div class="sim-control-card">
+            <div class="sim-label">
+              <span>Release Bonded Casks (Tapping)</span>
+              <strong id="sim-cask-label" style="color:var(--primary); font-size:0.9rem;">25 Casks (5,500 L)</strong>
+            </div>
+            <input type="range" class="sim-range" id="sim-cask-slider" min="0" max="100" step="5" value="25" oninput="runFiscalSimulator()">
+            <div style="font-size:0.72rem; color:var(--on-surface-variant); display:flex; justify-content:space-between;">
+              <span>0 casks</span>
+              <span>50 casks</span>
+              <span>100 casks (22,000 L)</span>
+            </div>
+            <div style="font-size:0.72rem; color:var(--on-surface-variant); margin-top:4px;">
+              Triggers instant Skatteetaten excise duty liability at NOK 342.50 / liter pure alcohol + 25% MVA.
+            </div>
+          </div>
+
+          <!-- Slider 2: Shift DSO payment terms -->
+          <div class="sim-control-card">
+            <div class="sim-label">
+              <span>Target Collection Period (DSO)</span>
+              <strong id="sim-dso-label" style="color:var(--secondary); font-size:0.9rem;">35 Days (-3.2 d)</strong>
+            </div>
+            <input type="range" class="sim-range" id="sim-dso-slider" min="25" max="60" step="1" value="35" oninput="runFiscalSimulator()">
+            <div style="font-size:0.72rem; color:var(--on-surface-variant); display:flex; justify-content:space-between;">
+              <span>25 days (Strict)</span>
+              <span>38.2 days (Current)</span>
+              <span>60 days (Relaxed)</span>
+            </div>
+            <div style="font-size:0.72rem; color:var(--on-surface-variant); margin-top:4px;">
+              Accounts receivable acceleration directly liberates liquid working capital from wholesale distributors.
+            </div>
+          </div>
+
+          <!-- Computed Simulation Output -->
+          <div class="sim-result-box">
+            <div class="sim-result-label">Net Liquidity Impact (NOK)</div>
+            <div class="sim-result-val" id="sim-net-liquidity">+NOK 842,500</div>
+            <div style="font-size:0.75rem; color:var(--on-primary-container); margin-top:4px;" id="sim-sub-breakdown">
+              Released AR Cash: +NOK 1,624,000 | New Excise Owed: -NOK 781,500
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         SECTION 4: VISMA ERP & DUCKDB LIVE DATA EXPLORER TABLE
+         ========================================================================= -->
+    <section>
+      <div class="section-head">
+        <div>
+          <h2 class="section-head-title">Visma ERP &amp; Bonded Warehouse Ledger</h2>
+          <div class="section-head-subtitle">Searchable In-Memory SQL View: Oak Casks, Spirits Inventory &amp; AR Reskontro</div>
+        </div>
+        <div style="display:flex; gap:var(--space-sm);">
+          <button class="btn btn-secondary btn-sm" onclick="exportTableToCSV()">
+            <i data-lucide="file-spreadsheet" style="width:14px; height:14px;"></i>
+            Export CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="data-table-container">
+        <!-- Table Toolbar -->
+        <div class="table-toolbar">
+          <div class="search-box">
+            <i data-lucide="search" style="width:14px; height:14px; color:var(--on-surface-variant);"></i>
+            <input type="text" id="table-search" placeholder="Search cask ID, brand, barrel type, batch..." onkeyup="filterLedgerTable()">
+          </div>
+
+          <div style="display:flex; gap:var(--space-sm); align-items:center;">
+            <label style="font-size:var(--label-size); font-weight:600; text-transform:uppercase; color:var(--on-surface-variant);">
+              Filter Bond State:
+            </label>
+            <select class="filter-select" id="table-bond-filter" onchange="filterLedgerTable()">
+              <option value="ALL">Show All Entries</option>
+              <option value="ULAST">Ulåst Tollager Only</option>
+              <option value="FORTOLLET">Fortollet Only</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Ledger Table -->
+        <table class="data-table" id="ledger-table">
+          <thead>
+            <tr>
+              <th>Cask / Batch ID</th>
+              <th>Product / Spirit Brand</th>
+              <th>Cask Type / Wood</th>
+              <th class="num">Net Volume</th>
+              <th class="num">ABV %</th>
+              <th>Bond Status</th>
+              <th class="num">Deferred Duty (NOK)</th>
+              <th>Age (Mo)</th>
+              <th>Cellar Location</th>
+              <th style="text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ledger-table-body">
+            <!-- Dynamically populated from canonical distillery records -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       INSPECTION DRAWER / MODAL
+       ========================================================================= -->
+  <div class="detail-drawer" id="detail-drawer" onclick="closeDrawer(event)">
+    <div class="drawer-card" onclick="event.stopPropagation()">
+      <div class="drawer-head">
+        <div>
+          <div class="section-head-subtitle" id="drawer-subtitle">Distillery Asset Profile</div>
+          <h3 class="drawer-title" id="drawer-title">Cask #DNB-2021-142</h3>
+        </div>
+        <button class="close-btn" onclick="closeDrawerDirect()" title="Close details">&times;</button>
+      </div>
+      <div id="drawer-content" style="display:flex; flex-direction:column; gap:var(--space-md); font-size:0.875rem;">
+        <!-- Filled dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       FOOTER (Charter Classic Navy)
+       ========================================================================= -->
+  <footer class="dashboard-footer">
+    <div class="footer-inner">
+      <div class="footer-col">
+        <h4>Det Norske Brenneri AS &bull; ØkAdmOfficeHub</h4>
+        <p>
+          Purpose-built financial command center and regulatory automation portal for Det Norske Brenneri AS, Grimstad. 
+          Engineered to unify Visma ERP bookkeeping, automatic bank and reskontro reconciliations, bonded customs warehouse 
+          management (tollager), and real-time Skatteetaten / Altinn tax compliance.
+        </p>
+        <p style="margin-top:var(--space-xs); font-size:0.75rem; color:color-mix(in srgb, var(--outline) 70%, var(--on-primary));">
+          Complies with Norwegian Bokføringsloven, Lov om merverdiavgift (MVA-loven), Forskrift om særavgifter, and Skattebetalingsloven § 5-12.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Operational Key Contacts</h4>
+        <p><strong>Frederik Alexander Eldrup Grundekjøn</strong><br>Økonomiansvarlig, Det Norske Brenneri AS<br>Email: frederik@detnorskebrenneri.no<br>Tlf: +47 40 63 98 32</p>
+        <p style="margin-top:var(--space-xs);"><strong>Grimstad Production &amp; Tollager:</strong><br>Industriveien 6, 4879 Grimstad</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Architecture &amp; Intelligence</h4>
+        <p>
+          <strong>Vector Store:</strong> 384-dimensional cosine embeddings<br>
+          <strong>Analytical Engine:</strong> DuckDB In-Memory Parquet Engine<br>
+          <strong>Accounting Integration:</strong> Visma.net &amp; SAF-T Financial<br>
+          <strong>Altinn Gateway:</strong> RF-1127 Særavgift &amp; MVA-melding
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- State persistence shim required for NotebookApp environment -->
+  <api-shim></api-shim>
+
+  <!-- =========================================================================
+       JAVASCRIPT LOGIC: DATA, CHARTS, RAG CHATBOT, SIMULATOR & PERSISTENCE
+       ========================================================================= -->
+  <script>
+    /* -------------------------------------------------------------------------
+       1. DATA STRUCTURES & CANONICAL SAMPLES (Det Norske Brenneri AS)
+       ------------------------------------------------------------------------- */
+    const DISTILLERY_INVENTORY = [
+      { id: "DNB-CASK-104", brand: "Arvesølvet Aquavit", type: "Oloroso Sherry Cask (500L)", volume: 492, abv: 41.5, status: "ULAST", duty: 70012, age: 38, location: "Cellar A - Bay 04" },
+      { id: "DNB-CASK-112", brand: "Arvesølvet Aquavit", type: "Oloroso Sherry Cask (500L)", volume: 488, abv: 41.8, status: "ULAST", duty: 69920, age: 36, location: "Cellar A - Bay 04" },
+      { id: "DNB-CASK-205", brand: "Eiktyrne Single Malt", type: "First-Fill Bourbon (200L)", volume: 194, abv: 60.2, status: "ULAST", duty: 40018, age: 62, location: "Cellar B - Rack 12" },
+      { id: "DNB-CASK-208", brand: "Eiktyrne Single Malt", type: "Pedro Ximénez Cask (250L)", volume: 242, abv: 58.4, status: "ULAST", duty: 48430, age: 54, location: "Cellar B - Rack 14" },
+      { id: "DNB-CASK-310", brand: "Harahorn Botanical Gin", type: "Stainless Steel Tank (Aging)", volume: 2450, abv: 46.0, status: "FORTOLLET", duty: 385800, age: 2, location: "Tapping Tank T-02" },
+      { id: "DNB-CASK-315", brand: "Lyng Norwegian Gin", type: "Stainless Tank (Distillate)", volume: 1800, abv: 45.0, status: "FORTOLLET", duty: 277425, age: 1, location: "Tapping Tank T-01" },
+      { id: "DNB-CASK-402", brand: "Puntervold Eplemost/Cider", type: "Oak Cider Vat (1000L)", volume: 980, abv: 6.5, status: "FORTOLLET", duty: 21854, age: 6, location: "Puntervold Hall C" },
+      { id: "DNB-CASK-408", brand: "Puntervold Eplebrennevin", type: "French Limousin Oak (300L)", volume: 295, abv: 42.0, status: "ULAST", duty: 42436, age: 28, location: "Cellar A - Bay 09" },
+      { id: "DNB-CASK-501", brand: "Arvesølvet Helt Klar", type: "Steel Resting Vat", volume: 1200, abv: 40.0, status: "FORTOLLET", duty: 164400, age: 3, location: "Bottling Buffer 1" },
+      { id: "DNB-CASK-520", brand: "Eiktyrne Single Cask #41", type: "Heavily Charred Oak (225L)", volume: 218, abv: 59.8, status: "ULAST", duty: 44647, age: 74, location: "Cellar B - Special Vault" }
+    ];
+
+    // Dual-Mode Knowledge Base & Prompt Chips
+    const PROMPTS_BY_MODE = {
+      legal: [
+        "How is excise duty (særavgift) calculated on 40% Aquavit when releasing from tollager?",
+        "What are the compliance mandates for the dedicated skattetrekkskonto under § 5-12?",
+        "Are oak maturation casks deductible for input MVA under MVA-loven § 8-1?",
+        "Explain allowed svinn (evaporation / angel's share) under Norwegian customs regulations."
+      ],
+      data: [
+        "Run DuckDB query: Show customer accounts receivable with DSO > 45 days.",
+        "What is our accrued Skatteetaten excise duty liability for Term 5?",
+        "Show bonded (ulåst) vs. released (fortollet) barrel distribution by wood type.",
+        "Simulate working capital impact if Vinmonopolet payment terms accelerate by 5 days."
+      ]
+    };
+
+    const AI_KNOWLEDGE_RESPONSES = {
+      // Legal mode responses
+      "saeravgift_calc": {
+        sender: "Regulatory AI &bull; Særavgiftsforskriften § 3-2",
+        text: `Under Norwegian excise regulations (Forskrift om særavgifter kap. 3) for spirits exceeding 22% ABV:
+        <br><br>
+        <strong>1. Rate Formula:</strong> Særavgift = Liters &times; Alcohol By Volume % &times; Standard Rate (NOK 8.82 per liter-prosent for 2026, or approx. <strong>NOK 342.50 to 352.80 per liter of 40% brennevin</strong>).
+        <br><br>
+        <strong>2. Tollager Deferral (Ulåst fatlager):</strong> Under our Grimstad Customs Warehouse Authorization (#TL-4879-NO), excise tax and 25% import/production VAT are <em>fully deferred</em> while the spirit matures in oak barrels.
+        <br><br>
+        <strong>3. Release Trigger (Fortolling):</strong> The excise liability materializes at the moment casks are unsealed, pumped to the bottling line, or physically released to domestic distribution (Vinmonopolet / Horeca). Reported via Altinn electronic form RF-1127 on the 18th of the subsequent month.`,
+        citations: ["Særavgiftsforskriften § 3-2", "Altinn RF-1127", "Tollavgiftsloven § 4-1"]
+      },
+      "skattetrekk_rules": {
+        sender: "Regulatory AI &bull; Skattebetalingsloven § 5-12",
+        text: `<strong>Mandatory Requirements for Skattetrekkskonto:</strong>
+        <br><br>
+        <strong>1. Dedicated &amp; Blocked Account:</strong> Skattebetalingsloven § 5-12 mandates that every employer maintain a dedicated bank account solely for employee withheld income tax (forskuddstrekk). Funds cannot be subjected to arrest, distress, or bankruptcy estate claims.
+        <br><br>
+        <strong>2. Real-Time Coverage Ratio:</strong> As payroll is disbursed, the withheld tax must be deposited onto the account immediately or within the first working day. 
+        <br><br>
+        <strong>3. Current Cockpit Status:</strong> Det Norske Brenneri AS holds <strong>NOK 528,400</strong> on Nordea Account #2801.xx against accrued Term 5 withholding liability of <strong>NOK 505,100</strong> (Coverage ratio: <strong>104.6%</strong> &mdash; <em>Fully Compliant</em>).`,
+        citations: ["Skattebetalingsloven § 5-12", "Skattebetalingsforskriften § 5-12-1", "Bokføringsloven § 4"]
+      },
+      "mva_casks": {
+        sender: "Regulatory AI &bull; Merverdiavgiftsloven (MVA-loven)",
+        text: `<strong>Input VAT (Fradrag for inngående MVA) on Oak Barrels:</strong>
+        <br><br>
+        <strong>Yes, 100% deductible.</strong> Under MVA-loven § 8-1, a registered enterprise has full right of deduction for input value-added tax on acquisitions that are used in its taxable operations.
+        <br><br>
+        Since aging spirits in Spanish Oloroso Sherry, Bourbon, or French Limousin oak barrels is an integral physical production process for Arvesølvet Aquavit and Eiktyrne Single Malt, the 25% VAT invoiced by cooperages (or assessed at customs entry) is fully deductible in the bi-monthly MVA-melding submitted through Altinn.`,
+        citations: ["MVA-loven § 8-1", "Bokføringsloven § 5", "Altinn MVA-melding (SAF-T 01)"]
+      },
+      "angels_share": {
+        sender: "Regulatory AI &bull; Customs Loss & Evaporation (Svinn)",
+        text: `<strong>Angel's Share &amp; Natural Loss in Maturation:</strong>
+        <br><br>
+        Under Norwegian customs warehouse guidelines and Særavgiftsforskriften § 3-11:
+        <br><br>
+        <strong>1. Documented Evaporation:</strong> Natural evaporation during cask maturation ("angels' share", typically 1.5% - 2.5% per annum depending on Grimstad cellar humidity and temperature) is exempt from excise duty, provided accurate cask weighing/gauging logs are maintained.
+        <br><br>
+        <strong>2. Discrepancy Reporting:</strong> Any unexplained loss exceeding standard tolerance thresholds must be recorded as an operational discrepancy and may trigger duty assessment unless verifiable physical leakage or barrel defect is evidenced.`,
+        citations: ["Særavgiftsforskriften § 3-11", "Tollforskriften § 4-20-4", "Grimstad Tollager Manual"]
+      },
+
+      // Data mode responses
+      "duckdb_ar_query": {
+        sender: "DuckDB Analytical Engine &bull; Visma Ledger Execution",
+        text: `<strong>Executed in-memory DuckDB query across 1,842 ledger transactions:</strong>
+        <br><br>
+        <code>SELECT customer_name, overdue_days, invoice_balance_nok FROM ar_ledger WHERE overdue_days > 45 ORDER BY invoice_balance_nok DESC;</code>
+        <br><br>
+        <strong>Query Output Summary:</strong>
+        <table style="width:100%; border-collapse:collapse; margin-top:6px; font-size:0.75rem;">
+          <tr style="border-bottom:1px solid var(--outline);"><th style="text-align:left;">Debtor / Account</th><th style="text-align:right;">Overdue</th><th style="text-align:right;">Outstanding NOK</th></tr>
+          <tr><td>Vinmonopolet Central (EDI Batch #814)</td><td style="text-align:right;">0 days (Current)</td><td style="text-align:right;">NOK 1,420,500</td></tr>
+          <tr><td>Sørlandsk Horeca Distribusjon AS</td><td style="text-align:right;">48 days</td><td style="text-align:right;">NOK 184,200</td></tr>
+          <tr><td>Oslo Bar &amp; Cocktail Lounge Group</td><td style="text-align:right;">52 days</td><td style="text-align:right;">NOK 92,400</td></tr>
+        </table>
+        <br>
+        <strong>Overall DSO:</strong> 38.2 days (well within our 45-day covenant). Recommended follow-up on 2 overdue Horeca accounts totaling NOK 276,600.`,
+        citations: ["DuckDB::ar_ledger", "Visma.net Kundereskontro", "SAF-T 1500"]
+      },
+      "term5_excise_summary": {
+        sender: "DuckDB Analytical Engine &bull; Altinn RF-1127 Staging",
+        text: `<strong>Accrued Alcohol Excise Duty for Term 5 (September / October 2026):</strong>
+        <br><br>
+        &bull; <strong>Spirits &gt; 22% vol (Arvesølvet, Harahorn, Eiktyrne):</strong> NOK 3,842,100 (11,220 L pure alcohol released)
+        <br>
+        &bull; <strong>Low-Alcohol Cider &amp; Fortified Must (K.G. Puntervold):</strong> NOK 373,700 (5,400 L finished cider)
+        <br>
+        &bull; <strong>Total Særavgift Accrued:</strong> <strong>NOK 4,215,800</strong>
+        <br><br>
+        <em>Status:</em> Fully reconciled against Visma dispatch orders and Grimstad warehouse release logs. Prepared for submission via Altinn API before deadline Nov 18, 2026.`,
+        citations: ["DuckDB::tax_accruals", "Altinn Gateway RF-1127", "Visma.net Batch T-5"]
+      },
+      "cask_distrib_query": {
+        sender: "DuckDB Analytical Engine &bull; Grimstad Fatregister",
+        text: `<strong>Grimstad Cask Maturation Breakdown (842 Active Barrels):</strong>
+        <br><br>
+        &bull; <strong>Spanish Oloroso Sherry (500L Butt):</strong> 340 casks (167,280 L) &mdash; <em>Arvesølvet Reserve &amp; Aquavit</em>
+        <br>
+        &bull; <strong>First-Fill Bourbon (200L American Oak):</strong> 295 casks (57,230 L) &mdash; <em>Eiktyrne Single Malt</em>
+        <br>
+        &bull; <strong>Pedro Ximénez &amp; Madeira Casks:</strong> 112 casks (26,880 L) &mdash; <em>Special Finishes</em>
+        <br>
+        &bull; <strong>French Limousin Apple Brandy Vats:</strong> 95 casks (28,500 L) &mdash; <em>Puntervold Eplebrennevin</em>
+        <br><br>
+        <strong>Bond Status:</strong> 185,240 L currently stored under bond (ulåst tollager); 48,120 L transferred to duty-paid preparation tanks.`,
+        citations: ["DuckDB::cask_register", "Grimstad Tollager DB", "Tollregister #TL-4879-NO"]
+      },
+      "working_cap_sim_query": {
+        sender: "DuckDB Analytical Engine &bull; Working Capital Optimization",
+        text: `<strong>Working Capital Optimization Simulation:</strong>
+        <br><br>
+        By lowering DSO from 38.2 to 33.2 days (5-day acceleration on wholesale collections), Det Norske Brenneri AS injects <strong>NOK 1,180,000</strong> of immediate liquid cash into the operational bank accounts.
+        <br><br>
+        This surplus comfortably offsets the upcoming Term 5 VAT payment and reduces reliance on short-term overdraft credit lines.`,
+        citations: ["DuckDB::working_capital_model", "Visma Cash Flow Module"]
+      }
+    };
+
+    let activeChatMode = "legal";
+    let chartProductionInstance = null;
+    let chartCaskInstance = null;
+    let chartWcInstance = null;
+    let chartTaxInstance = null;
+
+    /* -------------------------------------------------------------------------
+       2. INITIALIZATION ON DOM LOAD
+       ------------------------------------------------------------------------- */
+    document.addEventListener("DOMContentLoaded", function() {
+      // Render Lucide icons
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+
+      // Populate Ledger Table
+      populateLedgerTable(DISTILLERY_INVENTORY);
+
+      // Render Prompt Chips
+      renderPromptChips();
+
+      // Initialize Charts
+      initCharts();
+
+      // Initialize Simulator
+      runFiscalSimulator();
+
+      // Try restoring state from NotebookApp persistence
+      restoreSavedState();
+    });
+
+    /* -------------------------------------------------------------------------
+       3. CHATBOT MODE TOGGLE & MESSAGING
+       ------------------------------------------------------------------------- */
+    function switchChatMode(mode) {
+      activeChatMode = mode;
+      const btnLegal = document.getElementById("btn-mode-legal");
+      const btnData = document.getElementById("btn-mode-data");
+      const modeIndicator = document.getElementById("current-mode-indicator");
+      const modeDesc = document.getElementById("chat-mode-desc");
+
+      if (mode === "legal") {
+        if (btnLegal) btnLegal.classList.add("active");
+        if (btnData) btnData.classList.remove("active");
+        if (modeIndicator) {
+          modeIndicator.innerText = "Mode: Lovverk & Skatteetaten / Altinn";
+          modeIndicator.className = "badge-status released";
+        }
+        if (modeDesc) {
+          modeDesc.innerHTML = `<i data-lucide="info" style="width:12px; height:12px;"></i><span>Answers grounded in Norwegian Tax Law, Bokføringsloven, Særavgiftsforskriften &amp; Altinn specs.</span>`;
+        }
+      } else {
+        if (btnData) btnData.classList.add("active");
+        if (btnLegal) btnLegal.classList.remove("active");
+        if (modeIndicator) {
+          modeIndicator.innerText = "Mode: Data & KPI Analytics (DuckDB)";
+          modeIndicator.className = "badge-status bonded";
+        }
+        if (modeDesc) {
+          modeDesc.innerHTML = `<i data-lucide="info" style="width:12px; height:12px;"></i><span>In-memory DuckDB queries on Visma ERP ledgers, cask registers, and production batches.</span>`;
+        }
+      }
+
+      if (window.lucide) window.lucide.createIcons();
+      renderPromptChips();
+    }
+
+    function renderPromptChips() {
+      const container = document.getElementById("prompt-chips");
+      if (!container) return;
+
+      const prompts = PROMPTS_BY_MODE[activeChatMode] || [];
+      let html = "";
+      prompts.forEach((p, idx) => {
+        html += `<button class="chip-btn" onclick="askPresetPrompt(${idx})">${escapeHTML(p)}</button>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function askPresetPrompt(idx) {
+      const prompts = PROMPTS_BY_MODE[activeChatMode] || [];
+      const promptText = prompts[idx];
+      if (!promptText) return;
+
+      appendChatMessage("user", promptText);
+
+      // Map to corresponding response
+      setTimeout(function() {
+        let respKey = "saeravgift_calc";
+        if (activeChatMode === "legal") {
+          if (idx === 0) respKey = "saeravgift_calc";
+          else if (idx === 1) respKey = "skattetrekk_rules";
+          else if (idx === 2) respKey = "mva_casks";
+          else respKey = "angels_share";
+        } else {
+          if (idx === 0) respKey = "duckdb_ar_query";
+          else if (idx === 1) respKey = "term5_excise_summary";
+          else if (idx === 2) respKey = "cask_distrib_query";
+          else respKey = "working_cap_sim_query";
+        }
+
+        const data = AI_KNOWLEDGE_RESPONSES[respKey];
+        appendChatMessage("ai", data.text, data.sender, data.citations);
+        saveState();
+      }, 350);
+    }
+
+    function handleChatKeyDown(event) {
+      if (event.key === "Enter") {
+        submitChatMessage();
+      }
+    }
+
+    function submitChatMessage() {
+      const input = document.getElementById("chat-user-input");
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) return;
+
+      appendChatMessage("user", text);
+      input.value = "";
+
+      // Dynamic rule-based reasoning engine matching query
+      setTimeout(function() {
+        const lower = text.toLowerCase();
+        let resp = null;
+
+        if (lower.includes("excise") || lower.includes("særavgift") || lower.includes("avgift") || lower.includes("alkohol")) {
+          resp = AI_KNOWLEDGE_RESPONSES["saeravgift_calc"];
+        } else if (lower.includes("skattetrekk") || lower.includes("withholding") || lower.includes("5-12") || lower.includes("skatt")) {
+          resp = AI_KNOWLEDGE_RESPONSES["skattetrekk_rules"];
+        } else if (lower.includes("mva") || lower.includes("vat") || lower.includes("fradrag") || lower.includes("cask") || lower.includes("fat")) {
+          resp = AI_KNOWLEDGE_RESPONSES["mva_casks"];
+        } else if (lower.includes("ar") || lower.includes("reskontro") || lower.includes("dso") || lower.includes("duckdb") || lower.includes("sql")) {
+          resp = AI_KNOWLEDGE_RESPONSES["duckdb_ar_query"];
+        } else {
+          // General synthesized response
+          resp = {
+            sender: activeChatMode === "legal" ? "Regulatory AI &bull; Legal Knowledge Base" : "DuckDB Analytics &bull; Analytical Query Engine",
+            text: `Evaluated query: <em>"${escapeHTML(text)}"</em> against our Grimstad operational parameters.<br><br>
+            All related ledger movements in Visma.net match our bonded warehouse balance. If this requires an Altinn transmission adjustment or DuckDB schema refresh, click <strong>Re-index Memory</strong> in the top hub.`,
+            citations: ["Det Norske Brenneri Compliance", "Visma.net", "Altinn 2026"]
+          };
+        }
+
+        appendChatMessage("ai", resp.text, resp.sender, resp.citations);
+        saveState();
+      }, 400);
+    }
+
+    function appendChatMessage(type, text, sender = "", citations = []) {
+      const chatBox = document.getElementById("chat-messages");
+      if (!chatBox) return;
+
+      const bubble = document.createElement("div");
+      bubble.className = `chat-bubble ${type}`;
+
+      let citHtml = "";
+      if (citations && citations.length > 0) {
+        citHtml = `<div style="margin-top:4px;">` + citations.map(c => `<span class="chat-citation-tag">${escapeHTML(c)}</span>`).join("") + `</div>`;
+      }
+
+      if (type === "user") {
+        bubble.innerHTML = `
+          <div class="chat-sender-label">
+            <i data-lucide="user" style="width:12px; height:12px;"></i>
+            User &bull; Frank Ellingsen (ØkAdm)
+          </div>
+          <div>${escapeHTML(text)}</div>
+        `;
+      } else {
+        bubble.innerHTML = `
+          <div class="chat-sender-label">
+            <i data-lucide="cpu" style="width:12px; height:12px;"></i>
+            ${sender || "ØkAdm AI Copilot"}
+          </div>
+          <div>${text}</div>
+          ${citHtml}
+        `;
+      }
+
+      chatBox.appendChild(bubble);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    /* -------------------------------------------------------------------------
+       4. FILE UPLOAD & PROCESSING PIPELINE SIMULATION
+       ------------------------------------------------------------------------- */
+    function handleFileUpload(event) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+
+      const file = files[0];
+      simulateIngestionPipeline(file.name, file.size, file.name.endsWith(".csv") || file.name.endsWith(".xlsx") ? "DuckDB SQL" : "RAG Vector");
+    }
+
+    // Drag and drop handlers
+    const dropZone = document.getElementById("drop-zone");
+    if (dropZone) {
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.add('dragover');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove('dragover');
+        }, false);
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files && files.length > 0) {
+          const file = files[0];
+          simulateIngestionPipeline(file.name, file.size, file.name.endsWith(".csv") || file.name.endsWith(".xlsx") ? "DuckDB SQL" : "RAG Vector");
+        }
+      }, false);
+    }
+
+    function loadSampleDoc(type) {
+      if (type === "saeravgift") {
+        simulateIngestionPipeline("Særavgiftsforskriften_Kap3_2026.pdf", 485120, "RAG Vector", "Norwegian Excise Duty Circular (Skatteetaten)");
+      } else if (type === "visma_ar") {
+        simulateIngestionPipeline("Visma_Kundereskontro_Aldersfordeling.csv", 184200, "DuckDB SQL", "Accounts Receivable Ledger (Horeca / Polet)");
+      } else if (type === "cask_register") {
+        simulateIngestionPipeline("Grimstad_Oak_Cask_Bonded_Ledger.xlsx", 312000, "DuckDB SQL", "842 Casks: Ulåst vs. Fortollet Tracking");
+      } else if (type === "skattetrekk") {
+        simulateIngestionPipeline("Skattetrekk_Avstemming_Term5_Nordea.pdf", 124000, "RAG Vector", "Bank Guarantee & Withholding Account Reconciliation");
+      }
+    }
+
+    function simulateIngestionPipeline(fileName, fileSize, targetEngine, desc = "") {
+      const fill = document.getElementById("pipeline-fill");
+      const statusText = document.getElementById("pipeline-status-text");
+      const pctText = document.getElementById("pipeline-percent-text");
+
+      const s1 = document.getElementById("step-1");
+      const s2 = document.getElementById("step-2");
+      const s3 = document.getElementById("step-3");
+      const s4 = document.getElementById("step-4");
+
+      if (fill) fill.style.width = "15%";
+      if (statusText) statusText.innerText = `Ingesting ${fileName}...`;
+      if (pctText) pctText.innerText = "Stage 1: Tokenizing";
+
+      [s1, s2, s3, s4].forEach(s => s && s.classList.remove("active"));
+      if (s1) s1.classList.add("active");
+
+      setTimeout(() => {
+        if (fill) fill.style.width = "45%";
+        if (pctText) pctText.innerText = "Stage 2: Embedding Generation";
+        if (s2) s2.classList.add("active");
+      }, 300);
+
+      setTimeout(() => {
+        if (fill) fill.style.width = "75%";
+        if (pctText) pctText.innerText = "Stage 3: DuckDB Schema Ingest";
+        if (s3) s3.classList.add("active");
+      }, 600);
+
+      setTimeout(() => {
+        if (fill) fill.style.width = "100%";
+        if (pctText) pctText.innerText = "Stage 4: Synced";
+        if (s4) s4.classList.add("active");
+        if (statusText) statusText.innerText = `Successfully Mounted: ${fileName}`;
+
+        // Add to registry table
+        addDocumentToTable(fileName, targetEngine, `${(fileSize / 1024).toFixed(1)} KB`, desc);
+        saveState();
+      }, 950);
+    }
+
+    function addDocumentToTable(name, engine, size, desc) {
+      const tbody = document.getElementById("ingested-docs-body");
+      if (!tbody) return;
+
+      const tr = document.createElement("tr");
+      const isDuck = engine.includes("DuckDB");
+      tr.innerHTML = `
+        <td>
+          <strong>${escapeHTML(name)}</strong><br>
+          <span style="font-size:0.72rem; color:var(--on-surface-variant);">${escapeHTML(desc || "User uploaded datasource")}</span>
+        </td>
+        <td><span class="tag-engine ${isDuck ? 'duckdb' : ''}">${escapeHTML(engine)}</span></td>
+        <td>${escapeHTML(size)}</td>
+        <td><span class="tag-status"><i data-lucide="check" style="width:12px; height:12px;"></i> Ingested</span></td>
+        <td style="text-align:right;"><button class="btn btn-secondary btn-sm" onclick="alert('Document ${escapeHTML(name)} is active in browser vector cache.')">Inspect</button></td>
+      `;
+      tbody.prepend(tr);
+      if (window.lucide) window.lucide.createIcons();
+
+      const badge = document.getElementById("doc-count-badge");
+      if (badge) {
+        badge.innerText = `${tbody.querySelectorAll("tr").length} active datasources`;
+      }
+    }
+
+    function triggerManualReindex() {
+      const fill = document.getElementById("pipeline-fill");
+      const statusText = document.getElementById("pipeline-status-text");
+      if (fill) fill.style.width = "20%";
+      if (statusText) statusText.innerText = "Refreshing DuckDB schema & vector cache...";
+
+      setTimeout(() => {
+        if (fill) fill.style.width = "100%";
+        if (statusText) statusText.innerText = "All 4 canonical datasources fully indexed & operational.";
+      }, 450);
+    }
+
+    function inspectDoc(type) {
+      const drawer = document.getElementById("detail-drawer");
+      const title = document.getElementById("drawer-title");
+      const sub = document.getElementById("drawer-subtitle");
+      const content = document.getElementById("drawer-content");
+      if (!drawer || !title || !content) return;
+
+      sub.innerText = "Datasource Metadata & Schema";
+      if (type === "saeravgift") {
+        title.innerText = "Særavgiftsforskriften_Alkohol_2026.pdf";
+        content.innerHTML = `
+          <div style="background:var(--surface-container); padding:var(--space-md); border-left:3px solid var(--outline);">
+            <strong>RAG Vector Store Parameters:</strong><br>
+            &bull; Total Chunks: 340 semantic embeddings (dimension: 384)<br>
+            &bull; Scope: Chapter 3 (Alkoholholdige drikkevarer), Chapter 4 (Tollagerstatus og oppgjør)<br>
+            &bull; Authority: Skatteetaten &amp; Finansdepartementet<br>
+            &bull; Status: Real-time query matching enabled
+          </div>
+          <div>
+            <strong>Primary Legal Extracts:</strong>
+            <p style="margin-top:6px; font-size:0.8rem; color:var(--on-surface-variant);">
+              "§ 3-2-1. Plikten til å svare særavgift på alkohol oppstår når varen innføres til riket eller fremstilles her, 
+              men forfaller først ved uttak fra godkjent tollager (ulåst lager) til forbruk eller ordinær omsetning."
+            </p>
+          </div>
+        `;
+      } else if (type === "visma_ar") {
+        title.innerText = "Visma_Kundereskontro_Q3_Q4_2026.csv";
+        content.innerHTML = `
+          <div style="background:var(--surface-container); padding:var(--space-md); border-left:3px solid var(--primary);">
+            <strong>DuckDB Table Schema (ar_ledger):</strong><br>
+            &bull; Row count: 1,842 invoices | Column count: 14<br>
+            &bull; Primary Keys: invoice_id, customer_no, posting_date, due_date<br>
+            &bull; Key Totals: Gross AR = NOK 18,420,100 | Overdue &gt;30d = NOK 342,000<br>
+            &bull; Reconciled to Visma General Ledger Account 1500 (Kundefordringer).
+          </div>
+        `;
+      } else {
+        title.innerText = "Grimstad Cask Maturation Ledger";
+        content.innerHTML = `
+          <div style="background:var(--surface-container); padding:var(--space-md); border-left:3px solid var(--secondary);">
+            <strong>Bonded Warehouse Statistics:</strong><br>
+            &bull; 842 oak barrels recorded in Grimstad cellars.<br>
+            &bull; 185,240 L under bonded status (ulåst tollager).<br>
+            &bull; Duty deferred on mature stock: NOK 18,245,000.<br>
+            &bull; Barrel types: Oloroso Butt, First-Fill Bourbon, Pedro Ximénez, Limousin Oak.
+          </div>
+        `;
+      }
+
+      drawer.classList.add("open");
+    }
+
+    function closeDrawer(event) {
+      const drawer = document.getElementById("detail-drawer");
+      if (drawer) drawer.classList.remove("open");
+    }
+
+    function closeDrawerDirect() {
+      const drawer = document.getElementById("detail-drawer");
+      if (drawer) drawer.classList.remove("open");
+    }
+
+    /* -------------------------------------------------------------------------
+       5. INTERACTIVE CHARTS (Chart.js)
+       ------------------------------------------------------------------------- */
+    function initCharts() {
+      // Common Charter style chart options
+      const commonFont = {
+        family: "'Inter', sans-serif",
+        size: 11
+      };
+
+      // 1. Production Chart
+      const ctxProd = document.getElementById("chart-production");
+      if (ctxProd) {
+        chartProductionInstance = new Chart(ctxProd, {
+          type: "bar",
+          data: {
+            labels: ["May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov (Proj)", "Dec (Proj)"],
+            datasets: [
+              {
+                label: "Arvesølvet Aquavit (L)",
+                data: [8200, 9400, 8900, 11200, 14500, 18400, 19500, 21000],
+                backgroundColor: "#14213d", // Charter Navy
+                stack: "prod"
+              },
+              {
+                label: "Harahorn & Lyng Gin (L)",
+                data: [6500, 7800, 9200, 8900, 7100, 6800, 7200, 8100],
+                backgroundColor: "#8a6a35", // Dark brass
+                stack: "prod"
+              },
+              {
+                label: "Puntervold Cider / Must (L)",
+                data: [1200, 1400, 1800, 8500, 22400, 28100, 12000, 4500],
+                backgroundColor: "#2d5a4a", // Bottle green
+                stack: "prod"
+              },
+              {
+                label: "Eiktyrne Single Malt (L)",
+                data: [1800, 1900, 2100, 2000, 2400, 2200, 2500, 2800],
+                backgroundColor: "#5b7aa0", // Slate blue
+                stack: "prod"
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: { boxWidth: 12, font: commonFont }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(c) {
+                    return `${c.dataset.label}: ${c.raw.toLocaleString()} L`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { font: commonFont }
+              },
+              y: {
+                grid: { color: "#d9cfb8" },
+                ticks: {
+                  font: commonFont,
+                  callback: function(v) { return v >= 1000 ? (v / 1000) + "k L" : v + " L"; }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // 2. Cask Aging: Ulåst vs Fortollet Chart
+      const ctxCasks = document.getElementById("chart-casks");
+      if (ctxCasks) {
+        chartCaskInstance = new Chart(ctxCasks, {
+          type: "bar",
+          data: {
+            labels: ["0-1 Year", "1-2 Years", "2-3 Years", "3-5 Years", "5+ Years (Single Malt)"],
+            datasets: [
+              {
+                label: "Ulåst (Bonded Tollager)",
+                data: [32000, 48500, 52100, 34200, 18440],
+                backgroundColor: "#14213d",
+                barPercentage: 0.7
+              },
+              {
+                label: "Fortollet (Duty-Paid / Released)",
+                data: [18400, 14200, 9500, 4200, 1820],
+                backgroundColor: "#8a6a35",
+                barPercentage: 0.7
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: { boxWidth: 12, font: commonFont }
+              }
+            },
+            scales: {
+              x: { grid: { display: false }, ticks: { font: commonFont } },
+              y: {
+                grid: { color: "#d9cfb8" },
+                ticks: {
+                  font: commonFont,
+                  callback: function(v) { return (v / 1000) + "k L"; }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // 3. Working Capital Trends Chart
+      const ctxWc = document.getElementById("chart-working-capital");
+      if (ctxWc) {
+        chartWcInstance = new Chart(ctxWc, {
+          type: "line",
+          data: {
+            labels: ["Jun", "Jul", "Aug", "Sep", "Oct", "Nov (Curr)"],
+            datasets: [
+              {
+                label: "DSO (Days Sales Outstanding)",
+                data: [45.2, 43.8, 41.5, 39.4, 38.6, 38.2],
+                borderColor: "#14213d",
+                backgroundColor: "#14213d",
+                borderWidth: 2,
+                tension: 0.2
+              },
+              {
+                label: "DPO (Days Payable Outstanding)",
+                data: [42.0, 42.5, 43.1, 44.0, 43.8, 44.1],
+                borderColor: "#8a6a35",
+                backgroundColor: "#8a6a35",
+                borderWidth: 2,
+                tension: 0.2
+              },
+              {
+                label: "DIO / 5 (Scaled Inventory Days)",
+                data: [40.2, 39.8, 39.2, 38.9, 39.0, 38.9],
+                borderColor: "#2d5a4a",
+                backgroundColor: "#2d5a4a",
+                borderWidth: 2,
+                borderDash: [4, 4],
+                tension: 0.2
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: { boxWidth: 12, font: commonFont }
+              }
+            },
+            scales: {
+              x: { grid: { display: false }, ticks: { font: commonFont } },
+              y: {
+                grid: { color: "#d9cfb8" },
+                ticks: {
+                  font: commonFont,
+                  callback: function(v) { return v + " d"; }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // 4. Tax & Excise Breakdown Chart
+      const ctxTax = document.getElementById("chart-tax");
+      if (ctxTax) {
+        chartTaxInstance = new Chart(ctxTax, {
+          type: "doughnut",
+          data: {
+            labels: [
+              "Spirits Særavgift >22% (Aquavit/Gin/Whisky)",
+              "Cider & Wine Særavgift (Puntervold)",
+              "Net MVA (25% Output less Input Deductions)",
+              "Withholding Tax Guarantee Buffer"
+            ],
+            datasets: [
+              {
+                data: [3842100, 373700, 1420000, 528400],
+                backgroundColor: ["#14213d", "#8a6a35", "#2d5a4a", "#5b7aa0"]
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: { boxWidth: 10, font: commonFont }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(c) {
+                    return `${c.label}: NOK ${c.raw.toLocaleString()}`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function updateChartsData() {
+      const period = document.getElementById("filter-period")?.value || "YTD";
+      const brand = document.getElementById("filter-brand")?.value || "ALL";
+      const bond = document.getElementById("filter-bond-status")?.value || "ALL";
+
+      // Modulate production totals according to filter selection
+      let multiplier = 1.0;
+      if (period === "Q1") multiplier = 0.22;
+      else if (period === "Q2") multiplier = 0.24;
+      else if (period === "Q3") multiplier = 0.26;
+      else if (period === "Q4") multiplier = 0.28;
+
+      if (brand === "AQUAVIT") multiplier *= 0.55;
+      else if (brand === "GIN") multiplier *= 0.25;
+      else if (brand === "WHISKY") multiplier *= 0.12;
+      else if (brand === "CIDER") multiplier *= 0.08;
+
+      const totalLiters = Math.round(148450 * multiplier);
+      const prodVal = document.getElementById("kpi-production-val");
+      if (prodVal) prodVal.innerText = `${totalLiters.toLocaleString()} L`;
+
+      const chartHead = document.getElementById("chart-prod-headline");
+      if (chartHead) chartHead.innerText = `${totalLiters.toLocaleString()} L Filtered`;
+
+      // Trigger Chart.js refresh
+      if (chartProductionInstance) {
+        chartProductionInstance.data.datasets.forEach(ds => {
+          ds.data = ds.data.map(v => Math.round(v * (0.85 + Math.random() * 0.3)));
+        });
+        chartProductionInstance.update();
+      }
+    }
+
+    /* -------------------------------------------------------------------------
+       6. INTERACTIVE WHAT-IF FISCAL SIMULATOR
+       ------------------------------------------------------------------------- */
+    function runFiscalSimulator() {
+      const caskSlider = document.getElementById("sim-cask-slider");
+      const dsoSlider = document.getElementById("sim-dso-slider");
+      const caskLabel = document.getElementById("sim-cask-label");
+      const dsoLabel = document.getElementById("sim-dso-label");
+      const netBox = document.getElementById("sim-net-liquidity");
+      const breakdown = document.getElementById("sim-sub-breakdown");
+
+      if (!caskSlider || !dsoSlider) return;
+
+      const casksToRelease = parseInt(caskSlider.value, 10);
+      const targetDso = parseInt(dsoSlider.value, 10);
+
+      const litersPerCask = 220; // Average 220L per standard barrel
+      const totalLitersReleased = casksToRelease * litersPerCask;
+      
+      // Excise duty at 40% ABV: approx NOK 141.50 per gross liter finished spirit
+      const newExciseLiability = totalLitersReleased * 141.5;
+
+      // DSO cash acceleration: Each day saved represents ~NOK 508,000 in accelerated cash from AR
+      const currentDso = 38.2;
+      const daysDiff = currentDso - targetDso;
+      const cashReleasedFromAR = daysDiff * 508000;
+
+      const netLiquidity = cashReleasedFromAR - newExciseLiability;
+
+      if (caskLabel) caskLabel.innerText = `${casksToRelease} Casks (${totalLitersReleased.toLocaleString()} L)`;
+      
+      const dsoDiffSign = daysDiff >= 0 ? `-${daysDiff.toFixed(1)} d` : `+${Math.abs(daysDiff).toFixed(1)} d`;
+      if (dsoLabel) dsoLabel.innerText = `${targetDso} Days (${dsoDiffSign})`;
+
+      if (netBox) {
+        const sign = netLiquidity >= 0 ? "+" : "";
+        netBox.innerText = `${sign}NOK ${Math.round(netLiquidity).toLocaleString()}`;
+        netBox.style.color = netLiquidity >= 0 ? "var(--secondary)" : "var(--error)";
+      }
+
+      if (breakdown) {
+        breakdown.innerText = `Released AR Cash: ${cashReleasedFromAR >= 0 ? '+' : ''}NOK ${Math.round(cashReleasedFromAR).toLocaleString()} | Immediate Excise Duty: -NOK ${Math.round(newExciseLiability).toLocaleString()}`;
+      }
+    }
+
+    function resetSimulator() {
+      const caskSlider = document.getElementById("sim-cask-slider");
+      const dsoSlider = document.getElementById("sim-dso-slider");
+      if (caskSlider) caskSlider.value = 25;
+      if (dsoSlider) dsoSlider.value = 35;
+      runFiscalSimulator();
+    }
+
+    /* -------------------------------------------------------------------------
+       7. VISMA ERP LEDGER TABLE & SEARCH
+       ------------------------------------------------------------------------- */
+    function populateLedgerTable(items) {
+      const tbody = document.getElementById("ledger-table-body");
+      if (!tbody) return;
+
+      tbody.innerHTML = "";
+      items.forEach(item => {
+        const tr = document.createElement("tr");
+        const isBonded = item.status === "ULAST";
+        tr.onclick = function() { inspectLedgerItem(item); };
+
+        tr.innerHTML = `
+          <td><strong>${escapeHTML(item.id)}</strong></td>
+          <td>${escapeHTML(item.brand)}</td>
+          <td>${escapeHTML(item.type)}</td>
+          <td class="num">${item.volume.toLocaleString()} L</td>
+          <td class="num">${item.abv.toFixed(1)}%</td>
+          <td><span class="badge-status ${isBonded ? 'bonded' : 'released'}">${isBonded ? 'Ulåst Tollager' : 'Fortollet'}</span></td>
+          <td class="num">NOK ${item.duty.toLocaleString()}</td>
+          <td class="num">${item.age} mo</td>
+          <td>${escapeHTML(item.location)}</td>
+          <td style="text-align:right;">
+            <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); inspectLedgerItem(${JSON.stringify(item).replace(/"/g, '&quot;')})">
+              Inspect
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterLedgerTable() {
+      const query = (document.getElementById("table-search")?.value || "").toLowerCase();
+      const bondFilter = document.getElementById("table-bond-filter")?.value || "ALL";
+
+      const filtered = DISTILLERY_INVENTORY.filter(item => {
+        const matchesQuery = item.id.toLowerCase().includes(query) ||
+                             item.brand.toLowerCase().includes(query) ||
+                             item.type.toLowerCase().includes(query) ||
+                             item.location.toLowerCase().includes(query);
+
+        const matchesBond = (bondFilter === "ALL") ||
+                            (bondFilter === "ULAST" && item.status === "ULAST") ||
+                            (bondFilter === "FORTOLLET" && item.status === "FORTOLLET");
+
+        return matchesQuery && matchesBond;
+      });
+
+      populateLedgerTable(filtered);
+    }
+
+    function inspectLedgerItem(item) {
+      const drawer = document.getElementById("detail-drawer");
+      const title = document.getElementById("drawer-title");
+      const sub = document.getElementById("drawer-subtitle");
+      const content = document.getElementById("drawer-content");
+      if (!drawer || !title || !content) return;
+
+      sub.innerText = "Cask & Batch Ledger Specification";
+      title.innerText = `${item.id} &bull; ${item.brand}`;
+
+      const isBonded = item.status === "ULAST";
+
+      content.innerHTML = `
+        <div style="background:var(--surface-container); padding:var(--space-md); border-left:3px solid var(--outline);">
+          <div style="font-size:var(--label-size); text-transform:uppercase; color:var(--on-surface-variant); font-weight:600;">Customs Warehouse Status</div>
+          <div style="font-family:var(--font-headline); font-size:1.25rem; color:var(--on-surface);">
+            ${isBonded ? 'Ulåst Tollager (Bonded Under Customs)' : 'Fortollet (Duty-Paid Domestic Stock)'}
+          </div>
+          <div style="font-size:0.8rem; color:var(--on-surface-variant); margin-top:4px;">
+            Facility: Det Norske Brenneri AS, Grimstad Tollager Authorization #TL-4879-NO
+          </div>
+        </div>
+
+        <table style="width:100%; border-collapse:collapse; font-size:0.8125rem;">
+          <tr style="border-bottom:var(--hairline);"><td style="padding:6px 0; color:var(--on-surface-variant);">Cooperage &amp; Wood:</td><td style="text-align:right; font-weight:600;">${escapeHTML(item.type)}</td></tr>
+          <tr style="border-bottom:var(--hairline);"><td style="padding:6px 0; color:var(--on-surface-variant);">Net Spirit Volume:</td><td style="text-align:right; font-weight:600;">${item.volume.toLocaleString()} Liters</td></tr>
+          <tr style="border-bottom:var(--hairline);"><td style="padding:6px 0; color:var(--on-surface-variant);">Alcohol Strength (ABV):</td><td style="text-align:right; font-weight:600;">${item.abv.toFixed(1)}% Vol</td></tr>
+          <tr style="border-bottom:var(--hairline);"><td style="padding:6px 0; color:var(--on-surface-variant);">Total Maturation Age:</td><td style="text-align:right; font-weight:600;">${item.age} Months</td></tr>
+          <tr style="border-bottom:var(--hairline);"><td style="padding:6px 0; color:var(--on-surface-variant);">Physical Location:</td><td style="text-align:right; font-weight:600;">${escapeHTML(item.location)}</td></tr>
+          <tr style="border-bottom:var(--hairline);"><td style="padding:6px 0; color:var(--on-surface-variant);">Excise Duty Assessment:</td><td style="text-align:right; font-weight:600; color:var(--primary);">NOK ${item.duty.toLocaleString()}</td></tr>
+        </table>
+
+        <div style="margin-top:var(--space-md); display:flex; gap:var(--space-sm);">
+          <button class="btn btn-primary btn-sm" onclick="alert('Cask release instruction staged for Grimstad cellar master.')">
+            <i data-lucide="arrow-right-circle" style="width:14px; height:14px;"></i>
+            Stage Tapping Release
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="closeDrawerDirect()">Close</button>
+        </div>
+      `;
+
+      drawer.classList.add("open");
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function exportTableToCSV() {
+      let csv = "Cask_ID,Brand,Wood_Type,Volume_L,ABV_Pct,Bond_Status,Duty_NOK,Age_Mo,Cellar_Location\n";
+      DISTILLERY_INVENTORY.forEach(i => {
+        csv += `"${i.id}","${i.brand}","${i.type}",${i.volume},${i.abv},"${i.status}",${i.duty},${i.age},"${i.location}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "Det_Norske_Brenneri_Cask_Ledger.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function exportDashboardSummary() {
+      alert("ØkAdmOfficeHub summary generated. Ready for Altinn RF-1127 submission and Visma ERP posting.");
+    }
+
+    /* -------------------------------------------------------------------------
+       8. STATE PERSISTENCE & UTILITIES (Gemini Notebook Shim)
+       ------------------------------------------------------------------------- */
+    async function restoreSavedState() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.getState === 'function') {
+          const state = await window.notebookAppApi.getState();
+          if (state && state.chatHistory && state.chatHistory.length > 0) {
+            const chatBox = document.getElementById("chat-messages");
+            if (chatBox) {
+              chatBox.innerHTML = "";
+              state.chatHistory.forEach(msg => {
+                appendChatMessage(msg.type, msg.text, msg.sender, msg.citations);
+              });
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("State restoration skipped:", e);
+      }
+    }
+
+    async function saveState() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.setState === 'function') {
+          const messages = [];
+          const bubbles = document.querySelectorAll("#chat-messages .chat-bubble");
+          bubbles.forEach(b => {
+            const isUser = b.classList.contains("user");
+            messages.push({
+              type: isUser ? "user" : "ai",
+              text: b.querySelector("div:nth-child(2)")?.innerHTML || "",
+              sender: b.querySelector(".chat-sender-label")?.innerText || ""
+            });
+          });
+          await window.notebookAppApi.setState({ chatHistory: messages.slice(-10) });
+        }
+      } catch (e) {
+        console.warn("State save skipped:", e);
+      }
+    }
+
+    function escapeHTML(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+  </script>
+</body>
+</html>

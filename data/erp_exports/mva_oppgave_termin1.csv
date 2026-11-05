@@ -1,0 +1,5 @@
+MVA_Kode,Beskrivelse,Grunnlag_NOK,MVA_Beregnet_NOK,Konto
+Kode 3,Utgående MVA høy sats,4500000,1125000,2700
+Kode 5,Utgående MVA lav sats,350000,52500,2710
+Kode 1,Inngående MVA kjøp av varer,2800000,700000,2740
+Kode 1,Inngående MVA maskiner/drift,650000,162500,2740

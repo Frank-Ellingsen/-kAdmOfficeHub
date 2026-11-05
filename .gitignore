@@ -1,0 +1,55 @@
+# ==========================================
+# ØkAdmOfficeHub - Complete .gitignore File
+# ==========================================
+
+# --- Environments & Python Caches ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+envs/
+*.so
+
+# --- Environment Variables & Sensitive Credentials ---
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+
+# --- Databases & Vector Stores (Local data) ---
+vector_store/chroma_db/
+*.chroma
+*.sqlite3
+*.db
+*.duckdb
+*.duckdb.tmp
+*.duckdb.wal
+data/raw_documents/*.pdf
+
+# --- Temporary Office / Excel files ---
+~$*
+~$*.xlsx
+~$*.xls
+
+# --- IDEs & Editors ---
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# --- Streamlit & Local App Logs ---
+.streamlit/secrets.toml
+*.log
+
+# --- Python Build & Distribution Artifacts ---
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/

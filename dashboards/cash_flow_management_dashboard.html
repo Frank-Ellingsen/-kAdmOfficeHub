@@ -1,0 +1,2520 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="dashboard">
+  <meta name="design-style" content="charter">
+  <title>Det Norske Brenneri AS — Cash Flow & Likviditetsstyring</title>
+
+  <!-- Google Fonts: Libre Caslon Text & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons & Chart.js (Pinned CDN URLs from allowed list) -->
+  <script src="https://unpkg.com/lucide@1.43.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces */
+      --background: #f7f4ec;               /* warm cream paper */
+      --surface-container-low: #fffdf8;    /* bright leaf: figure cards, panels */
+      --surface-container: #ece5d4;        /* deeper cream: secondary buttons, pills */
+      --surface-container-high: #e3dac4;   /* table header band, hover fill */
+
+      /* Ink */
+      --on-surface: #1c1f26;               /* near-black ink */
+      --on-surface-variant: #4f5360;       /* graphite: captions, secondary text */
+
+      /* Rules */
+      --outline: #b08d57;                  /* burnished brass: rules and borders */
+      --outline-variant: #d9cfb8;          /* pale brass: hairline dividers */
+      --brass-light: #dfcaa2;              /* light brass text on navy */
+      --brass-tint: rgba(176, 141, 87, 0.15); /* brass wash */
+      --positive-tint: rgba(45, 90, 74, 0.12); /* green wash */
+      --surface-tint-hover: #fffefb;       /* hover leaf surface */
+      --surface-spotlight: #fdfbf5;        /* spotlight card surface */
+      --simulator-bg: #faf7f0;             /* simulator warm card */
+      --profile-bg: #fdfcf8;               /* profile leaf surface */
+
+      /* Accents */
+      --primary: #14213d;                  /* deep navy: title band, primary action, links */
+      --on-primary: #f7f4ec;               /* cream on navy */
+      --primary-container: #e3e6ee;        /* pale navy wash: selected row, active state */
+      --on-primary-container: #14213d;
+      --secondary: #2d5a4a;                /* bottle green: favorable notes, second voice */
+      --tertiary: #8a6a35;                 /* dark brass: small accent text */
+      --error: #9b2c2c;
+      --on-error: #f7f4ec;
+
+      /* Semantic tokens */
+      --positive: #2d5a4a;
+      --warning: #b4691e;
+      --focus: #14213d;
+
+      /* Data series */
+      --data-1: #14213d;                   /* navy */
+      --data-2: #8a6a35;                   /* dark brass */
+      --data-3: #2d5a4a;                   /* bottle green */
+      --data-4: #5b7aa0;                   /* slate blue */
+      --data-context: #c2bba9;             /* context series and gridlines */
+
+      /* Fonts */
+      --font-headline: 'Libre Caslon Text', Georgia, serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-label: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      /* Type Scale for Dashboard */
+      --display-size: clamp(1.65rem, 1.3rem + 1.1vw, 2.15rem);
+      --headline-size: clamp(1.2rem, 1.05rem + 0.45vw, 1.45rem);
+      --subhead-size: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
+      --body-size: clamp(0.9rem, 0.86rem + 0.15vw, 0.975rem);
+      --label-size: 0.75rem;
+
+      /* Spacing scale */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.25rem;
+      --space-2xl: 3.5rem;
+
+      /* Shape */
+      --rounded: 0.125rem;
+      --rounded-lg: 0.125rem;
+      --rounded-full: 0.125rem;
+
+      /* Style effects */
+      --brass-rule: 2px solid var(--outline);
+      --brass-rule-thick: 3px solid var(--outline);
+      --hairline: 1px solid var(--outline-variant);
+      --leaf-underline: 0 1px 0 var(--outline-variant);
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+
+    .page-grid {
+      display: grid;
+      gap: var(--space-xl);
+      padding: var(--space-lg);
+      max-width: 1360px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Title Band - Charter signature navy bar */
+    .title-band {
+      background: var(--primary);
+      color: var(--on-primary);
+      padding: var(--space-xl) var(--space-xl) var(--space-lg);
+      border-bottom: var(--brass-rule-thick);
+    }
+    .title-band-inner {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .title-kicker-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+    .brand-kicker {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--outline);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+    .status-badge-group {
+      display: flex;
+      gap: var(--space-sm);
+      align-items: center;
+    }
+    .badge-tag {
+      border: 1px solid var(--outline);
+      background: transparent;
+      color: var(--outline);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--rounded);
+      text-transform: uppercase;
+    }
+    .badge-tag.highlight {
+      background: var(--brass-tint);
+      color: var(--brass-light);
+      border-color: var(--brass-light);
+    }
+    .badge-tag.badge-positive {
+      background: var(--positive-tint);
+      color: var(--positive);
+      border-color: var(--positive);
+    }
+    .badge-tag.badge-platform {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+    .badge-tag.badge-roi {
+      color: var(--on-surface-variant);
+      border-color: var(--outline);
+    }
+    .stat-val-brass {
+      color: var(--brass-light);
+    }
+    .title-band h1 {
+      font-family: var(--font-headline);
+      font-size: var(--display-size);
+      font-weight: 400;
+      line-height: 1.15;
+      margin: 0;
+      color: var(--on-primary);
+    }
+    .title-band .lede {
+      margin: 0;
+      color: color-mix(in srgb, var(--on-primary) 80%, var(--primary));
+      font-size: 1.05rem;
+      max-width: 82ch;
+    }
+    .header-quick-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-lg);
+      margin-top: var(--space-sm);
+      padding-top: var(--space-md);
+      border-top: 1px solid rgba(176, 141, 87, 0.35);
+      font-size: 0.85rem;
+    }
+    .quick-stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .quick-stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--outline);
+    }
+    .quick-stat-val {
+      color: var(--on-primary);
+      font-family: var(--font-mono);
+      font-weight: 500;
+    }
+
+    /* Section Styling */
+    .section-head {
+      border-top: var(--brass-rule);
+      padding-top: var(--space-md);
+      border-bottom: var(--hairline);
+      padding-bottom: var(--space-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .section-title {
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 400;
+      margin: 0;
+      color: var(--on-surface);
+    }
+    .section-subtitle {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      color: var(--on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Figures Strip (KPI Cards) */
+    .figure-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    .figure-card {
+      background: var(--surface-container-low);
+      border-top: var(--brass-rule);
+      box-shadow: var(--leaf-underline);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: background-color var(--dur-short) var(--ease-out);
+    }
+    .figure-card:hover {
+      background-color: var(--surface-tint-hover);
+    }
+    .figure-card.primary-spotlight {
+      background: var(--surface-spotlight);
+      border-top: 3px solid var(--primary);
+    }
+    .figure-label {
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-xs);
+    }
+    .figure-value {
+      font-family: var(--font-headline);
+      font-size: 2.25rem;
+      font-weight: 400;
+      font-variant-numeric: tabular-nums lining-nums;
+      color: var(--on-surface);
+      line-height: 1.1;
+      margin: var(--space-xs) 0;
+    }
+    .figure-unit {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--on-surface-variant);
+      margin-left: 2px;
+    }
+    .figure-delta {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: var(--space-xs);
+    }
+    .delta-positive { color: var(--positive); }
+    .delta-tertiary { color: var(--tertiary); }
+    .figure-subtext {
+      font-size: 0.775rem;
+      color: var(--on-surface-variant);
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+
+    /* Primary Interactive Panels */
+    .panel-box {
+      background: var(--surface-container-low);
+      border: var(--hairline);
+      border-top: var(--brass-rule);
+      box-shadow: var(--leaf-underline);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-lg);
+    }
+
+    .panel-header-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-sm);
+      border-bottom: var(--hairline);
+    }
+    .panel-title-wrap h3 {
+      font-family: var(--font-headline);
+      font-size: var(--subhead-size);
+      font-weight: 700;
+      margin: 0 0 2px 0;
+      color: var(--on-surface);
+    }
+    .panel-desc {
+      font-size: 0.825rem;
+      color: var(--on-surface-variant);
+      margin: 0;
+    }
+
+    /* Button Group and Controls */
+    .btn-group {
+      display: inline-flex;
+      border: var(--hairline);
+      background: var(--surface-container);
+      padding: 2px;
+      border-radius: var(--rounded);
+      gap: 2px;
+    }
+    .btn-toggle {
+      border: none;
+      background: transparent;
+      color: var(--on-surface-variant);
+      font-family: var(--font-label);
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 0.4rem 0.85rem;
+      border-radius: var(--rounded);
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-toggle:hover {
+      background-color: var(--surface-container-high);
+      color: var(--on-surface);
+    }
+    .btn-toggle.active {
+      background-color: var(--primary);
+      color: var(--on-primary);
+      font-weight: 600;
+    }
+    .btn-toggle:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .btn-action {
+      background: var(--primary);
+      color: var(--on-primary);
+      border: none;
+      padding: 0.45rem 0.9rem;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 500;
+      border-radius: var(--rounded);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background var(--dur-micro) var(--ease-out);
+    }
+    .btn-action:hover {
+      background: color-mix(in srgb, var(--primary) 85%, black);
+    }
+    .btn-action:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      padding: 0.45rem 0.9rem;
+      font-family: var(--font-body);
+      font-size: 0.82rem;
+      font-weight: 500;
+      border-radius: var(--rounded);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background var(--dur-micro) var(--ease-out);
+    }
+    .btn-secondary:hover {
+      background: var(--primary-container);
+    }
+    .btn-secondary:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Chart Containers */
+    .chart-container-wrap {
+      position: relative;
+      width: 100%;
+      min-height: 380px;
+      margin-top: var(--space-sm);
+    }
+    .chart-legend-custom {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-lg);
+      margin-top: var(--space-md);
+      padding-top: var(--space-sm);
+      border-top: var(--hairline);
+      font-size: 0.82rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .legend-color-box {
+      width: 14px;
+      height: 14px;
+      border-radius: 1px;
+    }
+
+    /* Split layout: Two Columns */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      gap: var(--space-lg);
+    }
+    @media (max-width: 990px) {
+      .grid-2col { grid-template-columns: 1fr; }
+    }
+
+    /* Waterfall Bridge Breakdown Card */
+    .waterfall-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+      padding: var(--space-md);
+      background: var(--surface-container);
+      border-radius: var(--rounded);
+    }
+    .meta-stat-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .meta-stat-cell .lbl {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+      letter-spacing: 0.04em;
+    }
+    .meta-stat-cell .val {
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--on-surface);
+    }
+    .meta-stat-cell .sub {
+      font-size: 0.72rem;
+      color: var(--on-surface-variant);
+    }
+
+    /* Table Styles */
+    .data-table-wrap {
+      overflow-x: auto;
+      margin-top: var(--space-md);
+    }
+    table.charter-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+    table.charter-table th {
+      background: var(--surface-container-high);
+      font-family: var(--font-label);
+      font-size: var(--label-size);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--on-surface);
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: 2px solid var(--outline);
+    }
+    table.charter-table td {
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--hairline);
+      color: var(--on-surface);
+      font-variant-numeric: tabular-nums;
+    }
+    table.charter-table tr:hover td {
+      background-color: var(--primary-container);
+    }
+    table.charter-table td.num {
+      text-align: right;
+      font-family: var(--font-mono);
+    }
+    table.charter-table th.num {
+      text-align: right;
+    }
+    table.charter-table tfoot td {
+      font-weight: 700;
+      border-top: var(--brass-rule);
+      border-bottom: 2px solid var(--outline);
+      background: var(--surface-container);
+    }
+
+    /* Working Capital & Liquidity Gauge Cards */
+    .metric-meter-card {
+      background: var(--surface-container-low);
+      border: var(--hairline);
+      border-radius: var(--rounded);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .meter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .meter-title {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--on-surface);
+    }
+    .meter-badges {
+      display: flex;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+    .meter-badge-old {
+      color: var(--on-surface-variant);
+      text-decoration: line-through;
+    }
+    .meter-badge-new {
+      color: var(--positive);
+      font-weight: 600;
+    }
+    .progress-track {
+      width: 100%;
+      height: 9px;
+      background: var(--surface-container-high);
+      border-radius: var(--rounded);
+      overflow: hidden;
+      position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      transition: width var(--dur-long) var(--ease-out);
+    }
+    .progress-fill.positive {
+      background: var(--positive);
+    }
+    .progress-fill.brass {
+      background: var(--outline);
+    }
+    .meter-footer-note {
+      font-size: 0.775rem;
+      color: var(--on-surface-variant);
+      line-height: 1.35;
+    }
+
+    /* Interactive Simulator Box */
+    .simulator-box {
+      background: var(--simulator-bg);
+      border: 1px solid var(--outline);
+      border-radius: var(--rounded-lg);
+      padding: var(--space-lg);
+      margin-top: var(--space-md);
+    }
+    .simulator-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-lg);
+      align-items: center;
+    }
+    .slider-control-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+    }
+    .slider-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .slider-label-title {
+      font-family: var(--font-label);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--on-surface);
+    }
+    .slider-value-badge {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--surface-container);
+      padding: 2px 8px;
+      border-radius: var(--rounded);
+      border: var(--hairline);
+    }
+    .charter-range-input {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      background: var(--surface-container-high);
+      border-radius: var(--rounded);
+      outline: none;
+      cursor: pointer;
+    }
+    .charter-range-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 2px solid var(--outline);
+      cursor: pointer;
+      transition: transform var(--dur-micro) var(--ease-out);
+    }
+    .charter-range-input::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+    .charter-range-input:focus-visible {
+      outline: 2px solid var(--focus);
+    }
+
+    .sim-results-card {
+      background: var(--surface-container-low);
+      border: 2px solid var(--outline);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--rounded);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .sim-result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: var(--space-xs);
+      border-bottom: var(--hairline);
+    }
+    .sim-result-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .sim-result-row .lbl {
+      font-size: 0.825rem;
+      color: var(--on-surface-variant);
+    }
+    .sim-result-row .val {
+      font-family: var(--font-headline);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .sim-result-row .val.highlight {
+      color: var(--positive);
+    }
+
+    /* Strategic AI Initiatives Cards */
+    .ai-initiatives-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: var(--space-md);
+    }
+    .initiative-card {
+      background: var(--surface-container-low);
+      border: var(--hairline);
+      border-top: var(--brass-rule);
+      padding: var(--space-md);
+      border-radius: var(--rounded);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      transition: transform var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out);
+      cursor: pointer;
+    }
+    .initiative-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--outline);
+    }
+    .initiative-badge-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: 0.72rem;
+    }
+    .cat-tag {
+      font-family: var(--font-label);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--tertiary);
+    }
+    .roi-tag {
+      background: rgba(45, 90, 74, 0.12);
+      color: var(--positive);
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: var(--rounded);
+      font-family: var(--font-mono);
+    }
+    .initiative-title {
+      font-family: var(--font-headline);
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0;
+      color: var(--on-surface);
+    }
+    .initiative-desc {
+      font-size: 0.835rem;
+      color: var(--on-surface-variant);
+      margin: 0;
+      line-height: 1.45;
+    }
+    .initiative-stats-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: var(--space-sm);
+      border-top: var(--hairline);
+      font-size: 0.78rem;
+    }
+    .init-stat-box {
+      display: flex;
+      flex-direction: column;
+    }
+    .init-stat-box .lbl {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      color: var(--on-surface-variant);
+    }
+    .init-stat-box .val {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    /* Operational Alignment & Candidate Profile Box */
+    .profile-alignment-box {
+      background: var(--profile-bg);
+      border: 1px solid var(--outline);
+      border-radius: var(--rounded);
+      padding: var(--space-lg);
+      margin-top: var(--space-md);
+    }
+    .competence-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      margin-top: var(--space-sm);
+    }
+    .competence-pill {
+      background: var(--surface-container);
+      color: var(--on-surface);
+      border: var(--hairline);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.55rem;
+      border-radius: var(--rounded);
+      font-family: var(--font-label);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .competence-pill strong {
+      color: var(--primary);
+    }
+
+    /* Modal / Drawer for detailed drilldown */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 33, 61, 0.65);
+      backdrop-filter: blur(2px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: var(--space-md);
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+    .modal-content {
+      background: var(--background);
+      border: 2px solid var(--outline);
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: var(--space-xl);
+      border-radius: var(--rounded);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      position: relative;
+    }
+    .modal-close-btn {
+      position: absolute;
+      top: var(--space-md);
+      right: var(--space-md);
+      background: transparent;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: var(--on-surface-variant);
+      padding: 4px;
+    }
+    .modal-close-btn:hover {
+      color: var(--on-surface);
+    }
+
+    /* Export Notification Toast */
+    .toast-notify {
+      position: fixed;
+      bottom: var(--space-lg);
+      right: var(--space-lg);
+      background: var(--primary);
+      color: var(--on-primary);
+      border-left: 4px solid var(--outline);
+      padding: var(--space-md) var(--space-lg);
+      font-size: 0.85rem;
+      border-radius: var(--rounded);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+      transform: translateY(120%);
+      transition: transform var(--dur-short) var(--ease-out);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toast-notify.visible {
+      transform: translateY(0);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .title-band {
+        padding: var(--space-lg) var(--space-md);
+      }
+      .page-grid {
+        padding: var(--space-md);
+        gap: var(--space-lg);
+      }
+      .panel-box {
+        padding: var(--space-md);
+      }
+      .figure-grid {
+        grid-template-columns: 1fr;
+      }
+      .chart-container-wrap {
+        min-height: 300px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Full-bleed Charter Title Band -->
+  <header class="title-band">
+    <div class="title-band-inner">
+      <div class="title-kicker-row">
+        <div class="brand-kicker">
+          <i data-lucide="wine" style="width: 16px; height: 16px;"></i>
+          <span>Det Norske Brenneri AS &mdash; Grimstad (Org.nr. 996 928 977)</span>
+        </div>
+        <div class="status-badge-group">
+          <span class="badge-tag">Hovedkontor: Industriveien 6, 4879 Grimstad</span>
+          <span class="badge-tag highlight">Likviditetsstyring &amp; AI-Prognose 2026/27</span>
+        </div>
+      </div>
+
+      <h1>Likviditets- og Kontantstrømstyring (Cash Management)</h1>
+      <p class="lede">
+        Finansiell styringsmodell og 12-måneders kontantstrøm-prognose for Det Norske Brenneri AS. 
+        Visualisering av sesongsykluser (Arvesølvet akevitt, Harahorn gin, Eiktyrne single malt og K.G. Puntervold eplemost), 
+        arbeidskapitalreduksjon fra 18,0 % til 14,5 %, solid likviditetsgrad (2,1) samt operasjonelle AI-tiltak for frigjøring av likviditet.
+      </p>
+
+      <div class="header-quick-stats">
+        <div class="quick-stat-item">
+          <span class="quick-stat-label">Ansvarlig for økonomi</span>
+          <span class="quick-stat-val">Frederik A. E. Grundekjøn</span>
+        </div>
+        <div class="quick-stat-item">
+          <span class="quick-stat-label">ERP &amp; Finanssystem</span>
+          <span class="quick-stat-val">Visma &amp; Agresso / M365</span>
+        </div>
+        <div class="quick-stat-item">
+          <span class="quick-stat-label">Målsetting Net Free Cash Flow</span>
+          <span class="quick-stat-val" style="color: #dfcaa2;">4,70 MNOK (+175 % økning)</span>
+        </div>
+        <div class="quick-stat-item">
+          <span class="quick-stat-label">Optimalisert Likviditetsgrad 1</span>
+          <span class="quick-stat-val" style="color: #dfcaa2;">2,10 (Meget solid)</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Dashboard Container -->
+  <main class="page-grid">
+
+    <!-- KPI HERO FIGURES STRIP -->
+    <section aria-labelledby="kpi-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="kpi-heading" class="section-title">Nøkkeltall Likviditet &amp; Kontantstrøm</h2>
+          <span class="section-subtitle">Operativ status &bull; Konsolidert 12-måneders prognose</span>
+        </div>
+        <div>
+          <button class="btn-action" onclick="exportDataToCSV()" aria-label="Eksporter prognosedata til CSV">
+            <i data-lucide="download" style="width: 15px; height: 15px;"></i>
+            Eksporter prognose (CSV)
+          </button>
+        </div>
+      </div>
+
+      <div class="figure-grid">
+        <!-- KPI 1: Net Free Cash Flow -->
+        <div class="figure-card primary-spotlight">
+          <div class="figure-label">
+            <span>Net Free Cash Flow (AI)</span>
+            <i data-lucide="trending-up" style="width: 16px; height: 16px; color: var(--primary);"></i>
+          </div>
+          <div class="figure-value" id="kpi-nfcf-val">4,70 <span class="figure-unit">MNOK</span></div>
+          <div class="figure-delta delta-positive">
+            <i data-lucide="arrow-up-right" style="width: 14px; height: 14px;"></i>
+            <span>+175 % vs. baseline (1,71 MNOK)</span>
+          </div>
+          <div class="figure-subtext">Driftsramme baseline 5,6 MNOK optimalisert via frigjort arbeidskapital.</div>
+        </div>
+
+        <!-- KPI 2: Likviditetsgrad 1 -->
+        <div class="figure-card">
+          <div class="figure-label">
+            <span>Likviditetsgrad 1 (Current Ratio)</span>
+            <i data-lucide="shield-check" style="width: 16px; height: 16px; color: var(--secondary);"></i>
+          </div>
+          <div class="figure-value" id="kpi-cr-val">2,10 <span class="figure-unit">x</span></div>
+          <div class="figure-delta delta-positive">
+            <i data-lucide="check" style="width: 14px; height: 14px;"></i>
+            <span>Solid buffer (Mål &gt; 1,50)</span>
+          </div>
+          <div class="figure-subtext">Omløpsmidler 18,9 MNOK mot kortsiktig gjeld 9,0 MNOK.</div>
+        </div>
+
+        <!-- KPI 3: Arbeidskapital % av omsetning -->
+        <div class="figure-card">
+          <div class="figure-label">
+            <span>Arbeidskapital (NWC / Salg)</span>
+            <i data-lucide="pie-chart" style="width: 16px; height: 16px; color: var(--tertiary);"></i>
+          </div>
+          <div class="figure-value" id="kpi-nwc-val">14,5 <span class="figure-unit">%</span></div>
+          <div class="figure-delta delta-positive">
+            <i data-lucide="arrow-down-right" style="width: 14px; height: 14px;"></i>
+            <span>Ned fra 18,0 % (-3,5 pp)</span>
+          </div>
+          <div class="figure-subtext">Permanent frigjøring av 1,58 MNOK i bundet driftskapital.</div>
+        </div>
+
+        <!-- KPI 4: Kredittid Kunder (DSO) -->
+        <div class="figure-card">
+          <div class="figure-label">
+            <span>Kredittid Kunder (DSO)</span>
+            <i data-lucide="clock" style="width: 16px; height: 16px; color: var(--primary);"></i>
+          </div>
+          <div class="figure-value" id="kpi-dso-val">34 <span class="figure-unit">dager</span></div>
+          <div class="figure-delta delta-positive">
+            <i data-lucide="arrow-down-right" style="width: 14px; height: 14px;"></i>
+            <span>-14 dager (fra 48 dager)</span>
+          </div>
+          <div class="figure-subtext">AI-drevet EHF-purring mot serveringssteder og anbudskunder.</div>
+        </div>
+
+        <!-- KPI 5: Total Likviditetsreserve -->
+        <div class="figure-card">
+          <div class="figure-label">
+            <span>Tilgjengelig Reserve</span>
+            <i data-lucide="vault" style="width: 16px; height: 16px; color: var(--outline);"></i>
+          </div>
+          <div class="figure-value">5,80 <span class="figure-unit">MNOK</span></div>
+          <div class="figure-delta delta-tertiary">
+            <i data-lucide="layers" style="width: 14px; height: 14px;"></i>
+            <span>Bank 1,80 MNOK + Kreditt 4,0 MNOK</span>
+          </div>
+          <div class="figure-subtext">Robust beredskap for høstens eplemottak og fatkjøp.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: 12-MÅNEDERS S-KURVE KONTANTSTRØM -->
+    <section aria-labelledby="scurve-heading">
+      <div class="panel-box">
+        <div class="panel-header-controls">
+          <div class="panel-title-wrap">
+            <h3 id="scurve-heading">12-måneders S-kurve for Kontantstrøm (Cash Generation Profile)</h3>
+            <p class="panel-desc">
+              Sammenligning mellom historisk baseline og AI-optimalisert kontantstrøm. 
+              Sesongprofilering: Q1 oppgjør etter julesalg &bull; Q2 Vinmonopolet våranbud &amp; ginsalg &bull; Q3 eplepressing K.G. Puntervold &bull; Q4 julesalg for Arvesølvet akevitt.
+            </p>
+          </div>
+
+          <!-- Scenario & View toggles -->
+          <div style="display: flex; flex-wrap: wrap; gap: var(--space-sm); align-items: center;">
+            <div class="btn-group" role="group" aria-label="Visningsmodus">
+              <button class="btn-toggle active" id="btn-view-cum" onclick="setChartMetricView('cumulative')">
+                <i data-lucide="line-chart" style="width: 14px; height: 14px;"></i>
+                Kumulativ S-kurve
+              </button>
+              <button class="btn-toggle" id="btn-view-mo" onclick="setChartMetricView('monthly')">
+                <i data-lucide="bar-chart-2" style="width: 14px; height: 14px;"></i>
+                Månedlig Netto
+              </button>
+            </div>
+
+            <div class="btn-group" role="group" aria-label="Scenariovelger">
+              <button class="btn-toggle active" id="scen-ai" onclick="selectScenario('ai')">AI-Prognose (4,7 MNOK)</button>
+              <button class="btn-toggle" id="scen-base" onclick="selectScenario('base')">Baseline (1,71 MNOK)</button>
+              <button class="btn-toggle" id="scen-bull" onclick="selectScenario('bull')">Aggressiv AI (5,4 MNOK)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- S-Curve Chart Container -->
+        <div class="chart-container-wrap">
+          <canvas id="sCurveChart" aria-label="12-måneders kontantstrømdiagram"></canvas>
+        </div>
+
+        <div class="chart-legend-custom">
+          <div class="legend-item">
+            <span class="legend-color-box" style="background: var(--primary);"></span>
+            <span><strong>AI-Optimalisert Kontantstrøm:</strong> Sluttverdi 4,70 MNOK (175 % løft over uoptimalisert baseline)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color-box" style="background: var(--outline);"></span>
+            <span><strong>Historisk Baseline:</strong> 1,71 MNOK akkumulert (høy arbeidskapitalbinding på 5,6 MNOK i Q3)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color-box" style="background: var(--secondary);"></span>
+            <span><strong>Sesongdrevne Innbetalinger:</strong> K.G. Puntervold råvarer (Sep) og Arvesølvet toppleveranser (Nov-Des)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: CASH FLOW WATERFALL BRIDGE -->
+    <section aria-labelledby="waterfall-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="waterfall-heading" class="section-title">Cash Flow Waterfall Bridge (Kontantstrømbro)</h2>
+          <span class="section-subtitle">Fra driftsresultat (EBITDA) til Net Free Cash Flow 4,70 MNOK</span>
+        </div>
+        <div class="badge-tag">Full reconciliering &bull; Visma / Agresso</div>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Left: Waterfall Chart -->
+        <div class="panel-box">
+          <div class="panel-header-controls">
+            <div>
+              <h3>Bro mellom Driftsresultat og Netto Fri Kontantstrøm</h3>
+              <p class="panel-desc">De fem nøkkelkomponentene bak den årlige kontantgenereringen.</p>
+            </div>
+          </div>
+
+          <div class="chart-container-wrap" style="min-height: 340px;">
+            <canvas id="waterfallChart" aria-label="Cash Flow Waterfall Bridge Diagram"></canvas>
+          </div>
+
+          <div class="waterfall-meta-grid">
+            <div class="meta-stat-cell">
+              <span class="lbl">Driftsresultat (EBITDA)</span>
+              <span class="val">+6,20 MNOK</span>
+              <span class="sub">Høy produktmargin</span>
+            </div>
+            <div class="meta-stat-cell">
+              <span class="lbl">Avskrivninger</span>
+              <span class="val">+1,10 MNOK</span>
+              <span class="sub">Tilbakeført (non-cash)</span>
+            </div>
+            <div class="meta-stat-cell">
+              <span class="lbl">Arbeidskapital (NWC)</span>
+              <span class="val" style="color: var(--positive);">+0,80 MNOK</span>
+              <span class="sub">Frigjort via AI-tiltak</span>
+            </div>
+            <div class="meta-stat-cell">
+              <span class="lbl">Capex &amp; Fatlagring</span>
+              <span class="val" style="color: var(--error);">-1,90 MNOK</span>
+              <span class="sub">Eikefat &amp; tappelinje</span>
+            </div>
+            <div class="meta-stat-cell">
+              <span class="lbl">Lån &amp; Finans</span>
+              <span class="val" style="color: var(--error);">-1,50 MNOK</span>
+              <span class="sub">Renter &amp; avdrag</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Detailed Explanations & Line-Item Table -->
+        <div class="panel-box" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div class="panel-header-controls" style="margin-bottom: var(--space-sm);">
+              <h3>Spesifikasjon av Waterfall-poster</h3>
+              <span class="badge-tag">Regnskapsteknisk forklaring</span>
+            </div>
+            <p class="panel-desc" style="margin-bottom: var(--space-md);">
+              Net Free Cash Flow beregnes etter formelen: 
+              <br><code>NFCF = Driftsresultat + Avskrivninger + ΔNWC - Capex - Finanskostnader/Lån</code>.
+            </p>
+
+            <div class="data-table-wrap">
+              <table class="charter-table" aria-label="Waterfall tabell">
+                <thead>
+                  <tr>
+                    <th>Komponent</th>
+                    <th class="num">Beløp (MNOK)</th>
+                    <th>Strategisk Driver i Grimstad</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>1. Driftsresultat (EBITDA)</strong></td>
+                    <td class="num" style="color: var(--primary); font-weight: 600;">+6,20</td>
+                    <td>Sterk volumvekst på Harahorn Gin og K.G. Puntervold</td>
+                  </tr>
+                  <tr>
+                    <td><strong>2. Avskrivninger</strong></td>
+                    <td class="num">+1,10</td>
+                    <td>Tappeanlegg, produksjonstanker og fatlager</td>
+                  </tr>
+                  <tr>
+                    <td><strong>3. Arbeidskapitalendring (&Delta;NWC)</strong></td>
+                    <td class="num" style="color: var(--positive); font-weight: 600;">+0,80</td>
+                    <td>DSO-kutt til 34 dg + redusert sikkerhetslager emballasje</td>
+                  </tr>
+                  <tr>
+                    <td><strong>4. Capex (Investeringer)</strong></td>
+                    <td class="num" style="color: var(--error);">-1,90</td>
+                    <td>Kjøp av Oloroso-fat til Eiktyrne/Arvesølvet, presseutstyr</td>
+                  </tr>
+                  <tr>
+                    <td><strong>5. Lån &amp; Finanskostnader</strong></td>
+                    <td class="num" style="color: var(--error);">-1,50</td>
+                    <td>Ordinære låneavdrag og rentekostnader</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td><strong>Net Free Cash Flow (NFCF)</strong></td>
+                    <td class="num" style="color: var(--primary); font-size: 1.05rem;"><strong>4,70</strong></td>
+                    <td><strong>Frigjort overskuddslikviditet til disposisjon</strong></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+          <div style="background: var(--surface-container); padding: var(--space-md); border-radius: var(--rounded); margin-top: var(--space-md); border-left: 3px solid var(--outline);">
+            <div style="font-weight: 600; font-size: 0.85rem; color: var(--on-surface);">Ledelseskonklusjon:</div>
+            <div style="font-size: 0.8rem; color: var(--on-surface-variant); margin-top: 2px;">
+              Uten AI-drevet arbeidskapitaloptimalisering ville NFCF endt på 1,71 MNOK pga. kapitalbinding i råvarer og sene kundeoppgjør. AI-tiltakene tilfører direkte <strong>2,99 MNOK</strong> i likviditetsforbedring (+175 %).
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: ARBEIDSKAPITAL & LIKVIDITETSGRAD -->
+    <section aria-labelledby="wc-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="wc-heading" class="section-title">Arbeidskapitalreduksjon &amp; Likviditetsanalyse</h2>
+          <span class="section-subtitle">Optimalisering fra 18,0 % til 14,5 % &bull; Likviditetsgrad 1 på 2,10</span>
+        </div>
+        <div class="badge-tag">Soliditet &amp; Kredittstyring</div>
+      </div>
+
+      <div class="grid-2col">
+        <!-- Panel A: NWC Drivers & Reductions -->
+        <div class="panel-box">
+          <div class="panel-header-controls">
+            <div>
+              <h3>Arbeidskapital som andel av omsetning</h3>
+              <p class="panel-desc">Nedgang fra 18,0 % til 14,5 % frigjør 1,58 MNOK i likvide midler.</p>
+            </div>
+            <span class="badge-tag" style="background: rgba(45, 90, 74, 0.12); color: var(--positive); border-color: var(--positive);">-3,5 pp</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+            <!-- Meter 1: NWC Ratio -->
+            <div class="metric-meter-card">
+              <div class="meter-header">
+                <span class="meter-title">Net Working Capital / Omsetning</span>
+                <div class="meter-badges">
+                  <span class="meter-badge-old">18,0 %</span>
+                  <span>&rarr;</span>
+                  <span class="meter-badge-new">14,5 %</span>
+                </div>
+              </div>
+              <div class="progress-track" aria-hidden="true">
+                <div class="progress-fill positive" style="width: 80.5%;"></div>
+              </div>
+              <div class="meter-footer-note">
+                Omsetning estimert til 45,2 MNOK. Reduksjon tilsvarer 1,58 MNOK overført direkte til likviditetsbufferen.
+              </div>
+            </div>
+
+            <!-- Meter 2: DSO (Kredittid) -->
+            <div class="metric-meter-card">
+              <div class="meter-header">
+                <span class="meter-title">DSO (Dager utestående kundefordringer)</span>
+                <div class="meter-badges">
+                  <span class="meter-badge-old">48 dg</span>
+                  <span>&rarr;</span>
+                  <span class="meter-badge-new">34 dg (-14)</span>
+                </div>
+              </div>
+              <div class="progress-track" aria-hidden="true">
+                <div class="progress-fill" style="width: 70.8%;"></div>
+              </div>
+              <div class="meter-footer-note">
+                Automatisert oppfølging i Visma, EHF-faktura til Vinmonopolet/Horeca, og tidlig avviksvarsling.
+              </div>
+            </div>
+
+            <!-- Meter 3: DIO (Lageromløpshastighet) -->
+            <div class="metric-meter-card">
+              <div class="meter-header">
+                <span class="meter-title">DIO (Lageromløpstid råvarer/emballasje)</span>
+                <div class="meter-badges">
+                  <span class="meter-badge-old">112 dg</span>
+                  <span>&rarr;</span>
+                  <span class="meter-badge-new">89 dg (-23)</span>
+                </div>
+              </div>
+              <div class="progress-track" aria-hidden="true">
+                <div class="progress-fill brass" style="width: 79.4%;"></div>
+              </div>
+              <div class="meter-footer-note">
+                Presis prognostisering av flasker, korker og etiketter for Harahorn/Arvesølvet samt epler til K.G. Puntervold.
+              </div>
+            </div>
+
+            <!-- Meter 4: DPO (Leverandørgjeld) -->
+            <div class="metric-meter-card">
+              <div class="meter-header">
+                <span class="meter-title">DPO (Leverandørkredittid)</span>
+                <div class="meter-badges">
+                  <span class="meter-badge-old">32 dg</span>
+                  <span>&rarr;</span>
+                  <span class="meter-badge-new">38 dg (+6)</span>
+                </div>
+              </div>
+              <div class="progress-track" aria-hidden="true">
+                <div class="progress-fill" style="width: 84%;"></div>
+              </div>
+              <div class="meter-footer-note">
+                Harmonisert utbetalingstakt mot skonto-avtaler og kontantstrømtopper.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel B: Liquidity Ratios & Buffer Stress Test -->
+        <div class="panel-box" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div class="panel-header-controls">
+              <div>
+                <h3>Likviditetsgrad &amp; Finansiell Soliditet</h3>
+                <p class="panel-desc">Måling av Brenneriets kortsiktige gjeldsbetjeningsevne.</p>
+              </div>
+              <span class="badge-tag" style="background: rgba(45, 90, 74, 0.12); color: var(--positive); border-color: var(--positive);">Grad 1: 2,10</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); margin-bottom: var(--space-md);">
+              <div style="background: var(--surface-container); padding: var(--space-md); border-radius: var(--rounded); border-top: 2px solid var(--secondary);">
+                <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--on-surface-variant); font-weight: 600;">Likviditetsgrad 1 (Current Ratio)</div>
+                <div style="font-family: var(--font-headline); font-size: 2rem; font-weight: 700; color: var(--secondary); margin: 4px 0;">2,10</div>
+                <div style="font-size: 0.75rem; color: var(--on-surface-variant);">
+                  Formel: <code>Omløpsmidler (18,9 MNOK) / Kortsiktig gjeld (9,0 MNOK)</code>. Bransjesnitt for drikkevare er 1,35–1,50.
+                </div>
+              </div>
+
+              <div style="background: var(--surface-container); padding: var(--space-md); border-radius: var(--rounded); border-top: 2px solid var(--primary);">
+                <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--on-surface-variant); font-weight: 600;">Likviditetsgrad 2 (Quick Ratio)</div>
+                <div style="font-family: var(--font-headline); font-size: 2rem; font-weight: 700; color: var(--primary); margin: 4px 0;">1,25</div>
+                <div style="font-size: 0.75rem; color: var(--on-surface-variant);">
+                  Formel: <code>(Omløpsmidler - Varelager) / Kortsiktig gjeld</code>. Svært betryggende for et brenneri med fatlagret sprit.
+                </div>
+              </div>
+            </div>
+
+            <div style="border-top: var(--hairline); padding-top: var(--space-md);">
+              <div style="font-weight: 600; font-size: 0.85rem; color: var(--on-surface); margin-bottom: var(--space-xs);">
+                Stresstest &amp; Beredskap mot Likviditetssjokk:
+              </div>
+              <ul style="padding-left: var(--space-md); margin: 0; font-size: 0.8rem; color: var(--on-surface-variant); line-height: 1.5;">
+                <li><strong>Vinmonopolet forsinkelser:</strong> Selv med 30 dagers forsinket oppgjør holder Likviditetsgrad 1 seg over 1,75.</li>
+                <li><strong>Epleavling-variasjon:</strong> Støtdemper på 2,0 MNOK i kassekreditt dekker eventuell overskuddshøst ved K.G. Puntervold.</li>
+                <li><strong>Renteøkning (+2 %):</strong> Begrenset effekt (-0,12 MNOK p.a.) grunnet lav flytende gjeldsgrad.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="background: var(--surface-container-high); padding: var(--space-md); border-radius: var(--rounded); margin-top: var(--space-md);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 600; color: var(--on-surface);">Ubenyttet Kassekreditt</div>
+                <div style="font-family: var(--font-mono); font-size: 1.15rem; font-weight: 600; color: var(--primary);">4,00 MNOK disponibelt</div>
+              </div>
+              <span class="badge-tag" style="background: var(--surface-container-low); color: var(--primary);">0 % trukket pr. d.d.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: INTERAKTIV HVA-HVIS SIMULERING (SCENARIO DRIVER) -->
+    <section aria-labelledby="sim-heading">
+      <div class="panel-box">
+        <div class="panel-header-controls">
+          <div>
+            <h2 id="sim-heading" class="section-title" style="font-size: var(--subhead-size); margin: 0;">
+              Interaktiv Simuleringsmodell &mdash; "Hva-hvis" Følsomhetsanalyse
+            </h2>
+            <p class="panel-desc">
+              Test hvordan endringer i kundekredittid (DSO), lagerhastighet og investeringstakt (Capex) påvirker Net Free Cash Flow og Likviditetsgrad.
+            </p>
+          </div>
+          <div>
+            <button class="btn-secondary" onclick="resetSimulator()" aria-label="Nullstill simulator til standard AI-prognose">
+              <i data-lucide="rotate-ccw" style="width: 14px; height: 14px;"></i>
+              Gjenopprett AI-standard
+            </button>
+          </div>
+        </div>
+
+        <div class="simulator-box">
+          <div class="simulator-grid">
+            <!-- Left: Sliders -->
+            <div>
+              <!-- Slider 1: DSO Reduksjon -->
+              <div class="slider-control-group">
+                <div class="slider-label-row">
+                  <label for="slider-dso" class="slider-label-title">DSO-forbedring (Kortere kredittid)</label>
+                  <span class="slider-value-badge" id="val-slider-dso">-14 dager (DSO: 34 dg)</span>
+                </div>
+                <input type="range" id="slider-dso" class="charter-range-input" min="0" max="25" value="14" step="1" oninput="handleSimChange()">
+                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--on-surface-variant);">
+                  <span>0 dg (DSO 48)</span>
+                  <span>-14 dg (AI-mål)</span>
+                  <span>-25 dg (Maksimal)</span>
+                </div>
+              </div>
+
+              <!-- Slider 2: Lageromløp Forbedring -->
+              <div class="slider-control-group">
+                <div class="slider-label-row">
+                  <label for="slider-dio" class="slider-label-title">Lagerreduksjon (DIO Emballasje &amp; Råvarer)</label>
+                  <span class="slider-value-badge" id="val-slider-dio">-20 % (DIO: 89 dg)</span>
+                </div>
+                <input type="range" id="slider-dio" class="charter-range-input" min="0" max="35" value="20" step="1" oninput="handleSimChange()">
+                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--on-surface-variant);">
+                  <span>0 % (Uendret lager)</span>
+                  <span>-20 % (AI Just-In-Time)</span>
+                  <span>-35 % (Maks trimming)</span>
+                </div>
+              </div>
+
+              <!-- Slider 3: Capex Fleksibilitet -->
+              <div class="slider-control-group" style="margin-bottom: 0;">
+                <div class="slider-label-row">
+                  <label for="slider-capex" class="slider-label-title">Capex &amp; Fatkjøp Justering</label>
+                  <span class="slider-value-badge" id="val-slider-capex">1,90 MNOK (Planlagt)</span>
+                </div>
+                <input type="range" id="slider-capex" class="charter-range-input" min="1.0" max="3.0" value="1.9" step="0.1" oninput="handleSimChange()">
+                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--on-surface-variant);">
+                  <span>1,0 MNOK (Kun kritisk vedlikehold)</span>
+                  <span>1,9 MNOK (Hovedplan)</span>
+                  <span>3,0 MNOK (Ekspansiv fatlagring)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Dynamic Calculated Outcome Card -->
+            <div class="sim-results-card">
+              <div style="font-family: var(--font-label); font-size: 0.75rem; text-transform: uppercase; font-weight: 600; color: var(--tertiary); letter-spacing: 0.05em;">
+                Sanntids Beregnet Likviditetseffekt:
+              </div>
+
+              <div class="sim-result-row">
+                <div class="lbl">Ekstra Frigjort Arbeidskapital:</div>
+                <div class="val highlight" id="sim-freed-capital">+1,58 MNOK</div>
+              </div>
+
+              <div class="sim-result-row">
+                <div class="lbl">Beregnet Net Free Cash Flow:</div>
+                <div class="val" id="sim-res-nfcf">4,70 MNOK</div>
+              </div>
+
+              <div class="sim-result-row">
+                <div class="lbl">Prosentvis økning over baseline:</div>
+                <div class="val" id="sim-res-growth" style="color: var(--secondary);">+175 %</div>
+              </div>
+
+              <div class="sim-result-row">
+                <div class="lbl">Beregnet Likviditetsgrad 1:</div>
+                <div class="val" id="sim-res-cr">2,10 x</div>
+              </div>
+
+              <div style="font-size: 0.75rem; color: var(--on-surface-variant); background: var(--surface-container); padding: var(--space-sm); border-radius: var(--rounded);">
+                <i data-lucide="info" style="width: 13px; height: 13px; display: inline-block; vertical-align: middle; margin-right: 4px;"></i>
+                <span id="sim-summary-text">Med nåværende innstillinger realiseres den optimale balansen mellom likviditet og vekst i fatlagringen.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: STRATEGISKE AI-TILTAK FOR LIKVIDITETSSTYRING -->
+    <section aria-labelledby="ai-initiatives-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="ai-initiatives-heading" class="section-title">Strategiske AI-tiltak for Likviditetsstyring</h2>
+          <span class="section-subtitle">Operasjonell veikart for Det Norske Brenneri AS &bull; Grimstad</span>
+        </div>
+        <div class="badge-tag">Konkrete Implementeringer</div>
+      </div>
+
+      <!-- Category Filter Buttons -->
+      <div style="margin-bottom: var(--space-md); display: flex; flex-wrap: wrap; gap: var(--space-xs);">
+        <button class="btn-toggle active" id="filter-all" onclick="filterInitiatives('all')">Alle tiltak (5)</button>
+        <button class="btn-toggle" id="filter-rec" onclick="filterInitiatives('rec')">Reskontro &amp; DSO</button>
+        <button class="btn-toggle" id="filter-inv" onclick="filterInitiatives('inv')">Lager &amp; Produksjon</button>
+        <button class="btn-toggle" id="filter-cash" onclick="filterInitiatives('cash')">Likviditet &amp; Avstemming</button>
+      </div>
+
+      <!-- Grid of Initiative Cards -->
+      <div class="ai-initiatives-grid" id="initiatives-container">
+        
+        <!-- Initiative 1: Prediktiv Kasserer & Avstemming -->
+        <div class="initiative-card" data-category="cash" onclick="openInitiativeModal('prediktiv-kasserer')">
+          <div>
+            <div class="initiative-badge-row">
+              <span class="cat-tag">Likviditetsprognoser &amp; Avstemming</span>
+              <span class="roi-tag">Frigjør 0,45 MNOK</span>
+            </div>
+            <h3 class="initiative-title">AI-agent for Automatisk Bankavstemming &amp; Kontantposisjonering</h3>
+            <p class="initiative-desc">
+              Automatisk innlesing og matching av 99 % av innbetalinger fra Vinmonopolet, grossister og eksportkunder mot Visma/Agresso. 
+              Eliminerer manuelle timer og gir sanntids likviditetsbilde kl. 08:00 hver morgen.
+            </p>
+          </div>
+          <div class="initiative-stats-bar">
+            <div class="init-stat-box">
+              <span class="lbl">Tidsgevinst</span>
+              <span class="val">~12 t/mnd</span>
+            </div>
+            <div class="init-stat-box">
+              <span class="lbl">Systemstøtte</span>
+              <span class="val">Visma &bull; Adra</span>
+            </div>
+            <div class="init-stat-box">
+              <span class="lbl">Status</span>
+              <span class="val" style="color: var(--positive);">Klar for utrulling</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Initiative 2: Sesong- og Etterspørselsprognoser -->
+        <div class="initiative-card" data-category="inv" onclick="openInitiativeModal('sesong-prognose')">
+          <div>
+            <div class="initiative-badge-row">
+              <span class="cat-tag">Lager &amp; Råvarer</span>
+              <span class="roi-tag">Frigjør 0,60 MNOK</span>
+            </div>
+            <h3 class="initiative-title">Prediktiv Etterspørselsmodell for K.G. Puntervold &amp; Vinmonopolet</h3>
+            <p class="initiative-desc">
+              Maskinlæringsmodell (Microsoft AI &amp; ML) som estimerer lokal epletilgang i Agder og optimaliserer innkjøp av flasker, 
+              korker og etiketter før høstsesongen. Hindrer overlagring av innsatsfaktorer.
+            </p>
+          </div>
+          <div class="initiative-stats-bar">
+            <div class="init-stat-box">
+              <span class="lbl">Lagerreduksjon</span>
+              <span class="val">-23 dager DIO</span>
+            </div>
+            <div class="init-stat-box">
+              <span class="lbl">Treffsikkerhet</span>
+              <span class="val">94,2 %</span>
+            </div>
+            <div class="init-stat-box">
+              <span class="lbl">Status</span>
+              <span class="val" style="color: var(--secondary);">Fase 1 testet</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Initiative 3: Intelligent Purring & Kredittscore -->
+        <div class="initiative-card" data-category="rec" onclick="openInitiativeModal('kreditt-ai')">
+          <div>
+            <div class="initiative-badge-row">
+              <span class="cat-tag">Reskontro &amp; Fordringer</span>
+              <span class="roi-tag">Frigjør 0,55 MNOK</span>
+            </div>
+            <h3 class="initiative-title">Automatisert Kredittrisikovurdering &amp; EHF-oppfølging (DSO-kutt)</h3>
+            <p class="initiative-desc">
+              AI-agent som profilerer utelivs- og Horeca-kunder basert på historiske betalingsmønstre i Visma. 
+              Sender proaktive påminnelser før forfall og tilpasser kredittgrenser dynamisk.
+            </p>
+          </div>
+          <div class="initiative-stats-bar">
+            <div class="init-stat-box">
+              <span class="lbl">DSO-kutt</span>
+              <span class="val">48 &rarr; 34 dg</span>
+            </div>
+            <div class="init-stat-box">
+              <span class="lbl">Tap på fordringer</span>
+              <span class="val">&lt; 0,1 %</span>
+            </div>
+            <div class="init-stat-box">
+              <span class="lbl">Status</span>
+              <span class="val" style="color: var(--positive);">Aktiv pilot</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Initiative 4: Fatlagrings- og Batchoptimalisering -->
+        <div class="initiative-card" data-category="inv" onclick="openInitiativeModal('fat-opt')">
+          <div>
+            <div class="initiative-badge-row">
+              <span class="cat-tag">Lager &amp; Fatmodning</span>
+              <span class="roi-tag">Frigjør 0,38 MNOK</span>
+            </div>
+            <h3 class="initiative-title">Intelligent Fatmodningsplanlegger (Whisky &amp; Akevitt)</h3>
+            <p class="initiative-desc">
+              Optimalisering av tappingstidspunkt for Eiktyrne Single Malt og Arvesølvet mot Vinmonopolets anbudssykluser. 
+              Balanserer rentekostnaden på bundet kapital i eikefat mot flaskemarginer ved lansering.
+            </p>
+          </div>
+          <div class="initiative-stats-bar">
+            <div class="init-stat-box">
+              <span class="lbl">Kapitalfrigjøring</span>
+              <span class="val">0,38 MNOK</span>
+            </div>
+            <div class="init-stat-box">
+              <span class="lbl">Fatallokering</span>
+              <span class="val">Oloroso / Bourbon</span>
+            </div>
+            <div class="init-stat-box">
+              <span class="lbl">Status</span>
+              <span class="val" style="color: var(--outline);">Under planlegging</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Initiative 5: Dynamisk Skonto & Leverandørstyring -->
+        <div class="initiative-card" data-category="cash" onclick="openInitiativeModal('skonto-opt')">
+          <div>
+            <div class="initiative-badge-row">
+              <span class="cat-tag">Innkjøp &amp; Skonto</span>
+              <span class="roi-tag">Frigjør 0,22 MNOK</span>
+            </div>
+            <h3 class="initiative-title">AI-styrt Utbetalingstakt &amp; Skontooptimalisering</h3>
+            <p class="initiative-desc">
+              Algoritme som analyserer kontantstrømkurven og avgjør nøyaktig når leverandørfakturaer skal betales tidlig for 2 % kontantrabatt (skonto), 
+              eller utsettes til forfall for maksimal rentedifferanse.
+            </p>
+          </div>
+          <div class="initiative-stats-bar">
+            <div class="init-stat-box">
+              <span class="lbl">Effektiv rente</span>
+              <span class="val">+14,5 % p.a.</span>
+            </div>
+            <div class="init-stat-box">
+              <span class="lbl">DPO-balanse</span>
+              <span class="val">38 dager</span>
+            </div>
+            <div class="init-stat-box">
+              <span class="lbl">Status</span>
+              <span class="val" style="color: var(--secondary);">Implementeres Q1</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 6: IMPLEMENTERING, SYSTEMER & RESSURSMATCH -->
+    <section aria-labelledby="impl-heading">
+      <div class="section-head">
+        <div>
+          <h2 id="impl-heading" class="section-title">Operasjonell Implementering &amp; Ressurskobling</h2>
+          <span class="section-subtitle">Systemarkitektur &bull; Visma, Adra, Python AI &bull; Frank Ellingsen</span>
+        </div>
+        <div class="badge-tag">Kompetanse &amp; Gjennomføring</div>
+      </div>
+
+      <div class="profile-alignment-box">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-md);">
+          <div style="max-width: 820px;">
+            <div style="font-family: var(--font-label); font-size: var(--label-size); text-transform: uppercase; letter-spacing: 0.06em; color: var(--tertiary); font-weight: 600;">
+              Sømløs Integrasjon for Det Norske Brenneri AS (Grimstad)
+            </div>
+            <h3 style="font-family: var(--font-headline); font-size: 1.25rem; margin: 4px 0 var(--space-xs) 0; color: var(--on-surface);">
+              Praktisk erfaring møter sertifisert AI-arkitektur
+            </h3>
+            <p style="font-size: 0.85rem; color: var(--on-surface-variant); margin: 0; line-height: 1.55;">
+              For å realisere målene om 4,70 MNOK Net Free Cash Flow og en likviditetsgrad på 2,1 kreves både dyp forståelse for 
+              rutineoppgaver (bokføring, kundereskontro, e-handel, mva., avstemming mot revisor, anbudsprosesser og butikkdrift i eplesesongen) 
+              og evnen til å automatisere prosesser uten eksterne konsulenthonorarer.
+            </p>
+          </div>
+
+          <div style="background: var(--surface-container); padding: var(--space-md); border-radius: var(--rounded); border: var(--hairline); min-width: 250px;">
+            <div style="font-size: 0.72rem; text-transform: uppercase; color: var(--on-surface-variant); font-weight: 600;">Match mot stilling</div>
+            <div style="font-weight: 700; color: var(--primary); font-size: 0.95rem; margin: 2px 0;">Økonomi- og adm.medarbeider</div>
+            <div style="font-size: 0.75rem; color: var(--on-surface-variant);">Rapporterer til Frederik Grundekjøn &bull; Grimstad</div>
+          </div>
+        </div>
+
+        <div style="margin-top: var(--space-md); padding-top: var(--space-md); border-top: var(--hairline);">
+          <div style="font-weight: 600; font-size: 0.825rem; color: var(--on-surface); margin-bottom: var(--space-xs);">
+            Verifiserte spisskompetanser &amp; relevante sertifiseringer (Frank Ellingsen, Kristiansand):
+          </div>
+          <div class="competence-pills">
+            <span class="competence-pill"><i data-lucide="check-circle" style="width: 13px; height: 13px; color: var(--secondary);"></i> <strong>Visma &amp; Agresso:</strong> Erfaring fra Hurdal &amp; Lillestrøm</span>
+            <span class="competence-pill"><i data-lucide="check-circle" style="width: 13px; height: 13px; color: var(--secondary);"></i> <strong>AdraMatch:</strong> Automatisert avstemming (KLP suksesshistorie)</span>
+            <span class="competence-pill"><i data-lucide="check-circle" style="width: 13px; height: 13px; color: var(--secondary);"></i> <strong>Microsoft:</strong> AI &amp; ML Engineering Professional Certificate</span>
+            <span class="competence-pill"><i data-lucide="check-circle" style="width: 13px; height: 13px; color: var(--secondary);"></i> <strong>IBM:</strong> AI Agents, RAG &amp; LangChain Specialized</span>
+            <span class="competence-pill"><i data-lucide="check-circle" style="width: 13px; height: 13px; color: var(--secondary);"></i> <strong>Univ. of Michigan:</strong> Generative AI in Business</span>
+            <span class="competence-pill"><i data-lucide="check-circle" style="width: 13px; height: 13px; color: var(--secondary);"></i> <strong>Google:</strong> AI Essentials Certificate</span>
+            <span class="competence-pill"><i data-lucide="check-circle" style="width: 13px; height: 13px; color: var(--secondary);"></i> <strong>M365 &amp; Excel:</strong> Avansert modellering og rapporter</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Source attribution footer note -->
+    <footer style="margin-top: var(--space-xl); padding-top: var(--space-md); border-top: var(--hairline); font-size: 0.775rem; color: var(--on-surface-variant); display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-sm);">
+      <div>
+        Kilder: Stillingsannonse Det Norske Brenneri AS (FINN-kode: 478228409), CV &amp; Suksesshistorier Frank Ellingsen, Coursera verifiserte AI-sertifikater (Microsoft, IBM, Univ. of Michigan, Google).
+      </div>
+      <div>
+        Generert for Det Norske Brenneri AS &bull; Grimstad, Norge
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Modal Dialog for Initiative Details -->
+  <div class="modal-backdrop" id="initiative-modal" onclick="closeModalOnBackdrop(event)" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <button class="modal-close-btn" onclick="closeInitiativeModal()" aria-label="Lukk dialog">
+        <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+      </button>
+      <div id="modal-body-dynamic">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast-notify" id="toast-notify" role="status" aria-live="polite">
+    <i data-lucide="check-circle" style="width: 18px; height: 18px; color: #dfcaa2;"></i>
+    <span id="toast-text">Data eksportert til CSV</span>
+  </div>
+
+  <!-- CRITICAL: Shim API tag for Notebook state persistence -->
+  <api-shim></api-shim>
+
+  <!-- Application Logic -->
+  <script>
+    // State management object
+    const appState = {
+      activeView: 'cumulative', // 'cumulative' or 'monthly'
+      scenario: 'ai',           // 'ai', 'base', 'bull'
+      activeFilter: 'all',
+      sliderDso: 14,
+      sliderDio: 20,
+      sliderCapex: 1.9
+    };
+
+    // Monthly baseline and AI forecast cash flows (MNOK)
+    // 12 months: Jan to Des
+    const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'];
+
+    const SCENARIOS_DATA = {
+      ai: {
+        name: 'AI Hovedprognose',
+        monthly: [0.15, 0.12, 0.18, 0.28, 0.35, 0.42, 0.38, 0.32, 0.25, 0.55, 0.88, 0.82],
+        nfcfTotal: 4.70,
+        cr: 2.10,
+        nwcPct: 14.5,
+        dso: 34,
+        growth: '+175 %'
+      },
+      base: {
+        name: 'Historisk Baseline',
+        monthly: [0.05, 0.04, 0.08, 0.12, 0.15, 0.18, 0.16, 0.10, -0.15, 0.25, 0.38, 0.35],
+        nfcfTotal: 1.71,
+        cr: 1.45,
+        nwcPct: 18.0,
+        dso: 48,
+        growth: 'Baseline (0 %)'
+      },
+      bull: {
+        name: 'Aggressiv AI & Markedsekspansjon',
+        monthly: [0.18, 0.15, 0.22, 0.35, 0.45, 0.52, 0.48, 0.40, 0.32, 0.68, 1.05, 0.98],
+        nfcfTotal: 5.40,
+        cr: 2.25,
+        nwcPct: 13.8,
+        dso: 30,
+        growth: '+216 %'
+      }
+    };
+
+    // Calculate cumulative series
+    function getCumulativeSeries(monthlyArr) {
+      let run = 0;
+      return monthlyArr.map(val => {
+        run = Number((run + val).toFixed(2));
+        return run;
+      });
+    }
+
+    // Chart references
+    let sCurveChartInstance = null;
+    let waterfallChartInstance = null;
+
+    // Initiative database for modal detail view
+    const INITIATIVE_DETAILS = {
+      'prediktiv-kasserer': {
+        title: 'AI-agent for Automatisk Bankavstemming & Kontantposisjonering',
+        category: 'Likviditetsprognoser & Avstemming',
+        roi: 'Frigjør 0,45 MNOK i tapt rente/likviditet & sparer 12 t/mnd',
+        system: 'Visma Business/Net, AdraMatch & Python/RAG-agent',
+        description: `Basert på Frank Ellingsens suksessfulle erfaring fra KLP (der han implementerte automatisk avstemming av 350 bankkonti i 6 banker over 30 valutaer og automatiserte 99 % av transaksjonene), overføres denne metodikken til Det Norske Brenneri AS.`,
+        steps: [
+          'Etablere daglig automatisk filuttrekk fra bank og matching mot åpne poster i Visma reskontro.',
+          'Bruk av LLM-agent for semantisk tolkning av innbetalingsreferanser fra serveringssteder og anbudskunder.',
+          'Automatisk bokføring av gebyrer, valutadifferanser og agio/disagio.',
+          'Sanntids likviditetsvarsling kl. 08:00 før driftsdagen starter i Grimstad.'
+        ]
+      },
+      'sesong-prognose': {
+        title: 'Prediktiv Etterspørselsmodell for K.G. Puntervold & Vinmonopolet',
+        category: 'Lager & Råvarer',
+        roi: 'Frigjør 0,60 MNOK i redusert overlagring av emballasje og sprit',
+        system: 'Microsoft Azure Machine Learning & M365 PowerBI',
+        description: `Brenneriets sesongvariasjon er markant: Høsten krever massiv mottakskapasitet for epler hos K.G. Puntervold, mens akevittsalget (Arvesølvet) topper seg kraftig før jul. Modellen forutsier eksakt emballasjebehov.`,
+        steps: [
+          'Innsamling av historiske salgsdata fra Vinmonopolet fordelt på anbudskategorier.',
+          'Værvarsel og modningsestimering for eplehøsten i Agder.',
+          'Just-In-Time bestilling av spesialflasker, etiketter og naturkorker 4 uker før produksjonsbatch.',
+          'Reduserer DIO (lagerdager) fra 112 til 89 dager.'
+        ]
+      },
+      'kreditt-ai': {
+        title: 'Automatisert Kredittrisikovurdering & EHF-oppfølging (DSO-kutt)',
+        category: 'Reskontro & Fordringer',
+        roi: 'Frigjør 0,55 MNOK i utestående kundefordringer',
+        system: 'Visma ERP & AI-drevet purremotor',
+        description: `Horeca-markedet (hotell, restaurant, bar) har tidvis varierende betalingsevne. AI-agenten overvåker kredittrating og sender persontilpassede, høflige påminnelser i EHF- og e-postformat før forfallsdato.`,
+        steps: [
+          'Integrert sjekk mot Brønnøysundregistrene og kredittscore ved opprettelse av nye kunder.',
+          'Tidsstyrt varsling: 3 dager før forfall, på forfallsdato, og dag 7 etter forfall.',
+          'Kutter DSO fra 48 til 34 dager, noe som gir raskere tilgang på kontanter.',
+          'Friere hender for Frederik Grundekjøn til strategisk økonomistyring.'
+        ]
+      },
+      'fat-opt': {
+        title: 'Intelligent Fatmodningsplanlegger (Whisky & Akevitt)',
+        category: 'Lager & Fatmodning',
+        roi: 'Frigjør 0,38 MNOK i optimalisert fatkapital',
+        system: 'SimCorp/Excel-basert produksjonsalgoritme',
+        description: `Whisky (Eiktyrne) og premium akevitt (Arvesølvet) krever måneders og års lagring på Oloroso-sherryfat og eikefat. Algoritmen beregner optimal balanse mellom fatkjøp og flasking.`,
+        steps: [
+          'Registrering av fatnummer, tresort, fyllingsdato og spritstyrke.',
+          'Kalkulering av englenes andel (fordamping) og rentebærende kapitalbinding pr. liter.',
+          'Tilpasning av tapping mot Vinmonopolets anbudslanseringer i mars, mai, september og november.',
+          'Maksimering av bruttofortjeneste pr. solgt liter.'
+        ]
+      },
+      'skonto-opt': {
+        title: 'AI-styrt Utbetalingstakt & Skontooptimalisering',
+        category: 'Innkjøp & Skonto',
+        roi: 'Effektiv avkastning på +14,5 % p.a. på likviditetsoverskudd',
+        system: 'Visma leverandørreskontro & Cash Optimizer',
+        description: `Mange leverandører av råsprit og emballasje tilbyr 2 % kontantrabatt (skonto) ved betaling innen 10 dager. Systemet avgjør dynamisk når det lønner seg å utnytte dette basert på bankrenten.`,
+        steps: [
+          'Automatisk OCR-skanning og tolkning av betalingsbetingelser på innkommende fakturaer.',
+          'Likviditetssjekk mot 14-dagers kassekredittramme.',
+          'Automatisk godkjenning av skontobetalinger med &gt; 12 % annualisert avkastning.',
+          'DPO stabiliseres på sunne 38 dager.'
+        ]
+      }
+    };
+
+    // Initialize Dashboard on load
+    window.addEventListener('DOMContentLoaded', async function() {
+      // 1. Initialize Icons
+      if (window.lucide) {
+        window.lucide.createIcons();
+      }
+
+      // 2. Restore state if Notebook App API is present
+      await restoreAppStateSafe();
+
+      // 3. Render Charts
+      initSCurveChart();
+      initWaterfallChart();
+
+      // 4. Update figures and sync with UI
+      syncUIWithScenario();
+
+      // 5. Signal Notebook ready
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === 'function') {
+        window.notebookAppApi.notifyAppReady();
+      }
+    });
+
+    // Safe State Persistence with Notebook Shim
+    async function restoreAppStateSafe() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === 'function') {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === 'object') {
+            if (saved.scenario) appState.scenario = saved.scenario;
+            if (saved.activeView) appState.activeView = saved.activeView;
+            if (typeof saved.sliderDso === 'number') appState.sliderDso = saved.sliderDso;
+            if (typeof saved.sliderDio === 'number') appState.sliderDio = saved.sliderDio;
+            if (typeof saved.sliderCapex === 'number') appState.sliderCapex = saved.sliderCapex;
+
+            // Sync sliders
+            const sDso = document.getElementById('slider-dso');
+            if (sDso) sDso.value = appState.sliderDso;
+            const sDio = document.getElementById('slider-dio');
+            if (sDio) sDio.value = appState.sliderDio;
+            const sCap = document.getElementById('slider-capex');
+            if (sCap) sCap.value = appState.sliderCapex;
+          }
+        }
+      } catch (err) {
+        console.warn('Kunne ikke laste tilstand via notebookAppApi:', err);
+      }
+    }
+
+    async function persistAppStateSafe() {
+      try {
+        if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === 'function') {
+          await window.notebookAppApi.setAppState({
+            scenario: appState.scenario,
+            activeView: appState.activeView,
+            sliderDso: appState.sliderDso,
+            sliderDio: appState.sliderDio,
+            sliderCapex: appState.sliderCapex
+          });
+        }
+      } catch (err) {
+        console.warn('Kunne ikke lagre tilstand:', err);
+      }
+    }
+
+    // Initialize 12-month S-curve Chart
+    function initSCurveChart() {
+      const canvas = document.getElementById('sCurveChart');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const aiCum = getCumulativeSeries(SCENARIOS_DATA.ai.monthly);
+      const baseCum = getCumulativeSeries(SCENARIOS_DATA.base.monthly);
+
+      sCurveChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: MONTH_LABELS,
+          datasets: [
+            {
+              label: 'AI-Prognose (S-kurve til 4,70 MNOK)',
+              data: aiCum,
+              borderColor: '#14213d',
+              backgroundColor: 'rgba(20, 33, 61, 0.08)',
+              borderWidth: 3,
+              fill: true,
+              tension: 0.35,
+              pointBackgroundColor: '#14213d',
+              pointBorderColor: '#fffdf8',
+              pointBorderWidth: 2,
+              pointRadius: 4,
+              pointHoverRadius: 7
+            },
+            {
+              label: 'Historisk Baseline (1,71 MNOK / 5,6 MNOK ramme)',
+              data: baseCum,
+              borderColor: '#b08d57',
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              borderDash: [5, 5],
+              tension: 0.25,
+              pointBackgroundColor: '#b08d57',
+              pointBorderColor: '#fffdf8',
+              pointBorderWidth: 2,
+              pointRadius: 3,
+              pointHoverRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          plugins: {
+            legend: {
+              display: false // Handled by custom Charter legend
+            },
+            tooltip: {
+              backgroundColor: '#14213d',
+              titleColor: '#dfcaa2',
+              bodyColor: '#fffdf8',
+              borderColor: '#b08d57',
+              borderWidth: 1,
+              padding: 12,
+              callbacks: {
+                title: function(items) {
+                  const m = items[0].label;
+                  let seasonNote = '';
+                  if (m === 'Sep') seasonNote = ' &bull; Eplemottak K.G. Puntervold';
+                  if (m === 'Nov' || m === 'Des') seasonNote = ' &bull; Julesalg Arvesølvet';
+                  if (m === 'Mai' || m === 'Jun') seasonNote = ' &bull; Vårsalg Gin &amp; Uteservering';
+                  return `Måned: ${m}${seasonNote}`;
+                },
+                label: function(context) {
+                  const val = context.parsed.y;
+                  return `${context.dataset.label}: ${val.toFixed(2)} MNOK`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                color: '#d9cfb8',
+                lineWidth: 1
+              },
+              ticks: {
+                color: '#4f5360',
+                font: {
+                  family: 'Inter',
+                  size: 11
+                }
+              }
+            },
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: '#d9cfb8',
+                lineWidth: 1
+              },
+              ticks: {
+                color: '#4f5360',
+                font: {
+                  family: 'Inter',
+                  size: 11
+                },
+                callback: function(val) {
+                  return val.toFixed(1) + ' MNOK';
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Initialize Waterfall Bridge Chart (Floating bars)
+    function initWaterfallChart() {
+      const canvas = document.getElementById('waterfallChart');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Floating bars: [start, end]
+      // 1. EBITDA: [0, 6.20]
+      // 2. Avskrivninger: [6.20, 7.30] (+1.10)
+      // 3. Arbeidskapital: [7.30, 8.10] (+0.80)
+      // 4. Capex: [6.20, 8.10] (-1.90) => bar from 6.20 to 8.10
+      // 5. Lån/Renter: [4.70, 6.20] (-1.50) => bar from 4.70 to 6.20
+      // 6. Net Free Cash Flow: [0, 4.70] (Final bar)
+      const labels = ['EBITDA', 'Avskrivning', 'Arbeidskapital', 'Capex', 'Lån & Renter', 'Net Free CF'];
+      const barRanges = [
+        [0, 6.20],
+        [6.20, 7.30],
+        [7.30, 8.10],
+        [6.20, 8.10],
+        [4.70, 6.20],
+        [0, 4.70]
+      ];
+
+      const barColors = [
+        '#14213d', // Navy (EBITDA base)
+        '#2d5a4a', // Green (Non-cash addback)
+        '#2d5a4a', // Green (NWC release)
+        '#9b2c2c', // Red (Capex outflow)
+        '#9b2c2c', // Red (Debt financing outflow)
+        '#14213d'  // Navy (Final Net Free Cash Flow)
+      ];
+
+      waterfallChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Verdi (MNOK)',
+            data: barRanges,
+            backgroundColor: barColors,
+            borderColor: '#b08d57',
+            borderWidth: 1,
+            borderRadius: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#14213d',
+              titleColor: '#dfcaa2',
+              bodyColor: '#fffdf8',
+              borderColor: '#b08d57',
+              borderWidth: 1,
+              padding: 10,
+              callbacks: {
+                label: function(context) {
+                  const idx = context.dataIndex;
+                  const vals = context.raw;
+                  const diff = Number((vals[1] - vals[0]).toFixed(2));
+                  if (idx === 0) return `Driftsresultat: +${diff} MNOK`;
+                  if (idx === 1) return `Avskrivninger tilbakeført: +${diff} MNOK`;
+                  if (idx === 2) return `Frigjort arbeidskapital: +${diff} MNOK`;
+                  if (idx === 3) return `Capex (Investering i fat/tappelinje): -${diff} MNOK`;
+                  if (idx === 4) return `Gjeldsbetjening & renter: -${diff} MNOK`;
+                  if (idx === 5) return `Netto Fri Kontantstrøm: ${diff} MNOK`;
+                  return `${diff} MNOK`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                color: '#1c1f26',
+                font: { family: 'Inter', size: 11, weight: '500' }
+              }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: '#d9cfb8', lineWidth: 1 },
+              ticks: {
+                color: '#4f5360',
+                font: { family: 'Inter', size: 11 },
+                callback: function(v) { return v + ' MNOK'; }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // Switch between Cumulative S-curve and Monthly Net Bar view
+    function setChartMetricView(viewType) {
+      appState.activeView = viewType;
+      persistAppStateSafe();
+
+      const btnCum = document.getElementById('btn-view-cum');
+      const btnMo = document.getElementById('btn-view-mo');
+
+      if (btnCum && btnMo) {
+        if (viewType === 'cumulative') {
+          btnCum.classList.add('active');
+          btnMo.classList.remove('active');
+        } else {
+          btnMo.classList.add('active');
+          btnCum.classList.remove('active');
+        }
+      }
+
+      updateSCurveChartData();
+    }
+
+    // Switch Scenario (AI / Baseline / Bull)
+    function selectScenario(scenKey) {
+      if (!SCENARIOS_DATA[scenKey]) return;
+      appState.scenario = scenKey;
+      persistAppStateSafe();
+
+      // Update toggle buttons UI
+      const bAi = document.getElementById('scen-ai');
+      const bBase = document.getElementById('scen-base');
+      const bBull = document.getElementById('scen-bull');
+
+      if (bAi) bAi.classList.toggle('active', scenKey === 'ai');
+      if (bBase) bBase.classList.toggle('active', scenKey === 'base');
+      if (bBull) bBull.classList.toggle('active', scenKey === 'bull');
+
+      syncUIWithScenario();
+      updateSCurveChartData();
+    }
+
+    // Update Chart with current scenario and view type
+    function updateSCurveChartData() {
+      if (!sCurveChartInstance) return;
+
+      const currentScen = SCENARIOS_DATA[appState.scenario];
+      const baseScen = SCENARIOS_DATA.base;
+
+      if (appState.activeView === 'cumulative') {
+        const cumTarget = getCumulativeSeries(currentScen.monthly);
+        const cumBase = getCumulativeSeries(baseScen.monthly);
+
+        sCurveChartInstance.config.type = 'line';
+        sCurveChartInstance.data.datasets = [
+          {
+            label: `${currentScen.name} (Kumulativ S-kurve)`,
+            data: cumTarget,
+            borderColor: '#14213d',
+            backgroundColor: 'rgba(20, 33, 61, 0.08)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.35,
+            pointBackgroundColor: '#14213d',
+            pointBorderColor: '#fffdf8',
+            pointBorderWidth: 2,
+            pointRadius: 4
+          },
+          {
+            label: 'Historisk Baseline (1,71 MNOK)',
+            data: cumBase,
+            borderColor: '#b08d57',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderDash: [5, 5],
+            tension: 0.25,
+            pointBackgroundColor: '#b08d57',
+            pointBorderColor: '#fffdf8',
+            pointBorderWidth: 2,
+            pointRadius: 3
+          }
+        ];
+      } else {
+        // Monthly view
+        sCurveChartInstance.config.type = 'bar';
+        sCurveChartInstance.data.datasets = [
+          {
+            label: `${currentScen.name} (Månedlig Netto)`,
+            data: currentScen.monthly,
+            backgroundColor: currentScen.monthly.map(v => v >= 0 ? '#14213d' : '#9b2c2c'),
+            borderColor: '#b08d57',
+            borderWidth: 1,
+            borderRadius: 1
+          },
+          {
+            label: 'Baseline Månedlig Netto',
+            data: baseScen.monthly,
+            backgroundColor: 'rgba(176, 141, 87, 0.45)',
+            borderColor: '#8a6a35',
+            borderWidth: 1,
+            borderRadius: 1
+          }
+        ];
+      }
+
+      sCurveChartInstance.update();
+    }
+
+    // Update KPI Hero Cards according to Scenario
+    function syncUIWithScenario() {
+      const scen = SCENARIOS_DATA[appState.scenario];
+      if (!scen) return;
+
+      const nfcfEl = document.getElementById('kpi-nfcf-val');
+      const crEl = document.getElementById('kpi-cr-val');
+      const nwcEl = document.getElementById('kpi-nwc-val');
+      const dsoEl = document.getElementById('kpi-dso-val');
+
+      if (nfcfEl) nfcfEl.innerHTML = `${scen.nfcfTotal.toFixed(2)} <span class="figure-unit">MNOK</span>`;
+      if (crEl) crEl.innerHTML = `${scen.cr.toFixed(2)} <span class="figure-unit">x</span>`;
+      if (nwcEl) nwcEl.innerHTML = `${scen.nwcPct.toFixed(1)} <span class="figure-unit">%</span>`;
+      if (dsoEl) dsoEl.innerHTML = `${scen.dso} <span class="figure-unit">dager</span>`;
+    }
+
+    // Simulator Handler: calculates dynamic sensitivity
+    function handleSimChange() {
+      const sDso = document.getElementById('slider-dso');
+      const sDio = document.getElementById('slider-dio');
+      const sCapex = document.getElementById('slider-capex');
+
+      if (!sDso || !sDio || !sCapex) return;
+
+      const dsoCut = parseInt(sDso.value, 10); // 0 to 25 days cut
+      const dioCutPct = parseInt(sDio.value, 10); // 0 to 35% cut
+      const capexVal = parseFloat(sCapex.value); // 1.0 to 3.0 MNOK
+
+      appState.sliderDso = dsoCut;
+      appState.sliderDio = dioCutPct;
+      appState.sliderCapex = capexVal;
+      persistAppStateSafe();
+
+      // Update badge labels
+      const dsoResult = 48 - dsoCut;
+      const dioResult = Math.round(112 * (1 - (dioCutPct / 100)));
+
+      const lblDso = document.getElementById('val-slider-dso');
+      const lblDio = document.getElementById('val-slider-dio');
+      const lblCapex = document.getElementById('val-slider-capex');
+
+      if (lblDso) lblDso.textContent = `-${dsoCut} dager (DSO: ${dsoResult} dg)`;
+      if (lblDio) lblDio.textContent = `-${dioCutPct} % (DIO: ${dioResult} dg)`;
+      if (lblCapex) lblCapex.textContent = `${capexVal.toFixed(2)} MNOK`;
+
+      // Recalculate Cash Flow Sensitivity:
+      // Base revenue = 45.2 MNOK.
+      // 1 day of DSO reduction = 45.2 / 365 = ~0.1238 MNOK freed
+      const capitalFromDso = (dsoCut * (45.2 / 365));
+      // Baseline inventory = ~8.0 MNOK. 1% DIO cut = ~0.08 MNOK freed
+      const capitalFromDio = (dioCutPct * 0.045);
+      const totalFreedWorkingCapital = capitalFromDso + capitalFromDio;
+
+      // New NFCF:
+      // Starting from EBITDA 6.2 + Deprec 1.1 + deltaNWC - Capex - Debt 1.5
+      // deltaNWC default baseline was +0.80 MNOK (at 14 days DSO and 20% DIO)
+      const adjustedNWC = totalFreedWorkingCapital * 0.55; // calibrated delta
+      const simNFCF = 6.20 + 1.10 + adjustedNWC - capexVal - 1.50;
+
+      // Current ratio impact
+      // Baseline current ratio = 1.45 at 0 freed. At +1.58 freed => 2.10
+      const simCR = 1.45 + (adjustedNWC * 0.41);
+
+      // Growth over baseline 1.71 MNOK
+      const growthPct = Math.round(((simNFCF - 1.71) / 1.71) * 100);
+
+      // Update result fields
+      const resFreed = document.getElementById('sim-freed-capital');
+      const resNfcf = document.getElementById('sim-res-nfcf');
+      const resGrowth = document.getElementById('sim-res-growth');
+      const resCr = document.getElementById('sim-res-cr');
+      const resSummary = document.getElementById('sim-summary-text');
+
+      if (resFreed) resFreed.textContent = `+${totalFreedWorkingCapital.toFixed(2)} MNOK`;
+      if (resNfcf) resNfcf.textContent = `${simNFCF.toFixed(2)} MNOK`;
+      if (resGrowth) resGrowth.textContent = `${growthPct >= 0 ? '+' : ''}${growthPct} %`;
+      if (resCr) resCr.textContent = `${simCR.toFixed(2)} x`;
+
+      if (resSummary) {
+        if (simNFCF >= 4.7) {
+          resSummary.textContent = 'Målsetting på 4,70 MNOK Net Free Cash Flow er nådd eller overgått med solid gjeldsdekning.';
+        } else if (simNFCF >= 3.0) {
+          resSummary.textContent = 'Moderat likviditetsvekst. Ytterligere innstramming i kredittid eller emballasjelager anbefales.';
+        } else {
+          resSummary.textContent = 'Advarsel: For høy kapitalbinding i Capex eller utilstrekkelig DSO-oppfølging reduserer fri kontantstrøm.';
+        }
+      }
+    }
+
+    // Reset simulator to default AI targets
+    function resetSimulator() {
+      const sDso = document.getElementById('slider-dso');
+      const sDio = document.getElementById('slider-dio');
+      const sCapex = document.getElementById('slider-capex');
+
+      if (sDso) sDso.value = 14;
+      if (sDio) sDio.value = 20;
+      if (sCapex) sCapex.value = 1.9;
+
+      handleSimChange();
+      showToast('Simulatoren er tilbakestilt til standard AI-prognose');
+    }
+
+    // Filter AI initiatives by category
+    function filterInitiatives(cat) {
+      appState.activeFilter = cat;
+      const buttons = ['filter-all', 'filter-rec', 'filter-inv', 'filter-cash'];
+      buttons.forEach(id => {
+        const b = document.getElementById(id);
+        if (b) b.classList.remove('active');
+      });
+
+      const activeBtn = document.getElementById(
+        cat === 'all' ? 'filter-all' :
+        cat === 'rec' ? 'filter-rec' :
+        cat === 'inv' ? 'filter-inv' : 'filter-cash'
+      );
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const cards = document.querySelectorAll('.initiative-card');
+      cards.forEach(card => {
+        const cardCat = card.getAttribute('data-category');
+        if (cat === 'all' || cardCat === cat) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Modal dialog controls
+    function openInitiativeModal(initKey) {
+      const data = INITIATIVE_DETAILS[initKey];
+      if (!data) return;
+
+      const modalBody = document.getElementById('modal-body-dynamic');
+      if (!modalBody) return;
+
+      let stepsHtml = '';
+      data.steps.forEach((step, idx) => {
+        stepsHtml += `<li style="margin-bottom: 8px;"><strong>Trinn ${idx + 1}:</strong> ${step}</li>`;
+      });
+
+      modalBody.innerHTML = `
+        <div style="font-family: var(--font-label); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--tertiary); font-weight: 600; margin-bottom: 4px;">
+          ${data.category}
+        </div>
+        <h2 id="modal-title" style="font-family: var(--font-headline); font-size: 1.35rem; font-weight: 700; margin: 0 0 var(--space-sm) 0; color: var(--on-surface);">
+          ${data.title}
+        </h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: var(--space-md);">
+          <span class="badge-tag highlight" style="color: #4f5360; border-color: #b08d57;">Verdi: ${data.roi}</span>
+          <span class="badge-tag" style="border-color: #14213d; color: #14213d;">Plattform: ${data.system}</span>
+        </div>
+        <p style="font-size: 0.88rem; color: var(--on-surface-variant); line-height: 1.55; margin-bottom: var(--space-md);">
+          ${data.description}
+        </p>
+        <div style="border-top: var(--hairline); padding-top: var(--space-md); margin-top: var(--space-md);">
+          <div style="font-weight: 600; font-size: 0.85rem; color: var(--on-surface); margin-bottom: 8px;">
+            Operasjonell Gjennomføringsplan:
+          </div>
+          <ol style="padding-left: 20px; font-size: 0.825rem; color: var(--on-surface-variant); line-height: 1.5; margin: 0;">
+            ${stepsHtml}
+          </ol>
+        </div>
+        <div style="margin-top: var(--space-lg); text-align: right;">
+          <button class="btn-action" onclick="closeInitiativeModal()">Lukk vindu</button>
+        </div>
+      `;
+
+      const modal = document.getElementById('initiative-modal');
+      if (modal) modal.classList.add('open');
+    }
+
+    function closeInitiativeModal() {
+      const modal = document.getElementById('initiative-modal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function closeModalOnBackdrop(e) {
+      if (e.target.id === 'initiative-modal') {
+        closeInitiativeModal();
+      }
+    }
+
+    // Export Cash Flow Data to CSV
+    function exportDataToCSV() {
+      const scen = SCENARIOS_DATA[appState.scenario];
+      let csvContent = `Måned;Prognose_${scen.name}_MNOK;Kumulativ_S_Kurve_MNOK;Baseline_MNOK;Sesongmerknad\n`;
+
+      let run = 0;
+      let baseRun = 0;
+      MONTH_LABELS.forEach((m, idx) => {
+        const val = scen.monthly[idx];
+        const baseVal = SCENARIOS_DATA.base.monthly[idx];
+        run = Number((run + val).toFixed(2));
+        baseRun = Number((baseRun + baseVal).toFixed(2));
+
+        let note = 'Normal drift';
+        if (m === 'Mai') note = 'Gin og uteservering';
+        if (m === 'Sep') note = 'Eplemottak KG Puntervold';
+        if (m === 'Nov' || m === 'Des') note = 'Arvesølvet akevitt toppleveranser';
+
+        csvContent += `${m};${val.toFixed(2)};${run.toFixed(2)};${baseRun.toFixed(2)};${note}\n`;
+      });
+
+      // Append Summary
+      csvContent += `\nNet Free Cash Flow;${scen.nfcfTotal.toFixed(2)} MNOK\n`;
+      csvContent += `Likviditetsgrad 1;${scen.cr.toFixed(2)}\n`;
+      csvContent += `Arbeidskapitalandel;${scen.nwcPct.toFixed(1)} %\n`;
+      csvContent += `Kredittid Kunder (DSO);${scen.dso} dager\n`;
+
+      // Check if Notebook Shim API triggerFileDownload is available
+      if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === 'function') {
+        window.notebookAppApi.triggerFileDownload({
+          content: csvContent,
+          contentType: 'text/csv',
+          encoding: 'UTF-8',
+          filename: `Det_Norske_Brenneri_Cashflow_${appState.scenario}.csv`
+        });
+        showToast('Prognosen ble eksportert via Notebook API');
+      } else {
+        // Fallback browser download blob
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Det_Norske_Brenneri_Cashflow_${appState.scenario}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('Prognosen ble lastet ned som CSV-fil');
+      }
+    }
+
+    // Show Toast
+    function showToast(msg) {
+      const toast = document.getElementById('toast-notify');
+      const text = document.getElementById('toast-text');
+      if (!toast || !text) return;
+
+      text.textContent = msg;
+      toast.classList.add('visible');
+
+      setTimeout(() => {
+        toast.classList.remove('visible');
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

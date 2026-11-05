@@ -1,0 +1,9 @@
+﻿Fakturanr,Kundenavn,Org_Nr,Fakturadato,Forfallsdato,Belop_NOK,Dager_Forfalt,Status
+10045,Vinmonopolet AS (Sentralt),980486190,2025-10-15,2025-11-14,150000.0,0,Ikke forfalt
+10048,Vinmonopolet AS (Regi Sør),980486190,2025-10-20,2025-11-19,45000.0,0,Ikke forfalt
+10032,Grand Hotel Grimstad,912345678,2025-09-01,2025-10-01,12000.0,35,Forfalt 31-60d
+10015,Bar & Bistro Oslo AS,987654321,2025-07-15,2025-08-15,8500.0,82,Forfalt >60d
+10050,Gulating Gruppen AS,915678912,2025-10-25,2025-11-25,68000.0,0,Ikke forfalt
+10038,Strand Hotel Fevik,923456789,2025-09-20,2025-10-20,24500.0,16,Forfalt 1-30d
+10041,Asko Servering AS,934567890,2025-10-05,2025-11-04,185000.0,1,Forfalt 1-30d
+10022,Sørlandets Eplepresseri Gårdsbutikk,945678901,2025-08-10,2025-09-10,14200.0,56,Forfalt 31-60d
