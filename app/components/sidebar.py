@@ -19,6 +19,7 @@ def render_sidebar():
         st.markdown("---")
         st.subheader("📁 Hurtiglenker")
         st.markdown("- [🌐 Brønnøysund AI Lookup & Financial S-Curve Prognosis](https://frank-ellingsen.github.io/br-nn-ysund-oppslag/)")
+        st.markdown("- [🤖 7-Agent Control Center (HTML)](file:///G:/My%20Drive/ØkAdmOfficeHub/dashboards/seven_agent_control_center.html)")
         st.markdown("- [📊 Cash Flow Dashboard (HTML)](file:///G:/My%20Drive/ØkAdmOfficeHub/dashboards/cash_flow_management_dashboard.html)")
         st.markdown("- [🏛️ Executive AI Cockpit (HTML)](file:///G:/My%20Drive/ØkAdmOfficeHub/dashboards/ai_cockpit_fiscal_ledger.html)")
 

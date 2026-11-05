@@ -15,25 +15,27 @@ def main_menu():
     analytics_engine = DuckDBEngine()
     supervisor = SupervisorAgent(provider=current_provider)
 
-    print("=" * 70)
+    print("=" * 75)
     print("🚀 Velkommen til ØkAdmOfficeHub – Det Norske Brenneri AS")
-    print("   Orkestrert Multi-Agent System for Regnskap, Skatt, Reskontro & FP&A")
-    print("=" * 70)
+    print("   Orkestrert Multi-Agent System (7 Antigravity Agenter i DAG-topologi)")
+    print("=" * 75)
 
     while True:
         print(f"\n⚙️  Aktiv LLM-leverandør: [{current_provider.upper()}]")
-        print("1️⃣  Still spørsmål til lovverket (MVA, Regnskap, Skatt via RAG)")
-        print("2️⃣  Kundereskontro analyse (Aldersfordeling 0-30, 31-60, >60 dager)")
-        print("3️⃣  Lager- og alkoholavgiftsavstemming (Avgiftsfritt vs Fortollet)")
-        print("4️⃣  Skattetrekkskontroll (100% dekningskontroll på Konto 1925)")
-        print("5️⃣  MVA-oppgave Termin 1 & Altinn XML-utkast")
-        print("6️⃣  12-måneders S-kurve & Early Warning Risk Radar (FP&A)")
-        print("7️⃣  Kjør egendefinert SQL-spørring mot ERP-data (DuckDB)")
-        print("8️⃣  Still fritt spørsmål til Supervisor Agent (Autonom ruting)")
-        print("9️⃣  Bytt LLM-leverandør (Gemini <-> Ollama)")
-        print("🔟  Avslutt")
+        print("1️⃣   Still spørsmål til lovverket (MVA, Regnskap, Skatt via RAG)")
+        print("2️⃣   Kundereskontro analyse (Aldersfordeling 0-30, 31-60, >60 dager)")
+        print("3️⃣   Lager- og alkoholavgiftsavstemming (Avgiftsfritt vs Fortollet)")
+        print("4️⃣   Skattetrekkskontroll (100% dekningskontroll på Konto 1925)")
+        print("5️⃣   MVA-oppgave Termin 1 & Altinn XML-utkast")
+        print("6️⃣   12-måneders S-kurve & Early Warning Risk Radar (FP&A)")
+        print("7️⃣   Anbudskalkyle & Vinmonopolet marginberegning (Procurement Agent)")
+        print("8️⃣   Årsavslutning & revisjonssjekkliste (Audit Year-End Agent)")
+        print("9️⃣   Kjør egendefinert SQL-spørring mot ERP-data (DuckDB)")
+        print("🔟   Still fritt spørsmål til Supervisor Agent (Autonom ruting)")
+        print("1️⃣1️⃣ Bytt LLM-leverandør (Gemini <-> Ollama)")
+        print("1️⃣2️⃣ Avslutt")
 
-        valg = input("\n👉 Velg et alternativ (1-10): ").strip()
+        valg = input("\n👉 Velg et alternativ (1-12): ").strip()
 
         if valg == "1":
             print("\n" + "-" * 60)
@@ -93,6 +95,35 @@ def main_menu():
             print(scurve_df.head(6).to_string(index=False) if not scurve_df.empty else "Ingen S-kurvedata.")
 
         elif valg == "7":
+            print("\n🏷️ Procurement & Anbud – Priskalkyle Vinmonopolet:")
+            p_navn = input("Produktnavn [Harahorn Gin]: ").strip() or "Harahorn Gin"
+            p_innkjop = float(input("Innkjøpskost ex mva/avgift [45.0]: ").strip() or "45.0")
+            p_alk = float(input("Alkoholprosent [46.0]: ").strip() or "46.0")
+            p_vol = float(input("Volum i liter [0.5]: ").strip() or "0.5")
+            p_utsalg = float(input("Mål utsalgspris i Vinmonopolet inkl mva [420.0]: ").strip() or "420.0")
+
+            kalk = supervisor.procurement_agent.calculate_margin(
+                product_name=p_navn,
+                cost_price_ex_tax=p_innkjop,
+                alcohol_pct=p_alk,
+                volume_l=p_vol,
+                target_retail_nok=p_utsalg
+            )
+            print(f"\n📊 Kalkyle for {kalk['produkt']}:")
+            print(f" - Alkoholavgift (kr 942.50/L ren alk.): {kalk['alkoholavgift_nok']:,.2f} NOK")
+            print(f" - Emballasjeavgift:                     {kalk['emballasjeavgift_nok']:,.2f} NOK")
+            print(f" - Estimert Vinmonopolet-påslag:          {kalk['est_vinmonopolet_avanse']:,.2f} NOK")
+            print(f" - Netto grossistinntekt:                {kalk['grossistpris_netto']:,.2f} NOK")
+            print(f" - Dekningsbidrag (DB):                  {kalk['dekningsbidrag_nok']:,.2f} NOK")
+            print(f" - Dekningsgrad (DG):                    {kalk['dekningsgrad_prosent']}%")
+            print(f" - Vurdering: {'✅ Godkjent og lønnsomt' if kalk['lonnsomt'] else '❌ Negativ margin'}")
+
+        elif valg == "8":
+            print("\n📋 Årsavslutnings- og revisjonssjekkliste:")
+            check_df = pd.DataFrame(supervisor.audit_agent.get_audit_closing_checklist())
+            print(check_df.to_string(index=False))
+
+        elif valg == "9":
             print("\n📁 Tilgjengelige filer for SQL-spørring:")
             csv_filer = list(ERP_EXPORTS_DIR.glob("*.csv")) + list(FINANCIAL_MODELS_DIR.glob("*.xlsx"))
             for i, f in enumerate(csv_filer, 1):
@@ -119,23 +150,23 @@ def main_menu():
             print("\n📊 Resultat:")
             print(res_df.to_string(index=False) if not res_df.empty else "Ingen rader returnert.")
 
-        elif valg == "8":
+        elif valg == "10":
             sporsmal = input("\n🤖 Still et fritt spørsmål til Supervisor Agent:\n> ").strip()
             if sporsmal:
                 svar = supervisor.route_and_execute(sporsmal, provider=current_provider)
                 print("\n" + svar)
 
-        elif valg == "9":
+        elif valg == "11":
             current_provider = "ollama" if current_provider == "gemini" else "gemini"
             supervisor = SupervisorAgent(provider=current_provider)
             print(f"\n🔄 Endret aktiv LLM-leverandør til: [{current_provider.upper()}]")
 
-        elif valg in ["10", "avslutt", "exit", "q"]:
+        elif valg in ["12", "avslutt", "exit", "q"]:
             print("\n👋 Avslutter ØkAdmOfficeHub. God vakt videre!")
             break
 
         else:
-            print("⚠️ Ugyldig valg. Velg et tall mellom 1 og 10.")
+            print("⚠️ Ugyldig valg. Velg et tall mellom 1 og 12.")
 
 if __name__ == "__main__":
     main_menu()

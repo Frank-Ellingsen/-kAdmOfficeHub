@@ -24,7 +24,7 @@ provider = st.session_state.get("llm_provider", "gemini")
 st.title("🥃 ØkAdmOfficeHub – AI Cockpit & Finansiell Drift")
 st.markdown(
     "**Virksomhet:** Det Norske Brenneri AS (Org.nr 996 928 977)  \n"
-    "**Orkestrering:** Antigravity Multi-Agent Hierarkisk DAG (Supervisor + 4 Domene-spesialister)"
+    "**Orkestrering:** Antigravity Multi-Agent Hierarkisk DAG (7 Agenter: Supervisor + 6 Domene-spesialister)"
 )
 
 st.markdown("---")
@@ -49,7 +49,7 @@ st.markdown("---")
 st.subheader("🤖 Supervisor Agent – Autonom Oppgaveløser")
 st.caption("Still et spørsmål om MVA, reskontro, alkoholavgifter, likviditet eller regelverk:")
 
-user_input = st.text_input("Hva ønsker du utført i dag?", placeholder="F.eks: 'Hvor mye skylder vi i skattetrekk?' eller 'Hva er reglene for MVA-fradrag på representasjon?'")
+user_input = st.text_input("Hva ønsker du utført i dag?", placeholder="F.eks: 'Hvor mye skylder vi i skattetrekk?' eller 'Beregn anbudsmargin for Vinmonopolet'")
 
 if st.button("Kjør oppgave", type="primary"):
     if user_input:

@@ -14,15 +14,19 @@ Systemet kombinerer RAG (Retrieval-Augmented Generation) mot relevante lover og 
 Systemet er bygget opp som et autonomt multi-agent økosystem som fordeler oppgavene på fem spesialiserte agenter:
 
 1. **supervisor_agent (Orchestrator)**
-   - Håndterer brukerhenvendelser, filopplasting (PDF, CSV, Excel) og ruter oppgaver dynamisk til riktig spesialistagent.
+   - Håndterer brukerhenvendelser, filopplasting (PDF, CSV, Excel) og ruter oppgaver dynamisk i en Directed Acyclic Graph (DAG) til riktig spesialistagent.
 2. **compliance_rag_agent (Regelverksspesialist)**
    - Semantisk oppslag i ChromaDB mot Merverdiavgiftsloven (§ 8-1, § 8-2, § 8-3), Bokføringsforskriften (§ 8-10-6) og forretningsjus.
 3. **analytics_reskontro_agent (Dataingeniør)**
    - Utfører aldersfordelingsanalyser på kundereskontro, oppdaterer prisfiler og avstemmer avgiftsfritt fatlager (ulåst) mot fortollet salgslager.
 4. **tax_excise_agent (Offentlig Rapportering)**
-   - Beregner MVA-oppgaver, alkoholavgift (kr 942,50/L ren alkohol) og emballasjeavgift, samt gjennomfører 100% automatisk skattetrekkskontroll (konto 1925 mod skyldig forskuddstrekk).
+   - Beregner MVA-oppgaver, alkoholavgift (kr 942,50/L ren alkohol) og emballasjeavgift, samt gjennomfører 100% automatisk skattetrekkskontroll (konto 1925 mot skyldig forskuddstrekk).
 5. **cash_fpa_radar_agent (Likviditet & Prognose)**
    - Driver 3-statement prognosemodellen (2024–2026), simulerer arbeidskapitalendringer (DSO, DIO, DPO) og drifter Early Warning Risk Radar.
+6. **procurement_anbud_agent (Anbud & Prising - NY)**
+   - Bistår med Vinmonopolet anbudsbesvarelser, grossistprisfiler (Asko, Servicegrossistene), kalkyleberegning baklengs fra hyllepris og marginbeskyttelse.
+7. **audit_year_end_agent (Årsavslutning & Revisor - NY)**
+   - Utarbeider standardiserte avstemmingsbilag, dokumentasjonsmapper for ekstern revisor, anleggsavskrivninger og periodiseringskontroll.
 
 ---
 
