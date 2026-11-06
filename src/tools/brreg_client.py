@@ -110,3 +110,4 @@ class BrregClient:
             "farge": "success",
             "begrunnelse": "Aktivt norsk selskap, MVA-registrert, ingen konkurser eller avviklinger registrert."
         }
+
