@@ -9,6 +9,7 @@ sys.path.append(str(BASE_DIR))
 from src.analytics.duckdb_engine import DuckDBEngine
 from src.core.agent_engine import ProcurementAnbudAgent, AuditYearEndAgent
 from src.core.llm_router import LLMRouter
+from src.tools.brreg_client import BrregClient
 from app.components.sidebar import render_sidebar
 
 st.set_page_config(page_title="Anbud, FP&A & Årsavslutning", page_icon="📈", layout="wide")
@@ -25,11 +26,14 @@ audit_agent = AuditYearEndAgent(router, engine)
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "🎯 Early Warning Radar",
     "🌊 12-Måneders S-Kurve Kontantstrøm",
-    "💼 3-Statement & Arbeidskapital",
+    "💼 3-Statement & Regnskapshistorikk",
     "🏷️ Anbud & Vinmonopolet Prising",
     "📋 Årsavslutning & Revisjonsmappe"
 ])
 
+# ==========================================
+# TAB 1: EARLY WARNING RADAR
+# ==========================================
 with tab1:
     st.subheader("Finansiell Prognose & Avviksanalyse (Varians)")
     df_radar = engine.early_warning_radar()
@@ -46,6 +50,9 @@ with tab1:
     - **DIO Risiko:** Varelagerrotasjon på 90.6 dager (6.7 MNOK bundet i varer) krever aktiv oppfølging mot Vinmonopolets lanseringsplan.
     """)
 
+# ==========================================
+# TAB 2: 12-MÅNEDERS S-KURVE
+# ==========================================
 with tab2:
     st.subheader("12-Måneders S-Kurve: Akkumulert Kontantstrøm (MNOK)")
     df_scurve = engine.cashflow_scurve_analyse()
@@ -58,27 +65,38 @@ with tab2:
     else:
         st.warning("Finner ikke scurve_cashflow_12m.csv.")
 
+# ==========================================
+# TAB 3: 3-STATEMENT & REGNSKAPSHISTORIKK
+# ==========================================
 with tab3:
-    st.subheader("Balanse og Eiendeler Komposisjon")
+    st.subheader("Balanse og Eiendeler Komposisjon (2025)")
     path_eiendeler = BASE_DIR / "data" / "erp_exports" / "eiendeler_komposisjon_2025.csv"
     if path_eiendeler.exists():
         df_eiendeler = pd.read_csv(path_eiendeler)
         st.dataframe(df_eiendeler, use_container_width=True)
-        
         c_chart = df_eiendeler.set_index("Underkategori")["Verdi_NOK_M"]
         st.bar_chart(c_chart)
-    else:
-        st.info("Finner ikke eiendeler_komposisjon_2025.csv.")
 
     st.markdown("---")
-    st.subheader("3-Statement Prognose 2026")
+    st.subheader("3-Statement Prognose 2026 (Baseline vs. AI-Tiltak)")
     path_3stmt = BASE_DIR / "data" / "erp_exports" / "tre_statement_prognose_2026.csv"
     if path_3stmt.exists():
         df_3s = pd.read_csv(path_3stmt)
         st.dataframe(df_3s, use_container_width=True)
-    else:
-        st.info("Finner ikke tre_statement_prognose_2026.csv.")
 
+    st.markdown("---")
+    st.subheader("🏛️ Offisiell Regnskapshistorikk 2023–2025 (Brønnøysundregistrene)")
+    st.caption("Faktiske tall rapportert til Regnskapsregisteret for Det Norske Brenneri AS (Org.nr 996 928 977).")
+    path_hist = BASE_DIR / "data" / "erp_exports" / "det_norske_brenneri_regnskapshistorikk.csv"
+    if path_hist.exists():
+        df_hist = pd.read_csv(path_hist)
+        st.dataframe(df_hist, use_container_width=True)
+    else:
+        st.info("Finner ikke det_norske_brenneri_regnskapshistorikk.csv.")
+
+# ==========================================
+# TAB 4: ANBUD & VINMONOPOLET PRISING
+# ==========================================
 with tab4:
     st.subheader("🏷️ Anbudskalkyle for Vinmonopolet & Grossister (Asko / SG)")
     st.caption("Beregner alkoholavgifter (kr 942.50/L ren alkohol), emballasjeavgift, pol-avanse og dekningsbidrag baklengs fra hyllepris.")
@@ -114,11 +132,14 @@ with tab4:
     df_kalk = pd.DataFrame([kalk])
     st.dataframe(df_kalk.T.rename(columns={0: "Verdi"}), use_container_width=True)
 
+# ==========================================
+# TAB 5: ÅRSAVSLUTNING & REVISJONSMAPPE
+# ==========================================
 with tab5:
     st.subheader("📋 Årsavslutnings- & Revisjonsdokumentasjon")
-    st.caption("Lovpålagte avstemmingskrav for ekstern revisor iht. Regnskapsloven og God regnskapsskikk (NRS).")
+    st.caption("Lovpålagte avstemmingskrav for ekstern revisor (Cedra Norge AS) iht. Regnskapsloven og God regnskapsskikk (NRS).")
 
     checklist = audit_agent.get_audit_closing_checklist()
     st.dataframe(pd.DataFrame(checklist), use_container_width=True)
 
-    st.info("💡 Alle avstemmingsbilag kan eksporteres direkte til revisors dokumentasjonsportal via Altinn eller kryptert ZIP.")
+    st.info("💡 Alle avstemmingsbilag kan eksporteres direkte til revisors dokumentasjonsportal via Altinn eller kryptert overføring.")

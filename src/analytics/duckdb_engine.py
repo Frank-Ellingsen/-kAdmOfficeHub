@@ -224,3 +224,49 @@ class DuckDBEngine:
                 return pd.DataFrame()
 
         return prog_df
+
+    def leverandorreskontro_ap(self) -> pd.DataFrame:
+        """
+        Laster og analyserer leverandørreskontro (AP) fra operasjonell arbeidsbok.
+        """
+        excel_path = find_data_file("ok_adm_operasjonell_mappe.xlsx")
+        if not excel_path or not excel_path.exists():
+            return pd.DataFrame()
+
+        try:
+            df = pd.read_excel(excel_path, sheet_name="Leverandorreskontro_AP", header=2)
+            df = df.dropna(subset=["Faktura Nr", "Leverandør Navn"])
+            df["Beløp Inkl MVA (NOK)"] = pd.to_numeric(df["Beløp Inkl MVA (NOK)"], errors="coerce").fillna(0.0)
+            df["MVA-Beløp (NOK)"] = pd.to_numeric(df["MVA-Beløp (NOK)"], errors="coerce").fillna(0.0)
+            return df
+        except Exception as e:
+            logger.error(f"Feil ved lesing av Leverandorreskontro_AP: {e}")
+            return pd.DataFrame()
+
+    def beregn_angels_share(
+        self,
+        fatvolum_liter: float = 45000.0,
+        arlig_fordamping_prosent: float = 2.5,
+        alkoholprosent: float = 60.0
+    ) -> Dict[str, Any]:
+        """
+        Beregner fatlagringssvinn (Angels' share) for whisky og fatlagret akevitt i Grimstad.
+        Beregner spart alkoholavgift (kr 942.50/L ren alkohol) til lovpålagt svinnprotokoll for Skatteetaten.
+        """
+        fordampet_volum_liter = fatvolum_liter * (arlig_fordamping_prosent / 100.0)
+        fordampet_ren_alkohol_liter = fordampet_volum_liter * (alkoholprosent / 100.0)
+        alkoholavgift_sats = 942.50
+        fratrukket_avgiftsforpliktelse = fordampet_ren_alkohol_liter * alkoholavgift_sats
+
+        return {
+            "fatlager_totalt_liter": fatvolum_liter,
+            "snitt_alkoholstyrke_prosent": alkoholprosent,
+            "arlig_fordamping_prosent": arlig_fordamping_prosent,
+            "arlig_svinn_liter": round(fordampet_volum_liter, 1),
+            "arlig_svinn_ren_alkohol_liter": round(fordampet_ren_alkohol_liter, 2),
+            "maanedlig_svinn_ren_alkohol_liter": round(fordampet_ren_alkohol_liter / 12.0, 2),
+            "fratrukket_alkoholavgift_aarlig_nok": round(fratrukket_avgiftsforpliktelse, 2),
+            "fratrukket_alkoholavgift_maanedlig_nok": round(fratrukket_avgiftsforpliktelse / 12.0, 2),
+            "status_dokumentasjon": "KREVER LOGGFØRING I SKATTEETATENS SVINNPROTOKOLL (BOKFØRINGSFORSKRIFTEN)"
+        }
+
