@@ -1,0 +1,8 @@
+﻿Destinasjon / Knutepunkt,Etterspørsel (Kasser),Optimal Transportrute,Fraktkostnad / Kasse,Total Uke-kostnad (LP),Dagens Baseline,Ukentlig Innsparing
+Vinmonopolet Hovedlager (Vestby/Oslo),"1,200 kasser",FTL (Hel Pall/Lastebil),15.00 NOK,"18,000 NOK","20,700 NOK","2,700 NOK"
+Grossist ASKO (Kjeller/Sentral),800 kasser,3PL Sentrallager,21.00 NOK,"16,800 NOK","19,320 NOK","2,520 NOK"
+Grossist Servicegrossistene,450 kasser,FTL (Hel Pall/Lastebil),18.00 NOK,"8,100 NOK","9,315 NOK","1,215 NOK"
+Horeca Direkte Oslo / Viken,300 kasser,3PL Sentrallager,30.00 NOK,"9,000 NOK","10,350 NOK","1,350 NOK"
+Horeca Direkte Sørlandet (Kristiansand/Arendal),250 kasser,FTL (Hel Pall/Lastebil),12.00 NOK,"3,000 NOK","3,450 NOK",450 NOK
+Regional Distributør Nord/Vest,400 kasser,FTL (Hel Pall/Lastebil),28.00 NOK,"11,200 NOK","12,880 NOK","1,680 NOK"
+TOTALT ÅRLIG ESTIMAT (52 uker),"176,800 kasser",LP-Optimalisert Miks,19.44 NOK (snitt),"3,437,200 NOK","3,952,780 NOK","💰 515,580 NOK/år"
