@@ -905,13 +905,22 @@
       </div>
 
       <nav class="sidebar-nav">
+        <div class="nav-group-title">Stillingsutlysning &amp; Profil</div>
+        <div class="nav-item is-active" onclick="switchModule('module-job-posting', this)" id="nav-job-posting" role="button" tabindex="0">
+          <div class="nav-item-content">
+            <i data-lucide="briefcase" class="nav-icon" style="color: var(--primary);"></i>
+            <span>Stillingsutlysning &amp; Case</span>
+          </div>
+          <span class="nav-badge" style="background: var(--primary); color: white;">Øk &amp; Adm</span>
+        </div>
+
         <div class="nav-group-title">Operativ Ledelse</div>
-        <div class="nav-item is-active" onclick="switchModule('module-cockpit', this)" id="nav-cockpit" role="button" tabindex="0">
+        <div class="nav-item" onclick="switchModule('module-cockpit', this)" id="nav-cockpit" role="button" tabindex="0">
           <div class="nav-item-content">
             <i data-lucide="layout-dashboard" class="nav-icon"></i>
             <span>Executive Cockpit</span>
           </div>
-          <span class="nav-badge active-badge">31,05M</span>
+          <span class="nav-badge">31,05M</span>
         </div>
         <div class="nav-item" onclick="switchModule('module-ingestion', this)" id="nav-ingestion" role="button" tabindex="0">
           <div class="nav-item-content">
@@ -1018,7 +1027,7 @@
           <div class="topbar-breadcrumbs">
             <span>Brenneri Navigasjon</span>
             <span>/</span>
-            <span id="breadcrumbCurrent" style="color: var(--on-surface); font-weight: 600;">Executive Cockpit</span>
+            <span id="breadcrumbCurrent" style="color: var(--on-surface); font-weight: 600;">Stillingsutlysning &amp; Executive Case</span>
           </div>
         </div>
 
@@ -1045,9 +1054,236 @@
       <div class="content-canvas">
 
         <!-- =================================================================
+             MODULE 0: STILLINGSUTLYSNING & ROLLEBESKRIVELSE
+        ================================================================== -->
+        <section id="module-job-posting" class="module-section active-module">
+          <div class="section-head" style="border-bottom: 2px solid var(--primary); padding-bottom: 16px; margin-bottom: 24px;">
+            <div>
+              <div style="font-family: var(--font-label); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); font-weight: 700; margin-bottom: 4px;">
+                STILLINGSUTLYSNING &amp; KRAVPROFIL • DET NORSKE BRENNERI AS
+              </div>
+              <h2 class="section-title" style="font-size: 2rem; margin: 0 0 6px 0;">
+                Økonomi- og <strong>administrasjonsansvarlig</strong>
+              </h2>
+              <p class="section-desc" style="font-size: 0.95rem; color: var(--on-surface-variant); max-width: 900px; margin: 0;">
+                Helhetsansvar for finansiell styring, avgifts- og tollageretterlevelse (Tolletaten), MVA/A-melding (Skatteetaten), likviditetsplanlegging og kommersiell controlling for Norges ledende uavhengige brenneri.
+              </p>
+            </div>
+            <div class="section-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <span class="pill-tag pill-blue" style="font-weight: 600;">Fast 100 % stilling</span>
+              <span class="pill-tag pill-green" style="font-weight: 600;">Grimstad / Fleksibelt</span>
+              <a href="index.html" class="btn btn-primary btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <i data-lucide="layout-dashboard" style="width: 14px; height: 14px;"></i>
+                <span>Gå til Hverdags-Hub (index.html)</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- STILLINGSFAKTA STRIP -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 24px;">
+            <div style="background: var(--surface-container); padding: 14px 16px; border-left: 3px solid var(--primary);">
+              <div style="font-family: var(--font-label); font-size: 0.7rem; color: var(--on-surface-variant); text-transform: uppercase;">Arbeidsgiver</div>
+              <div style="font-weight: 700; font-size: 1rem; color: var(--on-surface); margin-top: 2px;">Det Norske Brenneri AS</div>
+              <div style="font-size: 0.75rem; color: var(--on-surface-subtle);">Org.nr 996 928 977 • Stiftet 2011</div>
+            </div>
+            <div style="background: var(--surface-container); padding: 14px 16px; border-left: 3px solid var(--positive);">
+              <div style="font-family: var(--font-label); font-size: 0.7rem; color: var(--on-surface-variant); text-transform: uppercase;">Arbeidssted &amp; Lokasjon</div>
+              <div style="font-weight: 700; font-size: 1rem; color: var(--on-surface); margin-top: 2px;">Grimstad (Agder)</div>
+              <div style="font-size: 0.75rem; color: var(--on-surface-subtle);">Industriveien 6 • Opsjon Oslo-kontor</div>
+            </div>
+            <div style="background: var(--surface-container); padding: 14px 16px; border-left: 3px solid #6f2da8;">
+              <div style="font-family: var(--font-label); font-size: 0.7rem; color: var(--on-surface-variant); text-transform: uppercase;">Kjerneprodukter</div>
+              <div style="font-weight: 700; font-size: 1rem; color: var(--on-surface); margin-top: 2px;">Harahorn &amp; Arvesølvet</div>
+              <div style="font-size: 0.75rem; color: var(--on-surface-subtle);">Norsk håndverksbrennevin &amp; Eik whisky</div>
+            </div>
+            <div style="background: var(--surface-container); padding: 14px 16px; border-left: 3px solid #da680f;">
+              <div style="font-family: var(--font-label); font-size: 0.7rem; color: var(--on-surface-variant); text-transform: uppercase;">Rapportering</div>
+              <div style="font-weight: 700; font-size: 1rem; color: var(--on-surface); margin-top: 2px;">Daglig Leder / Styret</div>
+              <div style="font-size: 0.75rem; color: var(--on-surface-subtle);">Tilsynsansvarlig: Frederik Grundekjøn</div>
+            </div>
+          </div>
+
+          <!-- STILLINGSINNHOLD 2-KOLONNER -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 20px; margin-bottom: 28px;">
+            
+            <!-- VENSTRE KOLONNE: OM SELSKAPET & STILLINGENS FORMÅL -->
+            <div style="background: var(--background); border: var(--rule); padding: 22px; display: flex; flex-direction: column; gap: 16px;">
+              <div>
+                <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--on-surface); margin: 0 0 8px 0; display: flex; align-items: center; gap: 8px;">
+                  <i data-lucide="building" style="color: var(--primary); width: 20px; height: 20px;"></i>
+                  <span>Om Det Norske Brenneri AS</span>
+                </h3>
+                <p style="font-size: 0.88rem; line-height: 1.6; color: var(--on-surface-variant); margin: 0;">
+                  Det Norske Brenneri har sine historiske røtter i Grimstad, en by med brennevinstradisjoner helt tilbake til 1880-årene. Da det statlige produksjonsmonopolet ble opphevet i 2005, var vi det første private brenneriet i Norge på over 80 år. I dag er vi Norges nest største brennevinsprodusent, kjent for prisvinnende kvalitetsprodukter som <strong>Harahorn Gin</strong> (dobbelt gull i San Francisco World Spirits Competition), <strong>Arvesølvet Akevitt</strong>, og Norges første single malt whisky <strong>Eik</strong>.
+                </p>
+                <p style="font-size: 0.88rem; line-height: 1.6; color: var(--on-surface-variant); margin: 10px 0 0 0;">
+                  Med moderne produksjon, fatlagre i Grimstad, og distribusjon over hele Norge via Vinmonopolet, grossister og barer/restauranter – samt eksport til mer enn 30 land – er selskapet i en spennende vekstfase.
+                </p>
+              </div>
+
+              <div style="border-top: var(--rule); pt-3; padding-top: 14px;">
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--on-surface); margin: 0 0 8px 0;">Stillingens Formål</h4>
+                <p style="font-size: 0.86rem; line-height: 1.55; color: var(--on-surface-variant); margin: 0;">
+                  Rollen som <strong>Økonomi- og administrasjonsansvarlig</strong> er sentral for brenneriets drift og lønnsomhet. Du får det helhetlige ansvaret for selskapets økonomi, regnskap, skatt- og avgiftsrapportering, samt rollen som strategisk sparringspartner for ledelsen i kommersielle anbud på Vinmonopolet, likviditetsstyring og kostnadsoptimalisering.
+                </p>
+              </div>
+            </div>
+
+            <!-- HØYRE KOLONNE: SENTRALE ANSVARSOMRÅDER -->
+            <div style="background: var(--background); border: var(--rule); padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+              <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--on-surface); margin: 0 0 4px 0; display: flex; align-items: center; gap: 8px;">
+                <i data-lucide="check-square" style="color: var(--positive); width: 20px; height: 20px;"></i>
+                <span>Sentrale Ansvarsområder</span>
+              </h3>
+              
+              <ul style="margin: 0; padding-left: 20px; font-size: 0.86rem; line-height: 1.6; color: var(--on-surface-variant); display: flex; flex-direction: column; gap: 8px;">
+                <li><strong>Løpende Regnskap &amp; Reskontro:</strong> Fakturering, inngående fakturakontroll med MVAL § 8-3 representasjonssjekk, remittering og aldersfordelt purrerutine etter Inkassoloven § 9.</li>
+                <li><strong>Tollager &amp; Særavgifter:</strong> Autorisert tollagerforvaltning i Grimstad, månedlig deklarasjon av alkoholavgift (kr 942,50/L ren alkohol) til Tolletaten og 3,2 % naturlig fordampingsfradrag (<em>Angels' Share</em>).</li>
+                <li><strong>Skatt, MVA &amp; Altinn 3:</strong> Rettidig levering av MVA-meldinger via Altinn 3 API, A-melding, og 100 % dekning på sperret skattetrekkskonto 1925 iht. Skattebetalingsloven § 5-12.</li>
+                <li><strong>Vinmonopolet Pris- &amp; Anbudskalkyler:</strong> Baklengskalkyler fra hyllepris (VMP) til netto fabrikkpris, beregning av Dekningsbidrag 1 (DB1) og DB2.</li>
+                <li><strong>Likviditet &amp; 3-Statement Modellering:</strong> 12-måneders rullerende kontantstrømprognose (S-kurve), EBITDA-oppfølging og balansekontroll.</li>
+                <li><strong>Logistikk &amp; Fraktminimering:</strong> Rute- og transportoptimering fra Grimstad til Vinmonopolet Vestby og ASKO for å hente ut stordriftsfordeler (+515k/år).</li>
+                <li><strong>Årsavslutning &amp; Revisor:</strong> Samarbeid med statsautorisert revisor Cedra Norge AS og komplett revisjonsmappe.</li>
+              </ul>
+            </div>
+
+          </div>
+
+          <!-- KVALIFIKASJONER OG KRAV -->
+          <div style="background: var(--surface-container); border: var(--rule); padding: 22px; margin-bottom: 28px;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--on-surface); margin: 0 0 14px 0; display: flex; align-items: center; gap: 8px;">
+              <i data-lucide="award" style="color: #6f2da8; width: 20px; height: 20px;"></i>
+              <span>Ønskede Kvalifikasjoner &amp; Personlige Egenskaper</span>
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <div style="width: 22px; height: 22px; border-radius: 50%; background: rgba(15, 98, 254, 0.15); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px;">1</div>
+                <div style="font-size: 0.86rem; color: var(--on-surface-variant); line-height: 1.5;">
+                  <strong>Utdanning:</strong> Høyere økonomisk utdanning (bachelor eller master) innen økonomi, regnskap, revisjon eller finansiell controlling.
+                </div>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <div style="width: 22px; height: 22px; border-radius: 50%; background: rgba(15, 98, 254, 0.15); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px;">2</div>
+                <div style="font-size: 0.86rem; color: var(--on-surface-variant); line-height: 1.5;">
+                  <strong>Erfaring:</strong> Solid erfaring med regnskap fra A til Å, gjerne fra produksjons-, varehandels- eller næringsmiddelvirksomhet.
+                </div>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <div style="width: 22px; height: 22px; border-radius: 50%; background: rgba(15, 98, 254, 0.15); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px;">3</div>
+                <div style="font-size: 0.86rem; color: var(--on-surface-variant); line-height: 1.5;">
+                  <strong>Regelverk:</strong> Forståelse for særavgiftsforskriften på alkohol, tollagerregnskap og MVA-lovgivning er en stor fordel.
+                </div>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: flex-start;">
+                <div style="width: 22px; height: 22px; border-radius: 50%; background: rgba(15, 98, 254, 0.15); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 2px;">4</div>
+                <div style="font-size: 0.86rem; color: var(--on-surface-variant); line-height: 1.5;">
+                  <strong>Systemforståelse:</strong> Sterke ferdigheter i Excel/BI, datamodellering (SQL/DuckDB) og nysgjerrighet på AI-verktøy i økonomistyringen.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- INTERAKTIV CASE-BESVARELSE (KANDIDAT FRANK ELLINGSEN) -->
+          <div style="background: var(--background); border: 2px solid var(--primary); padding: 24px; margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <span class="pill-tag pill-blue" style="font-weight: 700;">Interaktiv Søknads-Case</span>
+                <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--on-surface); margin: 6px 0 2px 0;">
+                  Hvordan ØkAdmOfficeHub besvarer stillingskravene i praksis
+                </h3>
+                <p style="font-size: 0.85rem; color: var(--on-surface-variant); margin: 0;">
+                  Utviklet av Frank Ellingsen som en fungerende, interaktiv pilot for Det Norske Brenneri AS. Klikk på modulene under for å teste funksjonaliteten direkte:
+                </p>
+              </div>
+              <button onclick="switchModule('module-cockpit', document.getElementById('nav-cockpit'))" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+                <span>Start med Executive Cockpit</span>
+                <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+              </button>
+            </div>
+
+            <!-- MODULMATRISE FOR CASE -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-top: 16px;">
+              
+              <div onclick="switchModule('module-cockpit', document.getElementById('nav-cockpit'))" style="cursor: pointer; background: var(--surface-container); padding: 14px; border: var(--rule); transition: transform 0.15s, border-color 0.15s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--outline-variant)'">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <strong style="font-size: 0.9rem; color: var(--on-surface);">1. Executive Cockpit</strong>
+                  <span class="nav-badge active-badge">31,05M</span>
+                </div>
+                <p style="font-size: 0.78rem; color: var(--on-surface-variant); margin: 6px 0 0 0;">
+                  Sanntids KPI-radar, fristradar for avgifter og likviditetsprognose.
+                </p>
+              </div>
+
+              <div onclick="switchModule('module-controlling', document.getElementById('nav-controlling'))" style="cursor: pointer; background: var(--surface-container); padding: 14px; border: var(--rule); transition: transform 0.15s, border-color 0.15s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--outline-variant)'">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <strong style="font-size: 0.9rem; color: var(--on-surface);">2. Controlling &amp; Skatt</strong>
+                  <span class="nav-badge" style="background: var(--positive); color: white;">100% K1925</span>
+                </div>
+                <p style="font-size: 0.78rem; color: var(--on-surface-variant); margin: 6px 0 0 0;">
+                  Sperret skattetrekkskonto 1925, MVAL § 8-3 representasjonssjekk og avgiftskontroll.
+                </p>
+              </div>
+
+              <div onclick="switchModule('module-fpa', document.getElementById('nav-fpa'))" style="cursor: pointer; background: var(--surface-container); padding: 14px; border: var(--rule); transition: transform 0.15s, border-color 0.15s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--outline-variant)'">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <strong style="font-size: 0.9rem; color: var(--on-surface);">3. Cash Flow &amp; FP&amp;A Radar</strong>
+                  <span class="nav-badge">12M S-Kurve</span>
+                </div>
+                <p style="font-size: 0.78rem; color: var(--on-surface-variant); margin: 6px 0 0 0;">
+                  3-Statement finansiell modell, rullerende kontantstrøm og EBITDA-oppfølging.
+                </p>
+              </div>
+
+              <div onclick="switchModule('module-logistics', document.getElementById('nav-logistics'))" style="cursor: pointer; background: var(--surface-container); padding: 14px; border: var(--rule); transition: transform 0.15s, border-color 0.15s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--outline-variant)'">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <strong style="font-size: 0.9rem; color: var(--on-surface);">4. LP-Logistikk &amp; Ruter</strong>
+                  <span class="nav-badge pill-green">+515k spar</span>
+                </div>
+                <p style="font-size: 0.78rem; color: var(--on-surface-variant); margin: 6px 0 0 0;">
+                  Lineær programmeringsmodell for frakt Grimstad &rarr; Vestby/ASKO.
+                </p>
+              </div>
+
+              <div onclick="switchModule('module-altinn', document.getElementById('nav-altinn'))" style="cursor: pointer; background: var(--surface-container); padding: 14px; border: var(--rule); transition: transform 0.15s, border-color 0.15s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--outline-variant)'">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <strong style="font-size: 0.9rem; color: var(--on-surface);">5. Altinn 3 API Levering</strong>
+                  <span class="nav-badge">JWT / XSD</span>
+                </div>
+                <p style="font-size: 0.78rem; color: var(--on-surface-variant); margin: 6px 0 0 0;">
+                  Direkte digital innsending av MVA-melding med Maskinporten JWT.
+                </p>
+              </div>
+
+              <div onclick="switchModule('module-agents', document.getElementById('nav-agents'))" style="cursor: pointer; background: var(--surface-container); padding: 14px; border: var(--rule); transition: transform 0.15s, border-color 0.15s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='var(--outline-variant)'">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <strong style="font-size: 0.9rem; color: var(--on-surface);">6. Antigravity 7-Agenter</strong>
+                  <span class="nav-badge">Gemini 3.8</span>
+                </div>
+                <p style="font-size: 0.78rem; color: var(--on-surface-variant); margin: 6px 0 0 0;">
+                  Multi-agent arkitektur for skatt, likviditet, logistikk og anbud.
+                </p>
+              </div>
+
+            </div>
+
+            <!-- OPPSUMMERING KNAPP -->
+            <div style="margin-top: 18px; padding-top: 14px; border-top: var(--rule); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div style="font-size: 0.82rem; color: var(--on-surface-variant);">
+                💡 <em>Tips: Bruk AI Copilot (knappen nederst til høyre) for å stille spørsmål om stillingen, regnskapstallene eller logistikkbesparelsene.</em>
+              </div>
+              <a href="index.html" class="btn btn-primary btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+                <i data-lucide="layout-dashboard" style="width: 14px; height: 14px;"></i>
+                <span>Gå til Operativ Hverdags-Hub (index.html)</span>
+              </a>
+            </div>
+
+          </div>
+
+        </section>
+        <!-- =================================================================
              MODULE 1: EXECUTIVE COCKPIT & KPI-ER
         ================================================================== -->
-        <section id="module-cockpit" class="module-section active-module">
+        <section id="module-cockpit" class="module-section">
           <div class="section-head">
             <div>
               <h2 class="section-title">Executive <strong>Finansiell &amp; Operativ Cockpit</strong></h2>
@@ -2378,6 +2614,7 @@ Klikk på 'Generer JWT Assertion' for å starte den digitale overføringsprosess
 
       // Update breadcrumb
       const names = {
+        'module-job-posting': 'Stillingsutlysning & Executive Case',
         'module-cockpit': 'Executive Cockpit',
         'module-ingestion': 'Drag & Drop Ingestion',
         'module-controlling': 'Controlling & Skatt',
@@ -3209,6 +3446,12 @@ Status Altinn 3: Klar for termin 1 innsending.`;
     window.addEventListener('DOMContentLoaded', async () => {
       lucide.createIcons();
       initCharts();
+      const initialHash = window.location.hash.replace('#', '');
+      if (initialHash && document.getElementById(initialHash)) {
+        switchModule(initialHash);
+      } else {
+        switchModule('module-job-posting', document.getElementById('nav-job-posting'));
+      }
       renderStatementTable('pnl');
       renderAgentTopology();
       await loadSavedState();

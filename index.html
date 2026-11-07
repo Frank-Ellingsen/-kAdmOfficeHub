@@ -141,10 +141,14 @@
 
                 <!-- EXTERNAL PORTALS & JOB POSTING -->
                 <div class="pt-2 border-t border-slate-800/80 space-y-1">
-                    <div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold px-3 py-0.5">Stillingscase & Portaler</div>
-                    <a href="Det_Norske_Brenneri_Job_Posting.html" class="sidebar-link w-full flex items-center justify-between px-3 py-2 rounded-lg text-blue-300 bg-blue-950/40 border border-blue-800/50 hover:bg-blue-900/40 hover:text-blue-200 transition-colors" title="Se full stillingsutlysning og executive Carbon-dashboard">
-                        <span class="flex items-center space-x-2"><i class="fa-solid fa-briefcase w-4 text-center text-blue-400"></i><span class="font-semibold">Stillingsutlysning (Carbon)</span></span>
-                        <span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded font-mono">Cockpit ↗</span>
+                    <div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold px-3 py-0.5">Stillingsutlysning &amp; Portaler</div>
+                    <button onclick="switchTab('tab-job')" id="btn-tab-job" class="sidebar-link w-full flex items-center justify-between px-3 py-2 rounded-lg text-blue-300 bg-blue-950/40 border border-blue-800/50 hover:bg-blue-900/40 hover:text-blue-200 transition-colors text-left" title="Se stillingsutlysning og case-besvarelse her i portalen">
+                        <span class="flex items-center space-x-2"><i class="fa-solid fa-briefcase w-4 text-center text-blue-400"></i><span class="font-semibold">Stillingsutlysning &amp; Case</span></span>
+                        <span class="text-[9px] bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded font-mono">In-Hub</span>
+                    </button>
+                    <a href="Det_Norske_Brenneri_Job_Posting.html" class="sidebar-link w-full flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:text-blue-300 hover:bg-slate-800/60 transition-colors" title="Åpne stillingsutlysning og executive Carbon Cockpit i fullskjerm">
+                        <span class="flex items-center space-x-2"><i class="fa-solid fa-arrow-up-right-from-square w-4 text-center text-blue-400"></i><span>Executive Cockpit (Carbon)</span></span>
+                        <span class="text-[9px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded font-mono">Fullskjerm ↗</span>
                     </a>
                     <a href="https://frank-ellingsen.github.io/br-nn-ysund-oppslag/" target="_blank" rel="noopener noreferrer" class="sidebar-link w-full flex items-center justify-between px-3 py-2 rounded-lg text-slate-400 hover:text-amber-400 hover:bg-slate-800/60 transition-colors">
                         <span class="flex items-center space-x-2"><i class="fa-solid fa-magnifying-glass-chart w-4 text-center text-emerald-400"></i><span>Brønnøysund AI Portal</span></span>
@@ -239,10 +243,16 @@
                     <p class="text-xs text-slate-400 mt-0.5">Rollebeskrivelse for Økonomi- og administrasjonsansvarlig, strategisk case-analyse, RAG drag &amp; drop, anbudsprispyramide og arkitekturpresentasjon.</p>
                 </div>
             </div>
-            <a href="Det_Norske_Brenneri_Job_Posting.html" class="inline-flex items-center justify-center space-x-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/20 whitespace-nowrap">
-                <span>Åpne Stillingspresentasjon</span>
-                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
-            </a>
+            <div class="flex items-center space-x-2 flex-wrap sm:flex-nowrap">
+                <button onclick="switchTab('tab-job')" class="inline-flex items-center justify-center space-x-1.5 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all border border-slate-700 whitespace-nowrap">
+                    <i class="fa-solid fa-file-lines text-amber-400"></i>
+                    <span>Les Stillingsprofil Her</span>
+                </button>
+                <a href="Det_Norske_Brenneri_Job_Posting.html" class="inline-flex items-center justify-center space-x-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-600/20 whitespace-nowrap">
+                    <span>Åpne Stillingspresentasjon</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+            </div>
         </div>
 
         <!-- =====================================================================
@@ -1171,7 +1181,212 @@
         </section>
 
         <!-- TAB 12: 7 ANTIGRAVITY AGENTER & AI COPILOT -->
-        <section id="tab-agents" class="tab-content space-y-6 hidden">
+        <section         <!-- =====================================================================
+             TAB: STILLINGSUTLYSNING & ROLLEBESKRIVELSE (DET NORSKE BRENNERI AS)
+        ====================================================================== -->
+        <div id="tab-job" class="tab-content hidden space-y-6">
+            
+            <!-- Hero Header -->
+            <div class="bg-gradient-to-r from-blue-950/60 via-slate-900 to-slate-900 border border-blue-800/60 rounded-2xl p-6 shadow-xl">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center space-x-2 text-xs font-mono text-blue-400 uppercase tracking-wider mb-1">
+                            <span>STILLINGSUTLYSNING &amp; KRAVPROFIL</span>
+                            <span>•</span>
+                            <span>DET NORSKE BRENNERI AS</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                            Økonomi- og administrasjonsansvarlig
+                        </h2>
+                        <p class="text-sm text-slate-300 mt-1 max-w-3xl leading-relaxed">
+                            Helhetsansvar for finansiell controlling, tollager og særavgifter (Tolletaten), MVA/A-melding (Skatteetaten), likviditetsplanlegging og anbudskalkyler for Norges ledende uavhengige brenneri.
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-2 flex-wrap">
+                        <span class="px-3 py-1 bg-blue-500/20 text-blue-300 border border-blue-500/30 rounded-lg text-xs font-mono font-semibold">100 % Fast</span>
+                        <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-lg text-xs font-mono font-semibold">Grimstad / Agder</span>
+                        <a href="Det_Norske_Brenneri_Job_Posting.html" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-all shadow-lg shadow-blue-600/30 flex items-center space-x-1.5">
+                            <span>Åpne Carbon Fullskjerm</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Hurtigfakta Grunnlag -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-4 border-t border-slate-800/80 text-xs">
+                    <div>
+                        <span class="text-slate-500 block">Selskap</span>
+                        <strong class="text-white text-sm">Det Norske Brenneri AS</strong>
+                        <span class="text-slate-400 block text-[11px]">Org.nr 996 928 977</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Arbeidssted</span>
+                        <strong class="text-white text-sm">Grimstad</strong>
+                        <span class="text-slate-400 block text-[11px]">Industriveien 6 (Opsjon Oslo)</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Kjerneprodukter</span>
+                        <strong class="text-white text-sm">Harahorn &amp; Arvesølvet</strong>
+                        <span class="text-slate-400 block text-[11px]">Gin, akevitt &amp; norsk whisky</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 block">Rapportering</span>
+                        <strong class="text-white text-sm">Daglig Leder / Styret</strong>
+                        <span class="text-slate-400 block text-[11px]">Tilsyn: Frederik Grundekjøn</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2-Kolonners Stillingsinnhold -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Venstre: Om Brenneriet og Stillingsformål -->
+                <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-5 space-y-4">
+                    <div>
+                        <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                            <i class="fa-solid fa-building text-amber-500"></i>
+                            <span>Om Det Norske Brenneri AS</span>
+                        </h3>
+                        <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                            Det Norske Brenneri har historiske røtter i Grimstad med brennevinstradisjoner tilbake til 1880-tallet. Da produksjonsmonopolet opphørte i 2005, etablerte vi oss som det første private brenneriet i Norge på over 80 år.
+                        </p>
+                        <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                            I dag er vi Norges nest største brennevinsprodusent, internasjonalt anerkjent for flaggskipet <strong>Harahorn Gin</strong> (dobbelt gullmedaljevinner i San Francisco), <strong>Arvesølvet Akevitt</strong>, og Norges første single malt whisky <strong>Eik</strong>. Med produksjon og tollager i Grimstad og distribusjon over hele landet via Vinmonopolet, grossister og eksport til over 30 land, er selskapet i kontinuerlig ekspansjon.
+                        </p>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-800">
+                        <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider">Stillingens Formål</h4>
+                        <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">
+                            Som Økonomi- og administrasjonsansvarlig får du det overordnede ansvaret for selskapets økonomifunksjon, compliance mot Tolletaten og Skatteetaten, samt rollen som kommersiell rådgiver for ledelsen ved anbud på Vinmonopolet og kostnadsoptimalisering.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Høyre: Hovedoppgaver & Ansvarsområder -->
+                <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-5">
+                    <h3 class="text-base font-bold text-white flex items-center space-x-2 mb-3">
+                        <i class="fa-solid fa-list-check text-emerald-400"></i>
+                        <span>Sentrale Arbeidsoppgaver &amp; Hverdagsrutiner</span>
+                    </h3>
+                    <ul class="text-xs text-slate-300 space-y-2.5">
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-0.5 text-[11px] flex-shrink-0"></i>
+                            <span><strong>Løpende Regnskap:</strong> Fakturering, inngående bilagskontroll med MVAL § 8-3 representasjonssjekk, remittering og aldersfordelt purrerutine iht. Inkassoloven § 9.</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-0.5 text-[11px] flex-shrink-0"></i>
+                            <span><strong>Tollager &amp; Særavgifter:</strong> Autorisert tollagerforvaltning i Grimstad, månedlig deklarasjon av alkoholavgift (kr 942,50/L ren alkohol) til Tolletaten og 3,2 % naturlig fordampingsfradrag (<em>Angels' Share</em>).</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-0.5 text-[11px] flex-shrink-0"></i>
+                            <span><strong>Skatt, MVA &amp; Altinn 3:</strong> Rettidig levering av MVA-meldinger via Altinn 3 API, A-melding, og 100 % sperret skattetrekksdekning på Konto 1925 iht. Skattebetalingsloven § 5-12.</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-0.5 text-[11px] flex-shrink-0"></i>
+                            <span><strong>Vinmonopolet Pris- &amp; Anbudskalkyler:</strong> Baklengskalkyler fra hyllepris til netto fabrikkpris, beregning av DB1 (60,5 % margin) og DB2 etter FTL-frakt.</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-0.5 text-[11px] flex-shrink-0"></i>
+                            <span><strong>Likviditet &amp; 3-Statement Modellering:</strong> 12-måneders rullerende kontantstrømprognose (S-kurve), EBITDA-oppfølging og balansekontroll.</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-0.5 text-[11px] flex-shrink-0"></i>
+                            <span><strong>Logistikk &amp; Fraktminimering:</strong> Optimal ruteallokering fra Grimstad til Vinmonopolet Vestby og ASKO (+515 580 NOK/år besparelse).</span>
+                        </li>
+                        <li class="flex items-start space-x-2">
+                            <i class="fa-solid fa-check text-emerald-400 mt-0.5 text-[11px] flex-shrink-0"></i>
+                            <span><strong>Årsoppgjør &amp; Revisor:</strong> Samarbeid med revisor Cedra Norge AS med 7/7 nøkkelområder avstemt.</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Interaktiv Case-Løsning Matrise -->
+            <div class="bg-slate-900 border border-amber-500/40 rounded-xl p-5 shadow-lg">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-4 border-b border-slate-800 gap-2">
+                    <div>
+                        <div class="text-[10px] uppercase font-bold text-amber-500 font-mono">KANDIDAT FRANK ELLINGSEN</div>
+                        <h3 class="text-lg font-bold text-white">Interaktiv Case-Besvarelse: Hvordan ØkAdmOfficeHub løser oppgavene</h3>
+                        <p class="text-xs text-slate-400">Klikk på snarveiene under for å hoppe rett til den operative løsningen i denne portalen:</p>
+                    </div>
+                    <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3 py-1 rounded-lg font-mono">100% Funksjonell</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                    <button onclick="switchTab('tab-reskontro')" class="p-3 bg-slate-950/70 border border-slate-800 hover:border-amber-500/50 rounded-lg text-left transition-colors flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between font-bold text-slate-200">
+                                <span>1. Kundereskontro &amp; Purring</span>
+                                <i class="fa-solid fa-arrow-right text-amber-500 text-[10px]"></i>
+                            </div>
+                            <p class="text-slate-400 text-[11px] mt-1">Aldersfordeling 0-30, 31-60, >60d og 1-klikks purrevarsel iht. Inkassoloven § 9.</p>
+                        </div>
+                        <span class="text-[10px] text-emerald-400 mt-2 font-mono">Testes i fanen &rarr;</span>
+                    </button>
+
+                    <button onclick="switchTab('tab-lager')" class="p-3 bg-slate-950/70 border border-slate-800 hover:border-purple-500/50 rounded-lg text-left transition-colors flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between font-bold text-slate-200">
+                                <span>2. Fatlager &amp; Angels' Share</span>
+                                <i class="fa-solid fa-arrow-right text-purple-400 text-[10px]"></i>
+                            </div>
+                            <p class="text-slate-400 text-[11px] mt-1">Interaktiv kalkulator for 3,2 % naturlig fordamping og avgiftsfritak hos Tolletaten.</p>
+                        </div>
+                        <span class="text-[10px] text-purple-400 mt-2 font-mono">Testes i fanen &rarr;</span>
+                    </button>
+
+                    <button onclick="switchTab('tab-tender')" class="p-3 bg-slate-950/70 border border-slate-800 hover:border-amber-500/50 rounded-lg text-left transition-colors flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between font-bold text-slate-200">
+                                <span>3. Vinmonopolet Priskalkyle</span>
+                                <i class="fa-solid fa-arrow-right text-amber-500 text-[10px]"></i>
+                            </div>
+                            <p class="text-slate-400 text-[11px] mt-1">Prispyramide fra kr 499,90 ned til netto fabrikkpris med DB1 og DB2.</p>
+                        </div>
+                        <span class="text-[10px] text-amber-400 mt-2 font-mono">Testes i fanen &rarr;</span>
+                    </button>
+
+                    <button onclick="switchTab('tab-logistics')" class="p-3 bg-slate-950/70 border border-slate-800 hover:border-emerald-500/50 rounded-lg text-left transition-colors flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between font-bold text-slate-200">
+                                <span>4. LP-Fraktoptimering</span>
+                                <i class="fa-solid fa-arrow-right text-emerald-400 text-[10px]"></i>
+                            </div>
+                            <p class="text-slate-400 text-[11px] mt-1">Optimalisering fra Grimstad til Vestby/ASKO (+515 580 NOK/år sparing).</p>
+                        </div>
+                        <span class="text-[10px] text-emerald-400 mt-2 font-mono">Testes i fanen &rarr;</span>
+                    </button>
+
+                    <button onclick="switchTab('tab-altinn')" class="p-3 bg-slate-950/70 border border-slate-800 hover:border-cyan-500/50 rounded-lg text-left transition-colors flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between font-bold text-slate-200">
+                                <span>5. Altinn 3 &amp; Konto 1925</span>
+                                <i class="fa-solid fa-arrow-right text-cyan-400 text-[10px]"></i>
+                            </div>
+                            <p class="text-slate-400 text-[11px] mt-1">XML/JSON MVA payload og 100% sperret skattetrekksavstemming.</p>
+                        </div>
+                        <span class="text-[10px] text-cyan-400 mt-2 font-mono">Testes i fanen &rarr;</span>
+                    </button>
+
+                    <button onclick="openChatbotPopup()" class="p-3 bg-slate-950/70 border border-slate-800 hover:border-amber-500/50 rounded-lg text-left transition-colors flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between font-bold text-amber-400">
+                                <span>6. Gemini 3.8 AI Copilot</span>
+                                <i class="fa-solid fa-comments text-amber-400 text-[10px]"></i>
+                            </div>
+                            <p class="text-slate-400 text-[11px] mt-1">Sanntids økonomiassistent for regnskap, MVA og frister.</p>
+                        </div>
+                        <span class="text-[10px] text-amber-400 mt-2 font-mono">Åpne popup chat &rarr;</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+
+id="tab-agents" class="tab-content space-y-6 hidden">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
                 <div class="flex justify-between items-center pb-4 border-b border-slate-800">
                     <div>
@@ -1327,6 +1542,7 @@
             if(btn) btn.classList.add('active');
 
             const titles = {
+                'tab-job': ['Stillingsutlysning & Case-beskrivelse', 'Det Norske Brenneri AS • Økonomi- og administrasjonsansvarlig • Kravprofil & Løsningsarkitektur'],
                 'tab-dashboard': ['Master Control Panel & Fristradar', 'Det Norske Brenneri AS • Operasjonelt Styringssystem'],
                 'tab-reskontro': ['Kundereskontro & Formriktig Purring', 'Aldersfordeling (AR) og purrevarsel iht. Inkassoloven § 9 og Forsinkelsesrenteloven'],
                 'tab-ap': ['Leverandørgjeld & Bilagskontroll', 'Forfallsstruktur, MVA § 8-3 representasjonskontroll og likviditetsbehov'],
