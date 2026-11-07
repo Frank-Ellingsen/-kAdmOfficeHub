@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office Hub - Det Norske Brenneri AS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+        .card-blur { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .chat-bubble-user { background: #d97706; color: white; border-radius: 16px 16px 4px 16px; }
+        .chat-bubble-agent { background: #1e293b; color: #f1f5f9; border: 1px solid #334155; border-radius: 16px 16px 16px 4px; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col md:flex-row">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-64 bg-slate-900 border-r border-slate-800 flex-shrink-0 flex flex-col justify-between p-4">
+        <div>
+            <!-- Brand Header -->
+            <div class="flex items-center space-x-3 mb-8 px-2">
+                <div class="bg-amber-600 p-2.5 rounded-xl text-white font-bold text-xl shadow-lg shadow-amber-600/20">
+                    <i class="fa-solid fa-wine-bottle"></i>
+                </div>
+                <div>
+                    <h1 class="text-base font-bold text-slate-100 leading-tight">Det Norske Brenneri</h1>
+                    <p class="text-xs text-amber-500 font-medium">ØkAdmOfficeHub v2.5</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-1">
+                <button onclick="switchTab('tab-dashboard')" id="btn-tab-dashboard" class="sidebar-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    <i class="fa-solid fa-chart-line w-4 text-center"></i> <span>Dashboard & Pipeline</span>
+                </button>
+                <button onclick="switchTab('tab-chatbot')" id="btn-tab-chatbot" class="sidebar-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors">
+                    <i class="fa-solid fa-comments w-4 text-center text-amber-500"></i> <span>AI Agent Copilot Chatbot</span>
+                </button>
+                <button onclick="switchTab('tab-agents')" id="btn-tab-agents" class="sidebar-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors">
+                    <i class="fa-solid fa-robot w-4 text-center"></i> <span>7 Antigravity Agenter</span>
+                </button>
+                <button onclick="switchTab('tab-logistics')" id="btn-tab-logistics" class="sidebar-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors">
+                    <i class="fa-solid fa-truck-fast w-4 text-center"></i> <span>LP Fraktoptimering</span>
+                </button>
+                <button onclick="switchTab('tab-inventory')" id="btn-tab-inventory" class="sidebar-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors">
+                    <i class="fa-solid fa-barrel-whiskey w-4 text-center"></i> <span>Fatlager & CCC Working Cap</span>
+                </button>
+                <button onclick="switchTab('tab-procurement')" id="btn-tab-procurement" class="sidebar-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors">
+                    <i class="fa-solid fa-calculator w-4 text-center"></i> <span>Vinmonopolet Anbud (DB1/DB2)</span>
+                </button>
+                <button onclick="switchTab('tab-altinn')" id="btn-tab-altinn" class="sidebar-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors">
+                    <i class="fa-solid fa-building-columns w-4 text-center"></i> <span>Altinn 3 & Skattetrekk 1925</span>
+                </button>
+                <button onclick="switchTab('tab-audit')" id="btn-tab-audit" class="sidebar-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors">
+                    <i class="fa-solid fa-file-invoice-dollar w-4 text-center"></i> <span>Årsoppgjør & Revisor</span>
+                </button>
+                <button onclick="switchTab('tab-manual')" id="btn-tab-manual" class="sidebar-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors">
+                    <i class="fa-solid fa-book-open w-4 text-center"></i> <span>Brukermanual / User Guide</span>
+                </button>
+                <button onclick="switchTab('tab-security')" id="btn-tab-security" class="sidebar-btn w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center space-x-3 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors">
+                    <i class="fa-solid fa-shield-halved w-4 text-center"></i> <span>Sikkerhet, GDPR & Etisk AI</span>
+                </button>
+
+                <div class="pt-3 border-t border-slate-800/80 space-y-1">
+                    <div class="text-[10px] uppercase tracking-wider text-slate-500 font-bold px-3 py-1">Eksterne & Dashboards</div>
+                    <a href="index.html" class="sidebar-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-between text-slate-400 hover:text-amber-400 hover:bg-slate-800/60 transition-colors">
+                        <span class="flex items-center space-x-2">
+                            <i class="fa-solid fa-layer-group w-4 text-center text-blue-400"></i>
+                            <span>Enterprise Cockpit (Carbon)</span>
+                        </span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500"></i>
+                    </a>
+                    <a href="https://frank-ellingsen.github.io/br-nn-ysund-oppslag/" target="_blank" rel="noopener noreferrer" class="sidebar-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-between text-slate-400 hover:text-amber-400 hover:bg-slate-800/60 transition-colors">
+                        <span class="flex items-center space-x-2">
+                            <i class="fa-solid fa-magnifying-glass-chart w-4 text-center text-emerald-400"></i>
+                            <span>Brønnøysund AI & S-Kurve</span>
+                        </span>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-500"></i>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- System Footer Metadata -->
+        <div class="pt-4 border-t border-slate-800 text-[11px] text-slate-400 space-y-1">
+            <div class="flex items-center justify-between">
+                <span>Org.nr:</span>
+                <strong class="text-slate-200 font-mono">996 928 977</strong>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>Altinn Status:</span>
+                <span class="text-emerald-400 font-medium"><i class="fa-solid fa-circle text-[8px]"></i> Live API</span>
+            </div>
+            <div class="text-[10px] text-slate-400 pt-2 border-t border-slate-800/60">
+                Sist synkronisert: <span id="last-updated-ts"></span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-8 max-w-7xl mx-auto w-full">
+        
+        <!-- Header Banner -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 mb-6 border-b border-slate-800 gap-4">
+            <div>
+                <h2 class="text-2xl font-bold text-white tracking-tight">Det Norske Brenneri AS</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Grimstad • AI-Powered Financial & Administrative Operations Cockpit</p>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-2 h-2 mr-2 bg-emerald-400 rounded-full animate-pulse"></span> Maskinporten Authenticated
+                </span>
+                <span class="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-lg border border-slate-700 font-mono">
+                    Supervisor Active
+                </span>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Sections -->
+
+        <!-- TAB 1: Dashboard -->
+        <div id="tab-dashboard" class="tab-content space-y-6">
+            <!-- Hero KPI Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="card-blur rounded-xl p-5 border-l-4 border-amber-500 relative group">
+                    <div class="flex justify-between items-center text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        <span>Prognose Omsetning</span>
+                        <i class="fa-solid fa-circle-info text-slate-400 cursor-pointer" title="Kilde: Brønnøysundregistrene (Org 996 928 977) + 3-Statement AI Modellsammenstilling. Baseline 27,0M NOK."></i>
+                    </div>
+                    <div class="text-2xl font-bold text-white mt-1">31,05 MNOK</div>
+                    <div class="text-xs text-emerald-400 mt-1 font-medium"><i class="fa-solid fa-arrow-up"></i> +15.0% vs. Baseline (27M)</div>
+                </div>
+
+                <div class="card-blur rounded-xl p-5 border-l-4 border-emerald-500 relative group">
+                    <div class="flex justify-between items-center text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        <span>EBITDA Margin</span>
+                        <i class="fa-solid fa-circle-info text-slate-400 cursor-pointer" title="Kilde: Resultatregnskap via DuckDB Analytics Engine. +450 bps løft ved AI-logistikk og anbudsoptimering."></i>
+                    </div>
+                    <div class="text-2xl font-bold text-white mt-1">16.0% (4,97 MNOK)</div>
+                    <div class="text-xs text-emerald-400 mt-1 font-medium"><i class="fa-solid fa-arrow-up"></i> +450 bps forbedring</div>
+                </div>
+
+                <div class="card-blur rounded-xl p-5 border-l-4 border-blue-500 relative group">
+                    <div class="flex justify-between items-center text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        <span>Net Free Cash Flow</span>
+                        <i class="fa-solid fa-circle-info text-slate-400 cursor-pointer" title="Kilde: S-Curve 12-måneders Likviditetsmotor. Frigjort kapital fra lavere arbeidskapital (CCC)."></i>
+                    </div>
+                    <div class="text-2xl font-bold text-white mt-1">4,69 MNOK</div>
+                    <div class="text-xs text-emerald-400 mt-1 font-medium"><i class="fa-solid fa-arrow-up"></i> +2,98 MNOK frigjort</div>
+                </div>
+
+                <div class="card-blur rounded-xl p-5 border-l-4 border-purple-500 relative group">
+                    <div class="flex justify-between items-center text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                        <span>Skattetrekkkonto (1925)</span>
+                        <i class="fa-solid fa-circle-info text-slate-400 cursor-pointer" title="Kilde: DNB Konto 1925 (93 000 kr) vs. A-melding 6. termin. 100% verifisert dekning."></i>
+                    </div>
+                    <div class="text-2xl font-bold text-emerald-400 mt-1">100% Dekning</div>
+                    <div class="text-xs text-slate-400 mt-1"><i class="fa-solid fa-circle-check text-emerald-400"></i> Full skattelov-compliance</div>
+                </div>
+            </div>
+
+            <!-- Pipeline Visual Card -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-diagram-project text-amber-500"></i> Operasjonell 4-Stegs AI-Arbeidsflyt
+                </h3>
+                <p class="text-xs text-slate-400 mb-6">Fra rådatamottak til fullført månedsoppgjør og revisorgodkjent innsending.</p>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800">
+                        <div class="text-xs font-bold text-amber-500 uppercase tracking-wide mb-1">STEG 1: INGESTION</div>
+                        <div class="text-sm font-semibold text-slate-200">PDF & Data Ingest</div>
+                        <p class="text-xs text-slate-400 mt-2">ChromaDB RAG-indeksering av MVAL og Bokføringsforskriften.</p>
+                    </div>
+                    <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800">
+                        <div class="text-xs font-bold text-emerald-500 uppercase tracking-wide mb-1">STEG 2: CONTROLLING</div>
+                        <div class="text-sm font-semibold text-slate-200">Avstemming & Skatt</div>
+                        <p class="text-xs text-slate-400 mt-2">100% sjekk av konto 1925 og § 8-3 representasjon MVA.</p>
+                    </div>
+                    <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800">
+                        <div class="text-xs font-bold text-blue-500 uppercase tracking-wide mb-1">STEG 3: FP&A & CASH</div>
+                        <div class="text-sm font-semibold text-slate-200">3-Statement & S-Kurve</div>
+                        <p class="text-xs text-slate-400 mt-2">12-måneders likviditetssimulering og arbeidskapital (CCC).</p>
+                    </div>
+                    <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800">
+                        <div class="text-xs font-bold text-purple-500 uppercase tracking-wide mb-1">STEG 4: EXECUTION</div>
+                        <div class="text-sm font-semibold text-slate-200">Altinn 3 & LP Frakt</div>
+                        <p class="text-xs text-slate-400 mt-2">Automatisk MVA-levering og +515 580 kr/år i fraktinnsparing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: AI Agent Copilot Chatbot -->
+        <div id="tab-chatbot" class="tab-content space-y-6 hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl flex flex-col h-[650px]">
+                <!-- Chat Header -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 mb-4 border-b border-slate-800 gap-2">
+                    <div class="flex items-center space-x-3">
+                        <div class="p-2.5 bg-amber-500/20 text-amber-400 rounded-xl">
+                            <i class="fa-solid fa-robot text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white leading-snug">Antigravity AI Agent Copilot</h3>
+                            <p class="text-xs text-slate-400">Interaktiv assistent for regnskap, avgifter, anbud og lovverk</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <label class="text-xs text-slate-400">Aktiv Agent:</label>
+                        <select id="chat-agent-select" class="bg-slate-950 border border-slate-700 text-xs text-amber-400 rounded-lg px-3 py-1.5 focus:outline-none focus:border-amber-500">
+                            <option value="supervisor_agent">Supervisor Agent (Orchestrator)</option>
+                            <option value="compliance_rag_agent">Compliance RAG Agent (MVAL / Lovverk)</option>
+                            <option value="tax_excise_agent">Tax & Excise Agent (Altinn / Særavgift)</option>
+                            <option value="analytics_reskontro_agent">Analytics & Reskontro Agent (DuckDB SQL)</option>
+                            <option value="cash_fpa_radar_agent">Cash & FP&A Radar Agent (CCC / Working Cap)</option>
+                            <option value="procurement_anbud_agent">Procurement & Anbud Agent (Vinmonopolet DB1/DB2)</option>
+                            <option value="audit_year_end_agent">Audit & Year-End Agent (Revisor Binder)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Quick Prompt Chips -->
+                <div class="flex items-center gap-2 mb-4 overflow-x-auto pb-2 text-xs">
+                    <span class="text-slate-400 font-semibold whitespace-nowrap"><i class="fa-solid fa-bolt text-amber-500"></i> Forslag:</span>
+                    <button onclick="sendQuickPrompt('Beregne dekningsbidrag (DB1 og DB2) for Harahorn 0.70L med hyllepris 499,90 kr på Vinmonopolet')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 whitespace-nowrap transition-colors">
+                        🍾 Vinmonopolet DB1/DB2
+                    </button>
+                    <button onclick="sendQuickPrompt('Hva sier Merverdiavgiftsloven § 8-3 om MVA-fradrag på representasjon og kundemiddager?')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 whitespace-nowrap transition-colors">
+                        📜 MVAL § 8-3 Representasjon
+                    </button>
+                    <button onclick="sendQuickPrompt('Verifiser saldo på skattetrekkkonto 1925 mot A-meldingen for 6. termin')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 whitespace-nowrap transition-colors">
+                        🏦 Sjekk Skattetrekk 1925
+                    </button>
+                    <button onclick="sendQuickPrompt('Hva er den beregnede årlige innsparingen ved FTL-frakt til Vinmonopolets hovedlager i Vestby?')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700 whitespace-nowrap transition-colors">
+                        🚚 LP Fraktoptimering
+                    </button>
+                </div>
+
+                <!-- Chat Conversation Stream -->
+                <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 pr-2 mb-4">
+                    <!-- Initial Welcome Message -->
+                    <div class="flex items-start space-x-3">
+                        <div class="p-2 bg-amber-500/20 text-amber-400 rounded-lg text-xs mt-1">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div class="chat-bubble-agent p-4 text-xs space-y-2 max-w-2xl">
+                            <div class="font-bold text-amber-400 flex items-center gap-2">
+                                <span>Supervisor Agent</span>
+                                <span class="bg-amber-500/10 text-amber-400 text-[10px] px-2 py-0.5 rounded border border-amber-500/30">System Ready</span>
+                            </div>
+                            <p class="text-slate-200">Hei Frank! Jeg er den koordinerende <strong>Supervisor Agenten</strong> for Det Norske Brenneri AS. Jeg kan besvare spørsmål om regnskap, MVA-regler (§ 8-3), skattetrekk (konto 1925), Vinmonopolets anbudskalkyler, arbeidskapital og LP-fraktoptimering. Hva ønsker du å undersøke i dag?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Form -->
+                <form onsubmit="handleChatSubmit(event)" class="flex items-center space-x-2 bg-slate-950 p-2 rounded-xl border border-slate-800">
+                    <input type="text" id="chat-input-text" placeholder="Skriv din forespørsel til Antigravity Copilot..." class="flex-1 bg-transparent text-xs text-slate-100 placeholder-slate-400 px-3 py-2 focus:outline-none">
+                    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs px-5 py-2.5 rounded-lg transition-colors flex items-center space-x-2">
+                        <span>Send</span> <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- TAB 3: 7 Antigravity Agenter -->
+        <div id="tab-agents" class="tab-content space-y-6 hidden">
+            <h3 class="text-xl font-bold text-white mb-2">Antigravity Multi-Agent Topology (7 Agenter)</h3>
+            <p class="text-xs text-slate-400 mb-6">Automatiserte spesialistagenter konfigurert for Det Norske Brenneri AS (Org.nr 996 928 977).</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="p-2 bg-amber-500/20 text-amber-400 rounded-lg"><i class="fa-solid fa-network-wired"></i></div>
+                        <h4 class="font-bold text-white text-sm">1. Supervisor Agent</h4>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-3">Master orchestrator. Ruter forespørsler og koordinerer månedsoppgjørets DAG-pipeline.</p>
+                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded font-mono border border-emerald-500/30">Active • Routing Engine</span>
+                </div>
+
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="p-2 bg-blue-500/20 text-blue-400 rounded-lg"><i class="fa-solid fa-scale-balanced"></i></div>
+                        <h4 class="font-bold text-white text-sm">2. Compliance RAG Agent</h4>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-3">ChromaDB-vektorsøk i MVAL (§ 8-1, § 8-2, § 8-3 representasjon) og Bokføringsforskriften.</p>
+                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded font-mono border border-emerald-500/30">Active • ChromaDB RAG</span>
+                </div>
+
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="p-2 bg-purple-500/20 text-purple-400 rounded-lg"><i class="fa-solid fa-database"></i></div>
+                        <h4 class="font-bold text-white text-sm">3. Analytics & Reskontro Agent</h4>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-3">DuckDB SQL-motor for aldersfordelt reskontro og avstemming av fatlager under modning.</p>
+                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded font-mono border border-emerald-500/30">Active • DuckDB SQL</span>
+                </div>
+
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="p-2 bg-emerald-500/20 text-emerald-400 rounded-lg"><i class="fa-solid fa-building-columns"></i></div>
+                        <h4 class="font-bold text-white text-sm">4. Tax & Excise Agent</h4>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-3">100% verifikasjon av skattetrekkkonto 1925 mot A-melding og beregning av alkoholavgift (942,50 kr/L).</p>
+                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded font-mono border border-emerald-500/30">Active • Altinn XML Engine</span>
+                </div>
+
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="p-2 bg-red-500/20 text-red-400 rounded-lg"><i class="fa-solid fa-chart-pie"></i></div>
+                        <h4 class="font-bold text-white text-sm">5. Cash & FP&A Radar Agent</h4>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-3">3-Statement modell, S-kurve for kontantstrøm og Early Warning Radar for arbeidskapital (CCC).</p>
+                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded font-mono border border-emerald-500/30">Active • FP&A Radar</span>
+                </div>
+
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="p-2 bg-amber-500/20 text-amber-400 rounded-lg"><i class="fa-solid fa-calculator"></i></div>
+                        <h4 class="font-bold text-white text-sm">6. Procurement & Anbud Agent</h4>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-3">Beregner Vinmonopolets anbudskalkyler (DB1/DB2) og synkroniserer grossistprisfiler (Asko/SG).</p>
+                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded font-mono border border-emerald-500/30">Active • Tender Calculator</span>
+                </div>
+
+                <div class="bg-slate-900 p-5 rounded-xl border border-slate-800 md:col-span-3">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                        <h4 class="font-bold text-white text-sm">7. Audit & Year-End Agent</h4>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-3">Genererer komplette avstemmingsmapper og dokumentasjonsgrunnlag for ekstern revisor ved periode- og årsavslutning.</p>
+                    <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-1 rounded font-mono border border-emerald-500/30">Active • Revisor Master Binder</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: LP Fraktoptimering -->
+        <div id="tab-logistics" class="tab-content space-y-6 hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Lineær Programmering (LP) Logistikk-Optimering</h3>
+                        <p class="text-xs text-slate-400">Distribusjonsmodell basert på scipy.optimize.linprog for frakt fra Grimstad</p>
+                    </div>
+                    <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs px-3 py-1.5 rounded-lg font-mono">
+                        💰 Årlig Innsparing: +515 580 kr
+                    </span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+                            <tr>
+                                <th class="p-3">Destinasjon / Knutepunkt</th>
+                                <th class="p-3 text-right">Ukentlig Volum</th>
+                                <th class="p-3">Optimal Transportrute</th>
+                                <th class="p-3 text-right">Frakt / Kasse</th>
+                                <th class="p-3 text-right">LP Ukekostnad</th>
+                                <th class="p-3 text-right">Innsparing / År</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60">
+                            <tr>
+                                <td class="p-3 font-semibold text-white">Vinmonopolet Hovedlager (Vestby)</td>
+                                <td class="p-3 text-right font-mono">1 200 kasser</td>
+                                <td class="p-3"><span class="bg-blue-500/10 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded">FTL (Hel Lastebil)</span></td>
+                                <td class="p-3 text-right font-mono">15,00 NOK</td>
+                                <td class="p-3 text-right font-mono">18 000 NOK</td>
+                                <td class="p-3 text-right font-mono text-emerald-400 font-bold">140 400 NOK</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-white">Grossist ASKO (Kjeller)</td>
+                                <td class="p-3 text-right font-mono">800 kasser</td>
+                                <td class="p-3"><span class="bg-purple-500/10 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded">3PL Sentrallager</span></td>
+                                <td class="p-3 text-right font-mono">21,00 NOK</td>
+                                <td class="p-3 text-right font-mono">16 800 NOK</td>
+                                <td class="p-3 text-right font-mono text-emerald-400 font-bold">131 040 NOK</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-white">Grossist Servicegrossistene</td>
+                                <td class="p-3 text-right font-mono">450 kasser</td>
+                                <td class="p-3"><span class="bg-blue-500/10 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded">FTL (Hel Lastebil)</span></td>
+                                <td class="p-3 text-right font-mono">18,00 NOK</td>
+                                <td class="p-3 text-right font-mono">8 100 NOK</td>
+                                <td class="p-3 text-right font-mono text-emerald-400 font-bold">63 180 NOK</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-semibold text-white">Horeca Direkte Oslo / Viken</td>
+                                <td class="p-3 text-right font-mono">300 kasser</td>
+                                <td class="p-3"><span class="bg-purple-500/10 text-purple-400 border border-purple-500/30 px-2 py-0.5 rounded">3PL Sentrallager</span></td>
+                                <td class="p-3 text-right font-mono">30,00 NOK</td>
+                                <td class="p-3 text-right font-mono">9 000 NOK</td>
+                                <td class="p-3 text-right font-mono text-emerald-400 font-bold">70 200 NOK</td>
+                            </tr>
+                            <tr class="bg-slate-950/80 font-bold">
+                                <td class="p-3 text-white">TOTALT ÅRLIG ESTIMAT</td>
+                                <td class="p-3 text-right font-mono text-amber-400">176 800 kasser</td>
+                                <td class="p-3 text-emerald-400">LP-Optimalisert Miks</td>
+                                <td class="p-3 text-right font-mono">19,44 NOK (snitt)</td>
+                                <td class="p-3 text-right font-mono">3 437 200 NOK</td>
+                                <td class="p-3 text-right font-mono text-emerald-400 text-sm">💰 +515 580 NOK</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: Fatlager & CCC Working Cap -->
+        <div id="tab-inventory" class="tab-content space-y-6 hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <h3 class="text-lg font-bold text-white mb-2">Varelagerets Tredelte Oppdeling (DIO 90.6 Dager)</h3>
+                <p class="text-xs text-slate-400 mb-6">Skille mellom verdiskapende fatlager under modning og fortollede driftsvarer.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 border-t-4 border-t-amber-500">
+                        <div class="text-xs font-semibold text-slate-400 uppercase">1. Råvarer & Innhøsting</div>
+                        <div class="text-xl font-bold text-white mt-1">1,25 MNOK</div>
+                        <p class="text-xs text-slate-400 mt-2">Eplepressing fra lokalbonder i Grimstad, glassflasker og korker. Sesongavhengig innkjøpsstøt.</p>
+                    </div>
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 border-t-4 border-t-purple-500">
+                        <div class="text-xs font-semibold text-slate-400 uppercase">2. Fatlager under Modning (WIP)</div>
+                        <div class="text-xl font-bold text-purple-400 mt-1">3,85 MNOK</div>
+                        <p class="text-xs text-slate-400 mt-2">Arvesølvet Akevitt og Eiktyrne Whisky på eikefat i 12–36+ måneder. <strong>Verdiøkende prosess.</strong></p>
+                    </div>
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 border-t-4 border-t-emerald-500">
+                        <div class="text-xs font-semibold text-slate-400 uppercase">3. Fortollet Salgslager</div>
+                        <div class="text-xl font-bold text-emerald-400 mt-1">1,60 MNOK</div>
+                        <p class="text-xs text-slate-400 mt-2">Ferdigtappede flasker (Harahorn Gin). Optimaliseres med hyppigere tapping for å redusere avgiftsbinding.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 6: Vinmonopolet Anbud (DB1/DB2) -->
+        <div id="tab-procurement" class="tab-content space-y-6 hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <h3 class="text-lg font-bold text-white mb-2">Vinmonopolet Anbudskalkyle (0.70L / 40% ABV)</h3>
+                <p class="text-xs text-slate-400 mb-6">Oppstilling fra villedende hyllepris til netto dekningsbidrag (DB1 og DB2) for brenneriet.</p>
+
+                <div class="max-w-2xl bg-slate-950 rounded-xl border border-slate-800 overflow-hidden text-xs">
+                    <div class="p-4 bg-slate-900 border-b border-slate-800 flex justify-between items-center font-bold">
+                        <span class="text-white text-sm">Hyllepris Vinmonopolet (Inkl. MVA)</span>
+                        <span class="text-amber-400 text-base font-mono">499,90 NOK (100.0%)</span>
+                    </div>
+                    <div class="p-4 space-y-2 text-slate-300">
+                        <div class="flex justify-between"><span>➖ Merverdiavgift (25% MVA)</span><span class="font-mono text-red-400">-99,98 NOK (-20.0%)</span></div>
+                        <div class="flex justify-between font-semibold text-white pt-1 border-t border-slate-800"><span>= Utsalgspris Ekskl. MVA</span><span class="font-mono">399,92 NOK (80.0%)</span></div>
+                        <div class="flex justify-between"><span>➖ Vinmonopolets Avanse (~9%)</span><span class="font-mono text-red-400">-35,99 NOK (-7.2%)</span></div>
+                        <div class="flex justify-between"><span>➖ Alkoholavgift (kr 942,50/L ren alk.)</span><span class="font-mono text-red-400">-263,90 NOK (-52.8%)</span></div>
+                        <div class="flex justify-between"><span>➖ Emballasjeavgift (Glass)</span><span class="font-mono text-red-400">-7,90 NOK (-1.6%)</span></div>
+                        <div class="flex justify-between font-bold text-amber-400 text-sm pt-2 border-t border-slate-800"><span>= Netto Brenneri Inntekt</span><span class="font-mono">92,13 NOK (18.4%)</span></div>
+                        <div class="flex justify-between"><span>➖ Direkte Varekostnad (Flaske, Etikett, Epler, Kork)</span><span class="font-mono text-red-400">-45,00 NOK (-9.0%)</span></div>
+                        <div class="flex justify-between font-bold text-emerald-400 text-sm pt-1 border-t border-slate-800"><span>= Dekningsbidrag 1 (DB1)</span><span class="font-mono">47,13 NOK (51.1% margin)</span></div>
+                        <div class="flex justify-between"><span>➖ Frakt og Logistikk til Grossist</span><span class="font-mono text-red-400">-6,50 NOK (-1.3%)</span></div>
+                        <div class="flex justify-between font-bold text-emerald-400 text-base pt-2 border-t border-slate-800"><span>= Dekningsbidrag 2 (DB2 Netto)</span><span class="font-mono">40,63 NOK (44.1% margin)</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 7: Altinn 3 & Skattetrekk 1925 -->
+        <div id="tab-altinn" class="tab-content space-y-6 hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Altinn 3 API & Skattetrekkkontroll (Konto 1925)</h3>
+                        <p class="text-xs text-slate-400">Maskinporten JWT Autentisering & Skatteetaten Direct Integration</p>
+                    </div>
+                    <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs px-3 py-1.5 rounded-lg font-mono">
+                        Arkivref: AR2026-E49A2B11
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+                        <h4 class="font-bold text-white text-sm mb-3">MVA-melding 1. Termin 2026 Summary</h4>
+                        <div class="space-y-2 text-xs">
+                            <div class="flex justify-between text-slate-300"><span>Utgående MVA (Kode 3):</span><span class="font-mono">1 552 500 NOK</span></div>
+                            <div class="flex justify-between text-slate-300"><span>Inngående MVA (Kode 81):</span><span class="font-mono text-emerald-400">-855 000 NOK</span></div>
+                            <div class="flex justify-between text-slate-300"><span>Avvist Representasjon (§ 8-3):</span><span class="font-mono text-red-400">45 000 NOK (0 MVA)</span></div>
+                            <div class="flex justify-between font-bold text-amber-400 text-sm pt-2 border-t border-slate-800"><span>Netto MVA å betale:</span><span class="font-mono">697 500 NOK</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-white text-sm mb-2">Skattetrekk Dekningsgrad (Konto 1925)</h4>
+                            <p class="text-xs text-slate-400 mb-3">Innestående på sperret konto 1925 (93 000 kr) dekker 100% av skyldig forskuddstrekk fra A-melding 6. termin.</p>
+                        </div>
+                        <div class="bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-lg text-emerald-400 text-xs font-semibold flex items-center justify-between">
+                            <span><i class="fa-solid fa-shield-check"></i> Skattelov Compliance:</span>
+                            <span class="font-mono">100% GODKJENT</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 8: Årsoppgjør & Revisor -->
+        <div id="tab-audit" class="tab-content space-y-6 hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <h3 class="text-lg font-bold text-white mb-2">Årsoppgjørsmappe & Revisorsjekkliste</h3>
+                <p class="text-xs text-slate-400 mb-6">Generert av audit_year_end_agent for ekstern revisor og regnskapsfører.</p>
+                <div class="space-y-3 text-xs">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex justify-between items-center">
+                        <div><strong class="text-white">Konto 1920 Bankinnskudd:</strong> Avstemt mot bankavstemmingsskjema per 31.12.</div>
+                        <span class="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded border border-emerald-500/30 font-mono">🟢 GODKJENT</span>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex justify-between items-center">
+                        <div><strong class="text-white">Konto 1400 Varelager:</strong> Lagermelding for fatlager under modning (§ 8-10-6).</div>
+                        <span class="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded border border-emerald-500/30 font-mono">🟢 GODKJENT</span>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex justify-between items-center">
+                        <div><strong class="text-white">Konto 2700/2710 MVA:</strong> Avstemt mot Altinn 3 kvittering AR2026-E49A2B11.</div>
+                        <span class="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded border border-emerald-500/30 font-mono">🟢 GODKJENT</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 9: Brukermanual / User Guide -->
+        <div id="tab-manual" class="tab-content space-y-6 hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <h3 class="text-lg font-bold text-white mb-2">Brukermanual & Rutinehåndbok for ØkAdmOfficeHub</h3>
+                <p class="text-xs text-slate-400 mb-6">Operasjonell veiledning for Økonomi- og Administrasjonsleder hos Det Norske Brenneri AS.</p>
+                
+                <div class="space-y-4 text-xs text-slate-300">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <h4 class="font-bold text-amber-400 text-sm mb-1">Daglig Rutine: Ingestion & Bank</h4>
+                        <p>1. Dra og slipp bankutskrifter og inngående MVA-bilag i STEG 1 Ingestion.<br>2. Verifiser at RAG-agenten oppdaterer ChromaDB med nye leverandøravtaler og lover.</p>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <h4 class="font-bold text-amber-400 text-sm mb-1">Månedsoppgjør: Altinn & Skattetrekk</h4>
+                        <p>1. Kjør 100% skattetrekkskontroll i STEG 2 for å sikre at konto 1925 dekker A-meldingen.<br>2. Generer Altinn 3 XML-payload for MVA-melding og trykk "Send inn via Altinn 3 API".</p>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <h4 class="font-bold text-amber-400 text-sm mb-1">Kvartalsvis Anbuds- & Logistikkoptimering</h4>
+                        <p>1. Bruk LP-optimereren i fane 4 for å beregne optimal transportmiks (FTL vs 3PL) før nye grossistavtaler.<br>2. Oppdater DB1/DB2-kalkylene for nye Vinmonopol-anbud.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 10: Sikkerhet, GDPR & Etisk AI -->
+        <div id="tab-security" class="tab-content space-y-6 hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-2">Sikkerhetsarkitektur, Personvern (GDPR) & Etisk AI</h3>
+                    <p class="text-xs text-slate-400">Retningslinjer for trygg, ansvarlig og etterrettelig AI-drift for Det Norske Brenneri AS.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+                        <div class="flex items-center space-x-2 text-amber-400 font-bold text-sm mb-2">
+                            <i class="fa-solid fa-user-shield"></i> <span>1. Personvern (GDPR)</span>
+                        </div>
+                        <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                            <li>Lokal databehandling via DuckDB & ChromaDB.</li>
+                            <li>Skjerming av ansattes personopplysninger i A-meldingen.</li>
+                            <li>Dataminimering i henhold til Bokføringsforskriften.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+                        <div class="flex items-center space-x-2 text-blue-400 font-bold text-sm mb-2">
+                            <i class="fa-solid fa-lock"></i> <span>2. IT-Sikkerhet</span>
+                        </div>
+                        <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                            <li>Maskinporten OAuth2 JWT-virksomhetssertifikat.</li>
+                            <li>Kryptografisk sikker kommunikasjon mot Altinn 3.</li>
+                            <li>Uforanderlige revisjonslogger for alle agenthandlinger.</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+                        <div class="flex items-center space-x-2 text-emerald-400 font-bold text-sm mb-2">
+                            <i class="fa-solid fa-scale-balanced"></i> <span>3. Etisk AI</span>
+                        </div>
+                        <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside">
+                            <li>Human-in-the-Loop: Ingen uovervåket bokføring.</li>
+                            <li>Sertifisert via Google AI Essentials & Univ. of Michigan.</li>
+                            <li>Full sporing mot MVAL og Bokføringsforskriften.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript Navigation & Chatbot Engine -->
+    <script>
+        function switchTab(tabId) {
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            
+            // Remove active style from all sidebar buttons
+            document.querySelectorAll('.sidebar-btn').forEach(btn => {
+                btn.classList.remove('bg-amber-500/10', 'text-amber-400', 'border', 'border-amber-500/20');
+                btn.classList.add('text-slate-400');
+            });
+
+            // Show selected tab content
+            const selectedTab = document.getElementById(tabId);
+            if (selectedTab) selectedTab.classList.remove('hidden');
+
+            // Highlight active sidebar button
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-400');
+                activeBtn.classList.add('bg-amber-500/10', 'text-amber-400', 'border', 'border-amber-500/20');
+            }
+        }
+
+        // Set live timestamp
+        document.getElementById('last-updated-ts').textContent = new Date().toLocaleString('no-NO', {
+            year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+        });
+
+        // Chatbot functionality
+        function sendQuickPrompt(promptText) {
+            document.getElementById('chat-input-text').value = promptText;
+            handleChatSubmit(new Event('submit'));
+        }
+
+        function handleChatSubmit(e) {
+            e.preventDefault();
+            const inputEl = document.getElementById('chat-input-text');
+            const query = inputEl.value.trim();
+            if (!query) return;
+
+            const selectedAgent = document.getElementById('chat-agent-select').value;
+            const messagesContainer = document.getElementById('chat-messages');
+
+            // Append User Message
+            const userMsgDiv = document.createElement('div');
+            userMsgDiv.className = 'flex items-start justify-end space-x-3';
+            userMsgDiv.innerHTML = `
+                <div class="chat-bubble-user p-4 text-xs max-w-xl shadow-lg">
+                    <p>${escapeHtml(query)}</p>
+                </div>
+                <div class="p-2 bg-amber-600 text-white rounded-lg text-xs mt-1">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            `;
+            messagesContainer.appendChild(userMsgDiv);
+            inputEl.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Simulate Agent Response
+            setTimeout(() => {
+                let agentName = "Supervisor Agent";
+                let responseText = "";
+
+                const qLower = query.toLowerCase();
+
+                if (qLower.includes("vinmonopol") || qLower.includes("db1") || qLower.includes("dekningsbidrag") || qLower.includes("anbud")) {
+                    agentName = "Procurement & Anbud Agent";
+                    responseText = "🍾 <strong>Vinmonopolet Anbudskalkyle (Harahorn 0.70L / 40% ABV):</strong><br>• Hyllepris (inkl. MVA): <strong>499,90 NOK</strong><br>• MVA (25%): -99,98 NOK<br>• Alkoholavgift (kr 942,50/L ren alk.): -263,90 NOK<br>• Pol-avanse (~9%): -35,99 NOK<br>• Netto Brenneri Inntekt: <strong>92,13 NOK</strong><br>• <strong>Dekningsbidrag 1 (DB1): 47,13 NOK (51.1% margin)</strong><br>• <strong>Dekningsbidrag 2 (DB2 Netto etter frakt): 40,63 NOK (44.1% margin)</strong>";
+                } else if (qLower.includes("8-3") || qLower.includes("representasjon") || qLower.includes("mva") || qLower.includes("lov")) {
+                    agentName = "Compliance RAG Agent";
+                    responseText = "📜 <strong>RAG-oppslag Merverdiavgiftsloven § 8-3:</strong><br>MVAL § 8-3 fjerner fradragsretten for inngående MVA på representasjon, kundemiddager og gaver. I siste avstemming ble 45 000 NOK i bilag identifisert som representasjon og ført uten MVA-fradrag. Netto skyldig MVA for 1. termin ble dermed korrekt beregnet til <strong>697 500 NOK</strong>.";
+                } else if (qLower.includes("1925") || qLower.includes("skattetrekk") || qLower.includes("a-melding") || qLower.includes("skatt")) {
+                    agentName = "Tax & Excise Agent";
+                    responseText = "🏦 <strong>Skattetrekkkontroll (Konto 1925):</strong><br>Avstemming mot A-meldingen for 6. termin bekrefter at 93 000 NOK står innestående på sperret bankkonto 1925 i DNB. Dekningsgraden er nøyaktig <strong>100% GODKJENT</strong> i samsvar med skattebetalingsloven § 5-12.";
+                } else if (qLower.includes("ftl") || qLower.includes("frakt") || qLower.includes("vestby") || qLower.includes("lp") || qLower.includes("transport")) {
+                    agentName = "Analytics & Reskontro Agent";
+                    responseText = "🚚 <strong>LP Fraktoptimering (scipy.optimize.linprog):</strong><br>Ved leveranse av 1 200 kasser/uke til Vinmonopolets hovedlager i Vestby er hel lastebil (FTL) den matematiske optimumsruten (15,00 NOK/kasse). Samlet gir denne logistikkmodellen en årlig innsparing på <strong>💰 +515 580 NOK/år</strong> (-12.2% reduksjon).";
+                } else if (qLower.includes("reskontro") || qLower.includes("purring") || qLower.includes("inkasso") || qLower.includes("forfalt") || qLower.includes("brreg") || qLower.includes("kreditt")) {
+                    agentName = "Analytics & Reskontro Agent";
+                    responseText = "📊 <strong>Kundereskontro & Kredittsjekk Status:</strong><br>• Totalt utestående: <strong>507 200 NOK</strong> fordelt på 8 nøkkelkunder.<br>• Forfalt > 60 dager: <strong>8 500 NOK</strong> (Bar & Bistro Oslo AS).<br>• Purrevarsel iht. <strong>Inkassoloven § 9</strong> er klargjort med 14 dagers betalingsfrist, 12,50% forsinkelsesrente og 70 kr gebyr.";
+                } else if (qLower.includes("fat") || qLower.includes("angels") || qLower.includes("fordamping") || qLower.includes("lager") || qLower.includes("svinn")) {
+                    agentName = "Tax & Excise Agent";
+                    responseText = "🥃 <strong>Fatmodning & Angels' Share (Tollager Grimstad):</strong><br>• Årlig naturlig fordamping er kalkulert til <strong>3,2%</strong>.<br>• På 42 000 liter fatbeholdning utgjør dette et tapt volum på 1 344 liter ren alkohol.<br>• Avgiftsskjerming: <strong>1 266 720 NOK</strong> i godkjent avgiftsfritak før uttak til innenlands konsum.";
+                } else if (qLower.includes("revisjon") || qLower.includes("årsavslutning") || qLower.includes("cedra") || qLower.includes("sjekkliste")) {
+                    agentName = "Audit & Year-End Agent";
+                    responseText = "📋 <strong>Årsoppgjørsmappe & Revisjon (Cedra Norge AS):</strong><br>• 7 av 7 nøkkelområder avstemt (Bank 1925, Reskontro, Tollager, MVA, AGA).<br>• Dokumentasjonsbinder inneholder fullstendige SAF-T eksportfiler, lageravstemming og avskrivningsplaner for destilleriutstyr i Grimstad.";
+                } else {
+                    agentName = selectedAgent.split('(')[0].trim() || "Supervisor Agent";
+                    responseText = `✅ Forespørselen din om <em>"${escapeHtml(query)}"</em> er analysert av Antigravity-nettverket (${agentName}). Samtlige 7 agenter rapporterer normalkjøring. Avstemmingsmapper og Altinn 3 payload er oppdatert med siste status.`;
+                }
+
+                const agentMsgDiv = document.createElement('div');
+                agentMsgDiv.className = 'flex items-start space-x-3';
+                agentMsgDiv.innerHTML = `
+                    <div class="p-2 bg-amber-500/20 text-amber-400 rounded-lg text-xs mt-1">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="chat-bubble-agent p-4 text-xs space-y-2 max-w-2xl shadow-lg">
+                        <div class="font-bold text-amber-400 flex items-center gap-2">
+                            <span>${agentName}</span>
+                            <span class="bg-emerald-500/10 text-emerald-400 text-[10px] px-2 py-0.5 rounded border border-emerald-500/30">Verified</span>
+                        </div>
+                        <p class="text-slate-200">${responseText}</p>
+                    </div>
+                `;
+                messagesContainer.appendChild(agentMsgDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 600);
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
