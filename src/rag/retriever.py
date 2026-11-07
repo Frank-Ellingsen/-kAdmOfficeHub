@@ -76,15 +76,34 @@ def query_rag(query_text: str, k: int = 4, provider: str = "gemini"):
 
     # 2. Hent relevante kildedokumenter
     print(f"🔍 Søker i lovverket etter: '{query_text}'...")
+    docs_with_scores = []
     try:
         docs_with_scores = vector_store.similarity_search_with_score(query_text, k=k)
     except Exception as e:
-        print(f"\n⚠️ Feil under oppslag i ChromaDB: {e}")
-        return
+        print(f"\n⚠️ Merknad: ChromaDB RAG-søk ikke tilgjengelig ({e}). Benytter direkte lovverkskunnskap fra {provider.upper()}...")
+        fallback_template = """Du er senior regelverks- og MVA-spesialist for Det Norske Brenneri AS (Org.nr 996 928 977).
+Besvar følgende spørsmål presist basert på norsk skatte- og regnskapslovgivning (Merverdiavgiftsloven, Bokføringsforskriften, Aksjeloven). Henvis spesifikt til lovparagrafer (f.eks. Mva-loven § 8-1, § 8-3 for representasjon, Bokføringsloven/forskrift):
+
+Spørsmål: {question}
+
+Svar (redegjør presist for hva lovteksten og gjeldende praksis bestemmer):"""
+        prompt = ChatPromptTemplate.from_template(fallback_template)
+        llm = get_llm(provider=provider)
+        chain = prompt | llm | StrOutputParser()
+        response = chain.invoke({"question": query_text})
+        print(f"\n💡 Svar:\n{response}\n")
+        return response
 
     if not docs_with_scores:
-        print("⚠️ Ingen relevante kildetekster ble funnet i databasen.")
-        return
+        print("⚠️ Ingen spesifikke kildetekster funnet i vektordatabasen. Svarer via overordnet lovverksmodell...")
+        fallback_template = """Du er senior regelverks- og MVA-spesialist for Det Norske Brenneri AS. Besvar spørsmålet med referanse til norsk lovverk:
+Spørsmål: {question}
+Svar:"""
+        prompt = ChatPromptTemplate.from_template(fallback_template)
+        llm = get_llm(provider=provider)
+        chain = prompt | llm | StrOutputParser()
+        response = chain.invoke({"question": query_text})
+        return response
 
     print(f"\n📄 Fant {len(docs_with_scores)} relevante tekstutdrag:")
     formatted_context = []

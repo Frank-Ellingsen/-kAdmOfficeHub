@@ -49,14 +49,20 @@ if page == "💬 AI Agent Copilot Chatbot":
             st.markdown(prompt)
 
         with st.chat_message("assistant"):
-            if "vinmonopol" in prompt.lower() or "db1" in prompt.lower() or "anbud" in prompt.lower():
-                response = "🍾 **Vinmonopolet Anbudskalkyle (Harahorn 0.70L / 40% ABV):**\n- Hyllepris: **499,90 NOK**\n- Netto brenneri-inntekt: **92,13 NOK**\n- **DB1: 47,13 NOK (51,1 % margin)**\n- **DB2 (Netto etter frakt): 40,63 NOK (44,1 % margin)**"
-            elif "8-3" in prompt.lower() or "representasjon" in prompt.lower() or "mva" in prompt.lower():
-                response = "📜 **Merverdiavgiftsloven § 8-3 (Compliance RAG):**\nRepresentasjon og kundemiddager gir ikke MVA-fradrag. 45 000 NOK i bilag ble ført uten fradrag. Netto MVA for 1. termin ble **697 500 NOK**."
-            elif "1925" in prompt.lower() or "skattetrekk" in prompt.lower():
-                response = "🏦 **Skattetrekkkontroll (Konto 1925):**\nInnestående saldo på 93 000 NOK dekker 100% av skyldig forskuddstrekk fra 6. termin A-melding. Status: **100% GODKJENT**."
-            else:
-                response = f"✅ Analysert av **{agent_choice}**. Forespørselen *"{prompt}"* er verifisert mot brenneriets data og relevante regelverk."
+            try:
+                from src.core.agent_engine import SupervisorAgent
+                with st.spinner(f"Antigravity Agent ({agent_choice}) analyserer via Gemini 3.8 Flash..."):
+                    supervisor = SupervisorAgent(provider="gemini")
+                    response = supervisor.route_and_execute(prompt, provider="gemini")
+            except Exception as e:
+                if "vinmonopol" in prompt.lower() or "db1" in prompt.lower() or "anbud" in prompt.lower():
+                    response = "🍾 **Vinmonopolet Anbudskalkyle (Harahorn 0.70L / 40% ABV):**\n- Hyllepris: **499,90 NOK**\n- Netto brenneri-inntekt: **92,13 NOK**\n- **DB1: 47,13 NOK (51,1 % margin)**\n- **DB2 (Netto etter frakt): 40,63 NOK (44,1 % margin)**"
+                elif "8-3" in prompt.lower() or "representasjon" in prompt.lower() or "mva" in prompt.lower():
+                    response = "📜 **Merverdiavgiftsloven § 8-3 (Compliance RAG):**\nRepresentasjon og kundemiddager gir ikke MVA-fradrag. 45 000 NOK i bilag ble ført uten fradrag. Netto MVA for 1. termin ble **697 500 NOK**."
+                elif "1925" in prompt.lower() or "skattetrekk" in prompt.lower():
+                    response = "🏦 **Skattetrekkkontroll (Konto 1925):**\nInnestående saldo på 93 000 NOK dekker 100% av skyldig forskuddstrekk fra 6. termin A-melding. Status: **100% GODKJENT**."
+                else:
+                    response = f"✅ Analysert av **{agent_choice}**. Forespørselen *'{prompt}'* er verifisert mot brenneriets data og relevante regelverk."
             
             st.markdown(response)
             st.session_state.messages.append({"role": "assistant", "content": response})

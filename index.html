@@ -635,20 +635,32 @@
                 let agentName = "Supervisor Agent";
                 let responseText = "";
 
-                if (query.includes("Vinmonopolet") || query.includes("DB1") || query.includes("dekningsbidrag")) {
+                const qLower = query.toLowerCase();
+
+                if (qLower.includes("vinmonopol") || qLower.includes("db1") || qLower.includes("dekningsbidrag") || qLower.includes("anbud")) {
                     agentName = "Procurement & Anbud Agent";
                     responseText = "🍾 <strong>Vinmonopolet Anbudskalkyle (Harahorn 0.70L / 40% ABV):</strong><br>• Hyllepris (inkl. MVA): <strong>499,90 NOK</strong><br>• MVA (25%): -99,98 NOK<br>• Alkoholavgift (kr 942,50/L ren alk.): -263,90 NOK<br>• Pol-avanse (~9%): -35,99 NOK<br>• Netto Brenneri Inntekt: <strong>92,13 NOK</strong><br>• <strong>Dekningsbidrag 1 (DB1): 47,13 NOK (51.1% margin)</strong><br>• <strong>Dekningsbidrag 2 (DB2 Netto etter frakt): 40,63 NOK (44.1% margin)</strong>";
-                } else if (query.includes("8-3") || query.includes("representasjon") || query.includes("MVA")) {
+                } else if (qLower.includes("8-3") || qLower.includes("representasjon") || qLower.includes("mva") || qLower.includes("lov")) {
                     agentName = "Compliance RAG Agent";
                     responseText = "📜 <strong>RAG-oppslag Merverdiavgiftsloven § 8-3:</strong><br>MVAL § 8-3 fjerner fradragsretten for inngående MVA på representasjon, kundemiddager og gaver. I siste avstemming ble 45 000 NOK i bilag identifisert som representasjon og ført uten MVA-fradrag. Netto skyldig MVA for 1. termin ble dermed korrekt beregnet til <strong>697 500 NOK</strong>.";
-                } else if (query.includes("1925") || query.includes("skattetrekk") || query.includes("A-melding")) {
+                } else if (qLower.includes("1925") || qLower.includes("skattetrekk") || qLower.includes("a-melding") || qLower.includes("skatt")) {
                     agentName = "Tax & Excise Agent";
                     responseText = "🏦 <strong>Skattetrekkkontroll (Konto 1925):</strong><br>Avstemming mot A-meldingen for 6. termin bekrefter at 93 000 NOK står innestående på sperret bankkonto 1925 i DNB. Dekningsgraden er nøyaktig <strong>100% GODKJENT</strong> i samsvar med skattebetalingsloven § 5-12.";
-                } else if (query.includes("FTL") || query.includes("frakt") || query.includes("Vestby") || query.includes("LP")) {
+                } else if (qLower.includes("ftl") || qLower.includes("frakt") || qLower.includes("vestby") || qLower.includes("lp") || qLower.includes("transport")) {
                     agentName = "Analytics & Reskontro Agent";
                     responseText = "🚚 <strong>LP Fraktoptimering (scipy.optimize.linprog):</strong><br>Ved leveranse av 1 200 kasser/uke til Vinmonopolets hovedlager i Vestby er hel lastebil (FTL) den matematiske optimumsruten (15,00 NOK/kasse). Samlet gir denne logistikkmodellen en årlig innsparing på <strong>💰 +515 580 NOK/år</strong> (-12.2% reduksjon).";
+                } else if (qLower.includes("reskontro") || qLower.includes("purring") || qLower.includes("inkasso") || qLower.includes("forfalt") || qLower.includes("brreg") || qLower.includes("kreditt")) {
+                    agentName = "Analytics & Reskontro Agent";
+                    responseText = "📊 <strong>Kundereskontro & Kredittsjekk Status:</strong><br>• Totalt utestående: <strong>507 200 NOK</strong> fordelt på 8 nøkkelkunder.<br>• Forfalt > 60 dager: <strong>8 500 NOK</strong> (Bar & Bistro Oslo AS).<br>• Purrevarsel iht. <strong>Inkassoloven § 9</strong> er klargjort med 14 dagers betalingsfrist, 12,50% forsinkelsesrente og 70 kr gebyr.";
+                } else if (qLower.includes("fat") || qLower.includes("angels") || qLower.includes("fordamping") || qLower.includes("lager") || qLower.includes("svinn")) {
+                    agentName = "Tax & Excise Agent";
+                    responseText = "🥃 <strong>Fatmodning & Angels' Share (Tollager Grimstad):</strong><br>• Årlig naturlig fordamping er kalkulert til <strong>3,2%</strong>.<br>• På 42 000 liter fatbeholdning utgjør dette et tapt volum på 1 344 liter ren alkohol.<br>• Avgiftsskjerming: <strong>1 266 720 NOK</strong> i godkjent avgiftsfritak før uttak til innenlands konsum.";
+                } else if (qLower.includes("revisjon") || qLower.includes("årsavslutning") || qLower.includes("cedra") || qLower.includes("sjekkliste")) {
+                    agentName = "Audit & Year-End Agent";
+                    responseText = "📋 <strong>Årsoppgjørsmappe & Revisjon (Cedra Norge AS):</strong><br>• 7 av 7 nøkkelområder avstemt (Bank 1925, Reskontro, Tollager, MVA, AGA).<br>• Dokumentasjonsbinder inneholder fullstendige SAF-T eksportfiler, lageravstemming og avskrivningsplaner for destilleriutstyr i Grimstad.";
                 } else {
-                    responseText = "✅ Forespørselen din om <em>"" + escapeHtml(query) + ""</em> er analysert av Antigravity-nettverket. Samtlige 7 agenter rapporterer normalkjøring. Avstemmingsmapper og Altinn 3 payload er oppdatert med siste status.";
+                    agentName = selectedAgent.split('(')[0].trim() || "Supervisor Agent";
+                    responseText = `✅ Forespørselen din om <em>"${escapeHtml(query)}"</em> er analysert av Antigravity-nettverket (${agentName}). Samtlige 7 agenter rapporterer normalkjøring. Avstemmingsmapper og Altinn 3 payload er oppdatert med siste status.`;
                 }
 
                 const agentMsgDiv = document.createElement('div');
